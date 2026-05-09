@@ -2255,9 +2255,8 @@
     }
     renderQuickReplies();
     setStageState('idle');
-    if (!state.sessionStartedAt) {
-      state.sessionStartedAt = Date.now();
-    }
+    // Timer starts on first user message, not on chat open. The countdown
+    // shouldn't run while the user is just reading the welcome.
     startTimer();
   }
   function closeChat() {
@@ -2329,14 +2328,8 @@
     document.getElementById('outOfTimeModal').classList.remove('active');
   }
   function onGetMoreTime() {
-    // Paystack flow lands here. For now, surface a calm placeholder.
-    const btn = document.getElementById('getMoreTimeBtn');
-    btn.disabled = true;
-    btn.textContent = 'coming soon';
-    setTimeout(() => {
-      btn.disabled = false;
-      btn.textContent = 'Get more time';
-    }, 1800);
+    const msg = "Hi, I'd love more time to talk. Please add me to the beta waitlist so I can keep using Sexhapist.";
+    window.location.href = 'contact.html?intent=beta&msg=' + encodeURIComponent(msg);
   }
   function sendQuick(text) {
     document.getElementById('chatInput').value = text;

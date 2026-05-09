@@ -241,9 +241,9 @@
 </nav>
 
 <main class="page">
-  <p class="eyebrow">Contact</p>
-  <h1>say <em>hello.</em></h1>
-  <p class="lede">questions, feedback, partnerships, press. a real person reads every message.</p>
+  <p class="eyebrow" id="pageEyebrow">Contact</p>
+  <h1 id="pageHeading">say <em>hello.</em></h1>
+  <p class="lede" id="pageLede">questions, feedback, partnerships, press. a real person reads every message.</p>
   <p class="email-line">or just email <a href="mailto:talk@sexhapist.com">talk@sexhapist.com</a></p>
 
   <form id="contactForm" novalidate>
@@ -284,6 +284,23 @@
     const status = document.getElementById('formStatus');
     const btn = document.getElementById('submitBtn');
 
+    // Read URL params: ?intent=beta&msg=...
+    const params = new URLSearchParams(window.location.search);
+    const intent = params.get('intent');
+    const presetMsg = params.get('msg');
+
+    if (intent === 'beta') {
+      document.getElementById('pageEyebrow').textContent = 'Beta waitlist';
+      document.getElementById('pageHeading').innerHTML = 'keep the <em>conversation</em> going.';
+      document.getElementById('pageLede').textContent = "you've found your way to the door before we've finished building it. drop your details below and we'll let you in as soon as the next round opens.";
+      document.title = 'Beta waitlist · Sexhapist';
+      btn.textContent = 'Request access';
+    }
+    if (presetMsg) {
+      const msgField = document.getElementById('message');
+      if (msgField) msgField.value = presetMsg;
+    }
+
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       status.className = 'status';
@@ -307,7 +324,7 @@
       btn.disabled = true;
       btn.textContent = 'Opening your mail app…';
 
-      const subject = 'Hello from ' + name;
+      const subject = (intent === 'beta' ? 'Beta waitlist · ' : 'Hello from ') + name;
       const body = message + '\n\n' + name + ' (' + email + ')';
       const href = 'mailto:talk@sexhapist.com'
         + '?subject=' + encodeURIComponent(subject)
@@ -319,7 +336,7 @@
         status.className = 'status ok';
         status.textContent = 'thanks. your mail app should be opening. if it didn’t, email talk@sexhapist.com directly.';
         btn.disabled = false;
-        btn.textContent = 'Send message';
+        btn.textContent = intent === 'beta' ? 'Request access' : 'Send message';
       }, 600);
     });
   })();
