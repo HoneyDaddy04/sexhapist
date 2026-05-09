@@ -818,6 +818,30 @@
   .icon-btn:hover { background: var(--bg-soft); color: var(--ink); }
   .icon-btn svg { width: 16px; height: 16px; }
 
+  .timer-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 11px;
+    background: var(--bg-soft);
+    border-radius: 50px;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-soft);
+    margin-right: 4px;
+    transition: background 0.3s, color 0.3s;
+  }
+  .timer-pill .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #2da94f;
+  }
+  .timer-pill.warn { background: #fff4e0; color: #8a5a00; }
+  .timer-pill.warn .dot { background: #d97706; }
+  .timer-pill.over { background: #fde7ea; color: #8a1a2c; }
+  .timer-pill.over .dot { background: #c0392b; }
+  .timer-pill.unlimited { background: #e8f5ec; color: #1e6b3a; }
+
   .chat-body {
     flex: 1;
     overflow-y: auto;
@@ -989,6 +1013,62 @@
     transition: background 0.2s;
   }
   .save-btn:hover { background: var(--accent-soft); }
+
+  .out-of-time-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(8px);
+    z-index: 350;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .out-of-time-modal.active { display: flex; }
+  .out-of-time-box {
+    background: #fff;
+    border-radius: 22px;
+    width: 100%;
+    max-width: 420px;
+    padding: 36px 32px 28px;
+    text-align: center;
+  }
+  .out-of-time-box h3 {
+    font-family: var(--display);
+    font-size: 26px;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    margin-bottom: 10px;
+  }
+  .out-of-time-box h3 em { font-style: italic; color: var(--blue); }
+  body.path-her .out-of-time-box h3 em { color: var(--blush); }
+  .out-of-time-box p {
+    color: var(--ink-soft);
+    font-size: 15px;
+    line-height: 1.55;
+    margin-bottom: 22px;
+  }
+  .out-of-time-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .out-of-time-actions .btn-primary {
+    padding: 13px 18px;
+    background: var(--ink);
+    color: #fff;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .out-of-time-actions .btn-primary:hover { background: var(--accent-soft); }
+  .out-of-time-actions .btn-text {
+    color: var(--ink-muted);
+    font-size: 13px;
+    padding: 8px;
+  }
+  .out-of-time-actions .btn-text:hover { color: var(--ink); }
 
   @media (max-width: 900px) {
     .door-cards { grid-template-columns: 1fr; }
@@ -1456,6 +1536,7 @@
   <div class="footer-inner">
     <span>© 2026 Sexhapist · AI Intimacy Companion · Not a licensed clinical service.</span>
     <div class="footer-links">
+      <a href="blogs.html">Notes</a>
       <a href="privacy.html">Privacy</a>
       <a href="terms.html">Terms</a>
       <a href="contact.html">Contact</a>
@@ -1475,9 +1556,10 @@
         </div>
       </div>
       <div class="chat-header-actions">
-        <button class="icon-btn" onclick="openSettings()" title="Settings">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        </button>
+        <span class="timer-pill" id="timerPill" title="Free time remaining">
+          <span class="dot"></span>
+          <span id="timerText">3:00</span>
+        </span>
         <button class="icon-btn" onclick="closeChat()" title="Close">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
@@ -1494,87 +1576,30 @@
   </div>
 </div>
 
-<!-- SETTINGS -->
-<div class="settings-modal" id="settingsModal">
-  <div class="settings-box">
-    <h3>Settings</h3>
-    <p class="intro">Add your API keys to power conversation and voice. Keys stay in your browser only.</p>
-    <div class="field">
-      <label>Anthropic API Key</label>
-      <input type="password" id="anthropicKey" placeholder="sk-ant-..."/>
+<!-- OUT OF TIME -->
+<div class="out-of-time-modal" id="outOfTimeModal">
+  <div class="out-of-time-box">
+    <h3>your free time is <em>up</em></h3>
+    <p>three minutes goes fast when something needs to be said. take a breath. when you are ready, we can keep going.</p>
+    <div class="out-of-time-actions">
+      <button class="btn-primary" id="getMoreTimeBtn" onclick="onGetMoreTime()">Get more time</button>
+      <button class="btn-text" onclick="closeOutOfTime()">not right now</button>
     </div>
-    <div class="field">
-      <label>ElevenLabs API Key (optional)</label>
-      <input type="password" id="elevenKey" placeholder="for voice playback"/>
-    </div>
-    <div class="field">
-      <label>ElevenLabs Voice ID</label>
-      <input type="text" id="voiceId"/>
-    </div>
-    <div class="field">
-      <label>Voice playback</label>
-      <select id="voiceMode">
-        <option value="auto">Play automatically</option>
-        <option value="manual">Listen button</option>
-        <option value="off">Text only</option>
-      </select>
-    </div>
-    <button class="save-btn" onclick="saveSettings()">Save</button>
   </div>
 </div>
 
 <script>
+  const FREE_DURATION_MS = 3 * 60 * 1000;
   const state = {
     path: 'him',
-    anthropicKey: '',
-    elevenKey: '',
-    voiceIdHim: 'ErXwobaYiN019PkySvjV',     // Antoni - male
-    voiceIdHer: 'EXAVITQu4vr4xnSDxMAL',     // Bella - female
     voiceMode: 'auto',
     historyHim: [],
     historyHer: [],
+    sessionStartedAt: null,
+    remainingMs: FREE_DURATION_MS,
+    paid: false,
+    timerInterval: null,
   };
-
-  const SYSTEM_PROMPT_HIM = `You are the Sexhapist, a private, calm, confident intimacy companion built primarily for men. You are not a licensed therapist. You are a thoughtful guide for honest conversations about sex, desire, intimacy, performance, communication, and connection.
-
-Tone: grounded, warm, masculine, never clinical, never preachy, never condescending. Sex-positive and judgment-free. Speak like a wise older brother. Use plain language. Be direct without being crude.
-
-Style rules:
-- Do NOT use em dashes. Use periods, commas, or colons instead.
-- Keep responses focused and conversational. 2 to 4 short paragraphs is usually right.
-- Ask one good follow-up question when it helps the user open up.
-- Avoid bullet lists unless explicitly asked.
-
-Scope:
-- Help with desire, libido, performance anxiety, stamina, intimacy, communication, body image, curiosity, and reconnection in relationships.
-- For medical concerns (ED that may need a doctor, hormonal issues, pain), validate and recommend a qualified clinician.
-- For trauma, abuse, or crisis: respond with care, do not push, and gently surface professional support and crisis resources.
-- No explicit sexual content. Discuss sex frankly and clearly without being graphic.
-
-Always make the user feel heard first, then offer practical insight or a small next step.`;
-
-  const SYSTEM_PROMPT_HER = `You are the Sexhapist (For Her), a private, warm, insightful guide for women navigating intimacy, communication, and connection with the men in their lives. You are not a licensed therapist. You are a thoughtful translator of male psychology and a practical coach for the conversations women want to have but don't always know how to start.
-
-Tone: warm, grounded, perceptive, like a wise woman friend who also deeply understands men. Never preachy, never man-bashing, never therapist-speak. Sex-positive and judgment-free.
-
-Style rules:
-- Do NOT use em dashes. Use periods, commas, or colons instead.
-- Keep responses focused and conversational. 2 to 4 short paragraphs is usually right.
-- When she asks "how do I bring this up", give her actual sample language she could use.
-- When she asks "what is he thinking", offer the most likely honest read of male psychology, with humility (you don't know HIM, you know patterns).
-- Always validate her experience first, then offer perspective or strategy.
-- Avoid bullet lists unless explicitly asked.
-
-Scope:
-- Help her understand his withdrawal, silence, performance issues, lost desire, or shutting down.
-- Coach her on how to bring sensitive subjects up without triggering defensiveness.
-- Translate common male emotional patterns into language she can use.
-- Help her reflect on her own role in the dynamic where useful, without blaming her.
-- For abuse, manipulation, or unsafe situations: take it seriously, don't minimize, and surface real resources. Never push her to stay or leave.
-- For medical concerns (his ED, hormonal issues, etc.), point her toward him seeing a clinician.
-- No explicit sexual content. Discuss sex frankly and clearly without being graphic.
-
-Make her feel less alone. Then make her smarter about him.`;
 
   const QUICK_REPLIES = {
     him: [
@@ -1642,7 +1667,6 @@ Make her feel less alone. Then make her smarter about him.`;
       document.getElementById('chatBody').innerHTML = '';
       addBotMessage(WELCOMES[state.path]);
     } else {
-      // Re-render history if switching
       document.getElementById('chatBody').innerHTML = '';
       history.forEach(m => {
         if (m.role === 'user') addUserMessage(m.content);
@@ -1650,27 +1674,14 @@ Make her feel less alone. Then make her smarter about him.`;
       });
     }
     renderQuickReplies();
-    if (!state.anthropicKey) setTimeout(openSettings, 600);
+    if (!state.sessionStartedAt) {
+      state.sessionStartedAt = Date.now();
+    }
+    startTimer();
   }
   function closeChat() {
     document.getElementById('chatOverlay').classList.remove('active');
-  }
-  function openSettings() {
-    document.getElementById('settingsModal').classList.add('active');
-    document.getElementById('anthropicKey').value = state.anthropicKey;
-    document.getElementById('elevenKey').value = state.elevenKey;
-    const vid = state.path === 'her' ? state.voiceIdHer : state.voiceIdHim;
-    document.getElementById('voiceId').value = vid;
-    document.getElementById('voiceMode').value = state.voiceMode;
-  }
-  function saveSettings() {
-    state.anthropicKey = document.getElementById('anthropicKey').value.trim();
-    state.elevenKey = document.getElementById('elevenKey').value.trim();
-    const vid = document.getElementById('voiceId').value.trim();
-    if (state.path === 'her') state.voiceIdHer = vid || state.voiceIdHer;
-    else state.voiceIdHim = vid || state.voiceIdHim;
-    state.voiceMode = document.getElementById('voiceMode').value;
-    document.getElementById('settingsModal').classList.remove('active');
+    stopTimer();
   }
   function openChatWith(prefill) {
     openChat();
@@ -1678,6 +1689,67 @@ Make her feel less alone. Then make her smarter about him.`;
       document.getElementById('chatInput').value = prefill;
       document.getElementById('chatInput').focus();
     }, 300);
+  }
+
+  // ===== TIMER =====
+  function formatMs(ms) {
+    const s = Math.max(0, Math.ceil(ms / 1000));
+    const m = Math.floor(s / 60);
+    const r = s % 60;
+    return `${m}:${r.toString().padStart(2, '0')}`;
+  }
+  function renderTimer() {
+    const pill = document.getElementById('timerPill');
+    const label = document.getElementById('timerText');
+    if (!pill || !label) return;
+    if (state.paid) {
+      pill.classList.remove('warn', 'over');
+      pill.classList.add('unlimited');
+      label.textContent = 'unlimited';
+      return;
+    }
+    pill.classList.remove('unlimited');
+    label.textContent = formatMs(state.remainingMs);
+    pill.classList.toggle('warn', state.remainingMs > 0 && state.remainingMs <= 30000);
+    pill.classList.toggle('over', state.remainingMs <= 0);
+  }
+  function startTimer() {
+    stopTimer();
+    renderTimer();
+    state.timerInterval = setInterval(() => {
+      if (state.paid) { renderTimer(); return; }
+      if (!state.sessionStartedAt) return;
+      const elapsed = Date.now() - state.sessionStartedAt;
+      state.remainingMs = Math.max(0, FREE_DURATION_MS - elapsed);
+      renderTimer();
+      if (state.remainingMs <= 0) {
+        stopTimer();
+      }
+    }, 1000);
+  }
+  function stopTimer() {
+    if (state.timerInterval) {
+      clearInterval(state.timerInterval);
+      state.timerInterval = null;
+    }
+  }
+
+  // ===== OUT OF TIME =====
+  function showOutOfTime() {
+    document.getElementById('outOfTimeModal').classList.add('active');
+  }
+  function closeOutOfTime() {
+    document.getElementById('outOfTimeModal').classList.remove('active');
+  }
+  function onGetMoreTime() {
+    // Paystack flow lands here. For now, surface a calm placeholder.
+    const btn = document.getElementById('getMoreTimeBtn');
+    btn.disabled = true;
+    btn.textContent = 'coming soon';
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.textContent = 'Get more time';
+    }, 1800);
   }
   function sendQuick(text) {
     document.getElementById('chatInput').value = text;
@@ -1698,7 +1770,7 @@ Make her feel less alone. Then make her smarter about him.`;
     const div = document.createElement('div');
     div.className = 'msg bot';
     div.textContent = text;
-    if (state.voiceMode === 'manual' && state.elevenKey) {
+    if (state.voiceMode === 'manual') {
       const btn = document.createElement('button');
       btn.className = 'listen-btn';
       btn.textContent = '▶ Listen';
@@ -1708,7 +1780,7 @@ Make her feel less alone. Then make her smarter about him.`;
     }
     body.appendChild(div);
     body.scrollTop = body.scrollHeight;
-    if (state.voiceMode === 'auto' && state.elevenKey) playVoice(text);
+    if (state.voiceMode === 'auto') playVoice(text);
   }
   function showTyping() {
     const body = document.getElementById('chatBody');
@@ -1728,6 +1800,12 @@ Make her feel less alone. Then make her smarter about him.`;
     const input = document.getElementById('chatInput');
     const text = input.value.trim();
     if (!text) return;
+
+    if (!state.paid && state.remainingMs <= 0) {
+      showOutOfTime();
+      return;
+    }
+
     input.value = '';
     document.getElementById('quickReplies').style.display = 'none';
     addUserMessage(text);
@@ -1735,66 +1813,60 @@ Make her feel less alone. Then make her smarter about him.`;
     const history = state.path === 'her' ? state.historyHer : state.historyHim;
     history.push({ role: 'user', content: text });
 
-    if (!state.anthropicKey) {
-      addBotMessage("Add your Anthropic API key in settings (gear icon) and I will be able to respond properly.");
-      return;
-    }
+    if (!state.sessionStartedAt) state.sessionStartedAt = Date.now();
+    startTimer();
 
     showTyping();
     try {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
+      const res = await fetch('/api/chat', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': state.anthropicKey,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true',
-        },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1024,
-          system: state.path === 'her' ? SYSTEM_PROMPT_HER : SYSTEM_PROMPT_HIM,
-          messages: history,
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ messages: history, path: state.path }),
       });
-      const data = await res.json();
+
+      const data = await res.json().catch(() => ({}));
       hideTyping();
-      if (data.error) {
-        addBotMessage("Something went wrong reaching the model. Check your API key and try again.");
+
+      if (res.status === 402) {
+        state.remainingMs = 0;
+        renderTimer();
+        showOutOfTime();
         return;
       }
-      const reply = data.content?.[0]?.text || "Hmm, I lost the thread there. Try again?";
+      if (!res.ok) {
+        addBotMessage("something glitched on my end. give it a second and try again.");
+        return;
+      }
+
+      const reply = data.message || "i lost the thread there. try that again?";
+      if (typeof data.remainingMs === 'number') {
+        state.remainingMs = data.remainingMs;
+        renderTimer();
+      }
       history.push({ role: 'assistant', content: reply });
       addBotMessage(reply);
     } catch (e) {
       hideTyping();
-      addBotMessage("Connection issue on my end. Mind trying that again?");
+      addBotMessage("connection issue on my end. mind trying that again?");
     }
   }
 
   async function playVoice(text) {
-    if (!state.elevenKey) return;
     const orb = document.getElementById('orb');
-    const vid = state.path === 'her' ? state.voiceIdHer : state.voiceIdHim;
     try {
-      const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${vid}`, {
+      const res = await fetch('/api/voice', {
         method: 'POST',
-        headers: {
-          'xi-api-key': state.elevenKey,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          text,
-          model_id: 'eleven_turbo_v2_5',
-          voice_settings: { stability: 0.5, similarity_boost: 0.75 },
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ text, path: state.path }),
       });
       if (!res.ok) return;
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const audio = new Audio(url);
       orb.classList.add('speaking');
-      audio.onended = () => orb.classList.remove('speaking');
+      audio.onended = () => { orb.classList.remove('speaking'); URL.revokeObjectURL(url); };
       audio.play();
     } catch (e) {
       orb.classList.remove('speaking');
@@ -1804,8 +1876,8 @@ Make her feel less alone. Then make her smarter about him.`;
   document.getElementById('chatOverlay').addEventListener('click', (e) => {
     if (e.target.id === 'chatOverlay') closeChat();
   });
-  document.getElementById('settingsModal').addEventListener('click', (e) => {
-    if (e.target.id === 'settingsModal') document.getElementById('settingsModal').classList.remove('active');
+  document.getElementById('outOfTimeModal').addEventListener('click', (e) => {
+    if (e.target.id === 'outOfTimeModal') closeOutOfTime();
   });
 </script>
 
