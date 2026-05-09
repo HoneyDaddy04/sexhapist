@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" role="img" aria-label="Sexhapist">
+  <title>Sexhapist — stacked wordmark</title>
+  <desc>Confidant Mark above the wordmark. Use for square or vertical layouts.</desc>
+  <style>
+    .wordmark { font-family: 'Fraunces', 'Times New Roman', Georgia, serif; font-size: 36px; font-weight: 500; fill: #1d1d1f; letter-spacing: -0.4px; text-anchor: middle; }
+    .wordmark .italic { font-style: italic; font-weight: 400; }
+  </style>
+  <g transform="translate(90 16) scale(0.6)">
+    <path d="M45.75 36.36 A24 24 0 1 0 45.75 63.64 A18 18 0 1 1 45.75 36.36 Z" fill="#1d1d1f"/>
+    <path d="M54.25 36.36 A24 24 0 1 1 54.25 63.64 A18 18 0 1 0 54.25 36.36 Z" fill="#1d1d1f"/>
+  </g>
+  <text class="wordmark" x="120" y="160">Se<tspan class="italic">x</tspan>hapist</text>
+</svg>

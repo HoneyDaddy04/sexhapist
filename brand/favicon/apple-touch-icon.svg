@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-label="Sexhapist">
+  <title>Sexhapist</title>
+  <rect width="180" height="180" rx="40" ry="40" fill="#f7f3ee"/>
+  <g transform="translate(40 40) scale(1)">
+    <path d="M45.75 36.36 A24 24 0 1 0 45.75 63.64 A18 18 0 1 1 45.75 36.36 Z" fill="#0066cc"/>
+    <path d="M54.25 36.36 A24 24 0 1 1 54.25 63.64 A18 18 0 1 0 54.25 36.36 Z" fill="#b85a6e"/>
+  </g>
+</svg>

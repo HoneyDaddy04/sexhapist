@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Privacy · Sexhapist</title>
+<link rel="icon" href="brand/favicon/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="brand/favicon/apple-touch-icon.svg">
+<link rel="manifest" href="brand/favicon/site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-soft: #f5f5f7;
+    --bg-warm: #f7f3ee;
+    --ink: #1d1d1f;
+    --ink-soft: #424245;
+    --ink-muted: #6e6e73;
+    --line: #d2d2d7;
+    --line-soft: #e8e8ed;
+    --accent: #1d1d1f;
+    --accent-soft: #2c2c2e;
+    --blue: #0066cc;
+    --blush: #b85a6e;
+    --display: 'Fraunces', 'Times New Roman', serif;
+    --body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--body);
+    font-weight: 400;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--body); cursor: pointer; border: none; background: none; color: inherit; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: 56px; padding: 0 24px; z-index: 100;
+    background: rgba(255,255,255,0.78);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid var(--line-soft);
+    display: flex; align-items: center;
+  }
+  .nav-inner {
+    width: 100%; max-width: 1024px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo { display: flex; align-items: center; gap: 8px; }
+  .logo-mark { width: 24px; height: 24px; flex-shrink: 0; }
+  .logo-mark svg { width: 100%; height: 100%; display: block; }
+  .logo-name {
+    font-family: var(--display);
+    font-size: 20px; font-weight: 500; letter-spacing: -0.01em;
+  }
+  .nav-cta {
+    background: var(--accent); color: #fff;
+    padding: 8px 18px; border-radius: 980px;
+    font-size: 13px; font-weight: 500; transition: background 0.2s;
+  }
+  .nav-cta:hover { background: var(--accent-soft); }
+
+  /* PAGE */
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 140px 24px 80px;
+  }
+  .eyebrow {
+    font-size: 13px;
+    color: var(--ink-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  h1 {
+    font-family: var(--display);
+    font-size: clamp(44px, 7vw, 72px);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    margin-bottom: 20px;
+  }
+  h1 em { font-style: italic; font-weight: 300; color: var(--ink-muted); }
+  .lede {
+    font-size: 20px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    margin-bottom: 12px;
+    letter-spacing: -0.005em;
+  }
+  .updated {
+    font-size: 13px;
+    color: var(--ink-muted);
+    margin-bottom: 56px;
+  }
+  h2 {
+    font-family: var(--display);
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.018em;
+    margin: 56px 0 14px;
+  }
+  h2 em { font-style: italic; font-weight: 300; color: var(--ink-muted); }
+  p {
+    font-size: 17px;
+    color: var(--ink-soft);
+    line-height: 1.65;
+    margin-bottom: 16px;
+  }
+  ul {
+    margin: 8px 0 18px 22px;
+    color: var(--ink-soft);
+    font-size: 17px;
+    line-height: 1.65;
+  }
+  ul li { margin-bottom: 8px; }
+  .pull {
+    background: var(--bg-warm);
+    border-radius: 18px;
+    padding: 24px 28px;
+    margin: 32px 0;
+    font-family: var(--display);
+    font-size: 22px;
+    line-height: 1.4;
+    color: var(--ink);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+  .pull em { font-style: italic; font-weight: 300; color: var(--ink-muted); }
+  a.inline { color: var(--blue); border-bottom: 1px solid rgba(0,102,204,0.2); }
+  a.inline:hover { border-bottom-color: var(--blue); }
+
+  /* FOOTER */
+  footer {
+    background: var(--bg-soft);
+    padding: 28px 24px;
+    border-top: 1px solid var(--line-soft);
+  }
+  .footer-inner {
+    max-width: 1024px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 16px;
+    font-size: 12px; color: var(--ink-muted);
+  }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a:hover { color: var(--ink); }
+
+  @media (max-width: 640px) {
+    .page { padding: 110px 22px 60px; }
+    h2 { font-size: 24px; margin-top: 44px; }
+    .pull { font-size: 19px; padding: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="sexhapist%20(2).html" class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="Sexhapist">
+          <path d="M45.75 36.36 A24 24 0 1 0 45.75 63.64 A18 18 0 1 1 45.75 36.36 Z" fill="#0066cc"/>
+          <path d="M54.25 36.36 A24 24 0 1 1 54.25 63.64 A18 18 0 1 0 54.25 36.36 Z" fill="#b85a6e"/>
+        </svg>
+      </div>
+      <div class="logo-name">Se<em>x</em>hapist</div>
+    </a>
+    <a href="sexhapist%20(2).html" class="nav-cta">Talk now</a>
+  </div>
+</nav>
+
+<main class="page">
+  <p class="eyebrow">Privacy</p>
+  <h1>this is between<br/><em>you and you.</em></h1>
+  <p class="lede">your conversations are private. that's not a feature. it's the whole thing.</p>
+  <p class="updated">Last updated: 9 May 2026</p>
+
+  <div class="pull">we don't sell your data. we don't share it with advertisers. we don't train public models on your conversations.</div>
+
+  <h2>what we collect</h2>
+  <p>only what we need to make this work, and nothing we'd be uncomfortable explaining to you in person.</p>
+  <ul>
+    <li><strong>your conversations,</strong> stored so you can pick up where you left off.</li>
+    <li><strong>account basics:</strong> email, and a password we never see in plain text.</li>
+    <li><strong>device &amp; usage signals,</strong> like browser type, approximate region, crash logs, and page interactions, so the product doesn't break on you.</li>
+    <li><strong>billing details,</strong> handled by our payment processor (Stripe). we never see your full card number.</li>
+  </ul>
+
+  <h2>what we don't collect</h2>
+  <ul>
+    <li>your real name (unless you give it).</li>
+    <li>your contacts, photos, location history, or microphone. we don't ask, and we don't want them.</li>
+    <li>tracking pixels from third-party advertisers.</li>
+  </ul>
+
+  <h2>how we use what we collect</h2>
+  <p>three reasons. that's it.</p>
+  <ul>
+    <li>to give you the product: your chat history, your settings, your account.</li>
+    <li>to keep it safe: abuse prevention, fraud detection, security incidents.</li>
+    <li>to make it better: aggregated, de-identified signals about what's working and what isn't.</li>
+  </ul>
+
+  <h2>how we store it</h2>
+  <p>everything is encrypted in transit (TLS) and at rest (AES-256). conversations are stored in isolated, access-controlled databases. only a small number of engineers can touch the systems, and only with logged, audited access. never to read your conversations for fun, curiosity, or analytics.</p>
+
+  <h2>AI model providers</h2>
+  <p>your conversations are processed by third-party AI providers we contract with to power the chat (e.g. Anthropic, OpenAI). we send only the messages needed to generate a response, under contracts that prohibit them from training on, retaining, or sharing your inputs beyond what's required to return an answer. your account identity is not sent to them.</p>
+
+  <h2>your control</h2>
+  <ul>
+    <li><strong>read it.</strong> you can request a copy of everything we have on you.</li>
+    <li><strong>delete it.</strong> one click in settings deletes your account and conversations within 30 days.</li>
+    <li><strong>correct it.</strong> anything wrong, you can change it. anything you can't change yourself, email us.</li>
+    <li><strong>opt out</strong> of optional analytics, of product emails, of anything non-essential.</li>
+  </ul>
+
+  <h2>cookies</h2>
+  <p>we use a small number of first-party cookies to keep you signed in and remember your preferences. we use a privacy-respecting analytics tool that doesn't fingerprint or follow you around the internet. no third-party advertising cookies. ever.</p>
+
+  <h2>kids</h2>
+  <p>this product is for adults. 18 and older. we don't knowingly collect anything from anyone under 18, and if we learn we have, we delete it.</p>
+
+  <h2>safety</h2>
+  <p>if a conversation suggests someone is in immediate danger, we may surface relevant emergency resources. we are not a crisis service. we are not a clinical service. for crises, please reach a human professional in your country.</p>
+
+  <h2>changes</h2>
+  <p>if we change this policy in a way that meaningfully affects you, we'll tell you before it takes effect, by email, in the product, or both. minor edits (typos, clarifications) we just date and update.</p>
+
+  <h2>questions</h2>
+  <p>email <a class="inline" href="mailto:talk@sexhapist.com">talk@sexhapist.com</a> or use the <a class="inline" href="contact.html">contact form</a>. a real person reads every message.</p>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>© 2026 Sexhapist · AI Intimacy Companion · Not a licensed clinical service.</span>
+    <div class="footer-links">
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

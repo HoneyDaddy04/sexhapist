@@ -1,0 +1,1783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sexhapist · Be Bold. Be Honest. Be Happy.</title>
+<link rel="icon" href="../brand/favicon/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../brand/favicon/apple-touch-icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e1419;
+    --bg-2: #131a21;
+    --panel: #161e25;
+    --panel-2: #1c2530;
+    --line: #2a333d;
+    --line-2: #3a4654;
+    --ivory: #f3eee5;
+    --ivory-dim: #cfc8bb;
+    --muted: #8a8578;
+    --bronze: #c89060;
+    --bronze-bright: #e0a878;
+    --bronze-deep: #8a5a36;
+    --gold-glow: rgba(200, 144, 96, 0.18);
+    --display: 'Cormorant Garamond', 'Times New Roman', serif;
+    --body: 'Inter', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ivory);
+    font-family: var(--body);
+    font-weight: 400;
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Subtle film grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--body); cursor: pointer; border: none; background: none; color: inherit; }
+
+  /* ===== NAVIGATION ===== */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    padding: 22px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 100;
+    background: linear-gradient(to bottom, rgba(14,20,25,0.95), rgba(14,20,25,0.6));
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(42, 51, 61, 0.4);
+  }
+
+  /* ===== LOGO (MASCULINE) ===== */
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+  }
+  .logo-mark {
+    width: 40px;
+    height: 40px;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .logo-mark svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .logo-mark-bg {
+    fill: var(--bronze);
+    transition: fill 0.3s;
+  }
+  .logo:hover .logo-mark-bg { fill: var(--bronze-bright); }
+  .logo-mark-letter {
+    fill: var(--bg);
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 28px;
+  }
+  .logo-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+  }
+  .logo-name {
+    font-family: var(--display);
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--ivory);
+  }
+  .logo-name em {
+    font-style: italic;
+    color: var(--bronze);
+    font-weight: 500;
+  }
+  .logo-tag {
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.32em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    align-items: center;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    font-weight: 500;
+  }
+  .nav-links a {
+    color: var(--ivory-dim);
+    transition: color 0.2s;
+    position: relative;
+  }
+  .nav-links a:hover { color: var(--bronze); }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -6px; left: 0;
+    width: 0; height: 1px;
+    background: var(--bronze);
+    transition: width 0.3s;
+  }
+  .nav-links a:hover::after { width: 100%; }
+
+  .nav-cta {
+    padding: 11px 22px;
+    background: var(--bronze);
+    color: var(--bg);
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    border-radius: 2px;
+    transition: all 0.25s;
+  }
+  .nav-cta:hover {
+    background: var(--bronze-bright);
+    transform: translateY(-1px);
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 100vh;
+    padding: 140px 48px 80px;
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    left: -10%;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, var(--gold-glow) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -10%;
+    right: -10%;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(200, 144, 96, 0.1) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-content { position: relative; z-index: 2; }
+
+  .hero-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    border: 1px solid var(--line-2);
+    border-radius: 50px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--ivory-dim);
+    text-transform: uppercase;
+    margin-bottom: 36px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+  .hero-pill .dot {
+    width: 7px; height: 7px;
+    background: var(--bronze);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--bronze); }
+    50% { opacity: 0.6; box-shadow: 0 0 0 8px transparent; }
+  }
+
+  .hero h1 {
+    font-family: var(--display);
+    font-size: clamp(56px, 8vw, 104px);
+    font-weight: 500;
+    line-height: 0.96;
+    letter-spacing: -0.02em;
+    color: var(--ivory);
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.4s forwards;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--bronze);
+    font-weight: 400;
+  }
+
+  .hero p.lead {
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--ivory-dim);
+    max-width: 480px;
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.6s forwards;
+  }
+
+  .hero-buttons {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 56px;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.8s forwards;
+  }
+  .btn-primary {
+    padding: 16px 32px;
+    background: var(--bronze);
+    color: var(--bg);
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.05em;
+    border-radius: 2px;
+    transition: all 0.25s;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-transform: uppercase;
+  }
+  .btn-primary:hover {
+    background: var(--bronze-bright);
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px -10px rgba(200, 144, 96, 0.4);
+  }
+  .btn-primary svg { transition: transform 0.25s; }
+  .btn-primary:hover svg { transform: translateX(4px); }
+
+  .btn-ghost {
+    padding: 16px 28px;
+    color: var(--ivory);
+    font-weight: 500;
+    font-size: 14px;
+    letter-spacing: 0.05em;
+    border: 1px solid var(--line-2);
+    border-radius: 2px;
+    transition: all 0.25s;
+    text-transform: uppercase;
+  }
+  .btn-ghost:hover {
+    border-color: var(--bronze);
+    color: var(--bronze);
+  }
+
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 28px;
+    padding-top: 36px;
+    border-top: 1px solid var(--line);
+    opacity: 0;
+    animation: fadeUp 0.9s 1s forwards;
+  }
+  .stat-num {
+    font-family: var(--display);
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--bronze);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* Hero photo collage */
+  .hero-visual {
+    position: relative;
+    height: 560px;
+    opacity: 0;
+    animation: fadeUp 1.1s 0.6s forwards;
+  }
+  .photo-frame {
+    position: absolute;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.7), 0 0 0 1px rgba(200, 144, 96, 0.15);
+    transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .photo-frame img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: contrast(1.05) saturate(0.9);
+  }
+  .photo-1 {
+    width: 280px; height: 360px;
+    top: 20px; right: 80px;
+    transform: rotate(3deg);
+    z-index: 3;
+  }
+  .photo-1:hover { transform: rotate(0deg) translateY(-8px); }
+  .photo-2 {
+    width: 240px; height: 300px;
+    top: 180px; right: 280px;
+    transform: rotate(-4deg);
+    z-index: 2;
+  }
+  .photo-2:hover { transform: rotate(0deg) translateY(-8px); }
+  .photo-3 {
+    width: 200px; height: 250px;
+    bottom: 30px; right: 140px;
+    transform: rotate(5deg);
+    z-index: 4;
+  }
+  .photo-3:hover { transform: rotate(0deg) translateY(-8px); }
+
+  .badge-floater {
+    position: absolute;
+    top: 0px; right: 30px;
+    background: var(--bronze);
+    color: var(--bg);
+    padding: 12px 18px;
+    border-radius: 50px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    font-weight: 600;
+    text-transform: uppercase;
+    z-index: 10;
+    box-shadow: 0 12px 30px -10px rgba(200,144,96,0.5);
+    animation: floatBadge 3.5s ease-in-out infinite;
+  }
+  @keyframes floatBadge {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===== MARQUEE ===== */
+  .marquee {
+    background: var(--bg-2);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 28px 0;
+    overflow: hidden;
+    position: relative;
+  }
+  .marquee-track {
+    display: flex;
+    gap: 60px;
+    white-space: nowrap;
+    animation: scroll 40s linear infinite;
+    width: max-content;
+  }
+  .marquee-track span {
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 28px;
+    font-weight: 400;
+    color: var(--ivory-dim);
+    display: flex;
+    align-items: center;
+    gap: 60px;
+  }
+  .marquee-track span::after {
+    content: '✦';
+    color: var(--bronze);
+    font-size: 14px;
+    font-style: normal;
+  }
+  @keyframes scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ===== TOPICS ===== */
+  .topics {
+    padding: 120px 48px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .section-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    color: var(--bronze);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .section-eyebrow::before {
+    content: '';
+    width: 32px; height: 1px;
+    background: var(--bronze);
+  }
+  .section-title {
+    font-family: var(--display);
+    font-size: clamp(40px, 5vw, 64px);
+    font-weight: 500;
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    color: var(--ivory);
+    margin-bottom: 24px;
+    max-width: 800px;
+  }
+  .section-title em {
+    font-style: italic;
+    color: var(--bronze);
+    font-weight: 400;
+  }
+  .section-sub {
+    font-size: 17px;
+    color: var(--ivory-dim);
+    max-width: 580px;
+    line-height: 1.6;
+    margin-bottom: 64px;
+  }
+
+  .topics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  .topic {
+    background: var(--panel);
+    padding: 36px 28px;
+    cursor: pointer;
+    transition: all 0.35s;
+    position: relative;
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .topic:hover {
+    background: var(--panel-2);
+    transform: translateY(-2px);
+  }
+  .topic-icon {
+    width: 38px; height: 38px;
+    color: var(--bronze);
+    margin-bottom: 24px;
+  }
+  .topic-icon svg { width: 100%; height: 100%; }
+  .topic h3 {
+    font-family: var(--display);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--ivory);
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+  .topic p {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+  .topic-arrow {
+    position: absolute;
+    top: 28px; right: 28px;
+    color: var(--line-2);
+    transition: all 0.3s;
+  }
+  .topic:hover .topic-arrow {
+    color: var(--bronze);
+    transform: translate(4px, -4px);
+  }
+
+  /* ===== HOW IT WORKS ===== */
+  .how {
+    background: var(--bg-2);
+    padding: 120px 48px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .how-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    margin-top: 60px;
+  }
+  .step {
+    background: var(--bg-2);
+    padding: 48px 36px;
+    position: relative;
+  }
+  .step-num {
+    font-family: var(--display);
+    font-size: 80px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--bronze);
+    line-height: 0.9;
+    margin-bottom: 32px;
+    opacity: 0.85;
+  }
+  .step h3 {
+    font-family: var(--display);
+    font-size: 30px;
+    font-weight: 500;
+    color: var(--ivory);
+    margin-bottom: 14px;
+    letter-spacing: -0.01em;
+  }
+  .step p {
+    font-size: 15px;
+    color: var(--ivory-dim);
+    line-height: 1.65;
+  }
+
+  /* ===== STORIES ===== */
+  .stories {
+    padding: 120px 48px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .stories-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+    margin-top: 60px;
+  }
+  .story {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: all 0.4s;
+  }
+  .story:hover {
+    border-color: var(--bronze-deep);
+    transform: translateY(-4px);
+    box-shadow: 0 24px 40px -20px rgba(0,0,0,0.5);
+  }
+  .story-img {
+    width: 100%;
+    height: 280px;
+    background: var(--bg);
+    overflow: hidden;
+  }
+  .story-img img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    filter: contrast(1.05) saturate(0.85);
+    transition: transform 0.6s;
+  }
+  .story:hover .story-img img { transform: scale(1.04); }
+
+  .story-body { padding: 28px; }
+  .story-stars {
+    color: var(--bronze);
+    font-size: 13px;
+    letter-spacing: 3px;
+    margin-bottom: 14px;
+  }
+  .story-quote {
+    font-family: var(--display);
+    font-size: 19px;
+    font-style: italic;
+    color: var(--ivory);
+    line-height: 1.5;
+    margin-bottom: 22px;
+  }
+  .story-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+  }
+  .story-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--ivory);
+  }
+  .story-loc {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    margin-top: 3px;
+    text-transform: uppercase;
+  }
+  .story-topic {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--bronze);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 6px 10px;
+    border: 1px solid var(--bronze-deep);
+    border-radius: 50px;
+  }
+
+  /* ===== CTA BANNER ===== */
+  .cta-banner {
+    background: linear-gradient(135deg, #c89060 0%, #a06d3d 100%);
+    padding: 100px 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-banner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+    opacity: 0.2;
+  }
+  .cta-banner h2 {
+    font-family: var(--display);
+    font-size: clamp(44px, 6vw, 76px);
+    font-weight: 500;
+    color: var(--bg);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin-bottom: 18px;
+    position: relative;
+  }
+  .cta-banner h2 em { font-style: italic; }
+  .cta-banner p {
+    font-size: 17px;
+    color: rgba(14, 20, 25, 0.75);
+    margin-bottom: 36px;
+    position: relative;
+  }
+  .cta-banner button {
+    padding: 18px 40px;
+    background: var(--bg);
+    color: var(--ivory);
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.06em;
+    border-radius: 50px;
+    transition: all 0.25s;
+    text-transform: uppercase;
+    position: relative;
+  }
+  .cta-banner button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 30px -10px rgba(0,0,0,0.5);
+  }
+
+  /* ===== FAQ ===== */
+  .faq {
+    padding: 120px 48px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .faq-list { margin-top: 56px; }
+  .faq-item {
+    border-bottom: 1px solid var(--line);
+    padding: 28px 0;
+    cursor: pointer;
+  }
+  .faq-q {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+  }
+  .faq-q h4 {
+    font-family: var(--display);
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--ivory);
+    line-height: 1.3;
+  }
+  .faq-plus {
+    width: 28px; height: 28px;
+    flex-shrink: 0;
+    color: var(--bronze);
+    transition: transform 0.3s;
+  }
+  .faq-item.open .faq-plus { transform: rotate(45deg); }
+  .faq-a {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s, padding 0.4s;
+    color: var(--ivory-dim);
+    font-size: 16px;
+    line-height: 1.7;
+  }
+  .faq-item.open .faq-a {
+    max-height: 200px;
+    padding-top: 18px;
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: var(--bg-2);
+    border-top: 1px solid var(--line);
+    padding: 60px 48px 32px;
+  }
+  .footer-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 48px;
+    margin-bottom: 48px;
+  }
+  .footer-about p {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6;
+    max-width: 320px;
+    margin-top: 16px;
+  }
+  .footer-col h5 {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--bronze);
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .footer-col a {
+    display: block;
+    color: var(--ivory-dim);
+    font-size: 13.5px;
+    margin-bottom: 10px;
+    transition: color 0.2s;
+  }
+  .footer-col a:hover { color: var(--bronze); }
+  .footer-bottom {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .footer-bottom .disclaimer {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ===== CHAT MODAL ===== */
+  .chat-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(8, 12, 16, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .chat-overlay.active { display: flex; }
+  .chat-window {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    width: 100%;
+    max-width: 760px;
+    height: 80vh;
+    max-height: 720px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 50px 100px -20px rgba(0,0,0,0.6);
+    overflow: hidden;
+  }
+  .chat-header {
+    padding: 22px 28px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .chat-header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .orb {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, var(--bronze-bright), var(--bronze-deep));
+    box-shadow: 0 0 0 1px rgba(200,144,96,0.3), 0 0 24px rgba(200,144,96,0.4);
+    transition: transform 0.3s;
+  }
+  .orb.speaking {
+    animation: orbPulse 1.2s ease-in-out infinite;
+  }
+  @keyframes orbPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.12); }
+  }
+  .chat-header-info h4 {
+    font-family: var(--display);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--ivory);
+  }
+  .chat-header-info span {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    color: var(--bronze);
+    text-transform: uppercase;
+  }
+  .chat-header-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .icon-btn {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--line-2);
+    color: var(--ivory-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .icon-btn:hover { color: var(--bronze); border-color: var(--bronze); }
+  .icon-btn svg { width: 16px; height: 16px; }
+
+  .chat-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .chat-body::-webkit-scrollbar { width: 6px; }
+  .chat-body::-webkit-scrollbar-thumb {
+    background: var(--line-2);
+    border-radius: 3px;
+  }
+  .msg {
+    max-width: 78%;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 14.5px;
+    line-height: 1.55;
+  }
+  .msg.user {
+    align-self: flex-end;
+    background: var(--bronze);
+    color: var(--bg);
+    font-weight: 500;
+  }
+  .msg.bot {
+    align-self: flex-start;
+    background: var(--panel-2);
+    color: var(--ivory);
+    border: 1px solid var(--line);
+  }
+  .msg.bot.typing {
+    display: flex; gap: 5px; padding: 18px;
+  }
+  .msg.bot.typing span {
+    width: 7px; height: 7px;
+    background: var(--bronze);
+    border-radius: 50%;
+    animation: typing 1.4s infinite;
+  }
+  .msg.bot.typing span:nth-child(2) { animation-delay: 0.2s; }
+  .msg.bot.typing span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typing {
+    0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+    30% { opacity: 1; transform: translateY(-3px); }
+  }
+  .listen-btn {
+    margin-top: 8px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--bronze);
+    text-transform: uppercase;
+    padding: 6px 10px;
+    border: 1px solid var(--bronze-deep);
+    border-radius: 50px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .listen-btn:hover { background: rgba(200,144,96,0.1); }
+
+  .quick-replies {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0 28px 14px;
+  }
+  .quick-reply {
+    padding: 8px 14px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 50px;
+    font-size: 12.5px;
+    color: var(--ivory-dim);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .quick-reply:hover {
+    border-color: var(--bronze);
+    color: var(--bronze);
+  }
+
+  .chat-input-row {
+    padding: 18px 24px 22px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .chat-input {
+    flex: 1;
+    background: var(--bg-2);
+    border: 1px solid var(--line-2);
+    border-radius: 50px;
+    padding: 14px 22px;
+    color: var(--ivory);
+    font-family: var(--body);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .chat-input:focus { border-color: var(--bronze); }
+  .send-btn {
+    width: 46px; height: 46px;
+    background: var(--bronze);
+    color: var(--bg);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .send-btn:hover { background: var(--bronze-bright); transform: translateY(-1px); }
+
+  /* ===== SETTINGS MODAL ===== */
+  .settings-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(8, 12, 16, 0.9);
+    z-index: 300;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .settings-modal.active { display: flex; }
+  .settings-box {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    width: 100%;
+    max-width: 480px;
+    padding: 36px;
+  }
+  .settings-box h3 {
+    font-family: var(--display);
+    font-size: 28px;
+    color: var(--ivory);
+    margin-bottom: 8px;
+  }
+  .settings-box p.intro {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 28px;
+    line-height: 1.55;
+  }
+  .field { margin-bottom: 18px; }
+  .field label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--bronze);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .field input, .field select {
+    width: 100%;
+    background: var(--bg-2);
+    border: 1px solid var(--line-2);
+    color: var(--ivory);
+    padding: 12px 14px;
+    border-radius: 4px;
+    font-family: var(--body);
+    font-size: 13.5px;
+    outline: none;
+  }
+  .field input:focus, .field select:focus { border-color: var(--bronze); }
+  .field-row { display: flex; gap: 10px; align-items: center; font-size: 13px; color: var(--ivory-dim); margin-top: 6px; }
+
+  .save-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--bronze);
+    color: var(--bg);
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border-radius: 3px;
+    margin-top: 10px;
+    transition: background 0.2s;
+  }
+  .save-btn:hover { background: var(--bronze-bright); }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 1100px) {
+    .topics-grid { grid-template-columns: repeat(2, 1fr); }
+    .stories-grid { grid-template-columns: repeat(2, 1fr); }
+    .footer-inner { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 800px) {
+    nav { padding: 18px 24px; }
+    .nav-links { display: none; }
+    .hero {
+      grid-template-columns: 1fr;
+      padding: 110px 24px 60px;
+      gap: 40px;
+    }
+    .hero-visual { height: 400px; order: -1; }
+    .photo-1 { width: 200px; height: 260px; right: 30px; }
+    .photo-2 { width: 170px; height: 220px; right: 200px; top: 130px; }
+    .photo-3 { width: 150px; height: 190px; right: 90px; bottom: 0; }
+    .badge-floater { right: 0; }
+    .hero-stats { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .topics, .how, .stories, .faq, .cta-banner { padding-left: 24px; padding-right: 24px; }
+    .topics-grid, .stories-grid, .steps { grid-template-columns: 1fr; }
+    .footer-inner { grid-template-columns: 1fr; gap: 32px; }
+    .footer-bottom { flex-direction: column; gap: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav>
+  <div class="logo" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+    <div class="logo-mark">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="Sexhapist">
+        <path d="M45.75 36.36 A24 24 0 1 0 45.75 63.64 A18 18 0 1 1 45.75 36.36 Z" fill="#0066cc"/>
+        <path d="M54.25 36.36 A24 24 0 1 1 54.25 63.64 A18 18 0 1 0 54.25 36.36 Z" fill="#b85a6e"/>
+      </svg>
+    </div>
+    <div class="logo-text">
+      <div class="logo-name">SEX<em>HAPIST</em></div>
+      <div class="logo-tag">Established · Private · Honest</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a href="#topics">Topics</a>
+    <a href="#how">How It Works</a>
+    <a href="#stories">Stories</a>
+    <a href="#faq">FAQ</a>
+    <button class="nav-cta" onclick="openChat()">Talk Now</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-pill">
+      <span class="dot"></span>
+      <span>Private · Always On · Judgment Free</span>
+    </div>
+    <h1>Be <em>bold.</em><br/>Be <em>honest.</em><br/>Be <em>happy.</em></h1>
+    <p class="lead">A real conversation about the things most men never talk about. Performance, desire, intimacy, control. With your Sexhapist, on your terms.</p>
+    <div class="hero-buttons">
+      <button class="btn-primary" onclick="openChat()">
+        Talk to a Sexhapist
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+      <a href="#how" class="btn-ghost">How it works</a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="stat-num">24/7</div>
+        <div class="stat-label">Always Available</div>
+      </div>
+      <div>
+        <div class="stat-num">0</div>
+        <div class="stat-label">Awkward Silences</div>
+      </div>
+      <div>
+        <div class="stat-num">100%</div>
+        <div class="stat-label">Private</div>
+      </div>
+      <div>
+        <div class="stat-num">∞</div>
+        <div class="stat-label">Questions Welcome</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="badge-floater">Confident · Uncensored</div>
+    <div class="photo-frame photo-1">
+      <img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=600&q=80" alt="Confident smiling man" onerror="this.src='https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&q=80'"/>
+    </div>
+    <div class="photo-frame photo-2">
+      <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80" alt="Smiling man" onerror="this.src='https://images.unsplash.com/photo-1463453091185-61582044d556?w=600&q=80'"/>
+    </div>
+    <div class="photo-frame photo-3">
+      <img src="https://images.unsplash.com/photo-1542178243-bc20204b769f?w=600&q=80" alt="Confident man portrait" onerror="this.src='https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=600&q=80'"/>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee">
+  <div class="marquee-track">
+    <span>desire</span><span>confidence</span><span>performance</span><span>connection</span><span>presence</span><span>communication</span><span>vitality</span><span>strength</span>
+    <span>desire</span><span>confidence</span><span>performance</span><span>connection</span><span>presence</span><span>communication</span><span>vitality</span><span>strength</span>
+  </div>
+</div>
+
+<!-- TOPICS -->
+<section class="topics" id="topics">
+  <div class="section-eyebrow">What you can talk about</div>
+  <h2 class="section-title">Everything you couldn't bring up <em>anywhere else.</em></h2>
+  <p class="section-sub">Real talk. No clipboards. No co-pays. No raised eyebrows. Pick a topic to get started, or open a chat and lead the conversation yourself.</p>
+  <div class="topics-grid">
+    <div class="topic" onclick="openChatWith('I have been struggling with my desire lately. It is not where I want it to be.')">
+      <svg class="topic-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+      <div>
+        <div class="topic-icon">
+          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6">
+            <circle cx="20" cy="20" r="14"/><path d="M14 20 Q20 14 26 20 Q20 26 14 20 Z" fill="currentColor" opacity="0.2"/>
+            <circle cx="20" cy="20" r="3" fill="currentColor"/>
+          </svg>
+        </div>
+        <h3>Desire & Libido</h3>
+        <p>When the spark feels off and you do not know why.</p>
+      </div>
+    </div>
+    <div class="topic" onclick="openChatWith('I deal with performance anxiety and it is messing with my head.')">
+      <svg class="topic-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+      <div>
+        <div class="topic-icon">
+          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M20 6 L20 24"/><circle cx="20" cy="29" r="5"/>
+            <path d="M12 12 L20 6 L28 12" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3>Performance Anxiety</h3>
+        <p>Get out of your head. Get back to the moment.</p>
+      </div>
+    </div>
+    <div class="topic" onclick="openChatWith('I want to feel more connected with my partner.')">
+      <svg class="topic-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+      <div>
+        <div class="topic-icon">
+          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6">
+            <circle cx="14" cy="20" r="6"/><circle cx="26" cy="20" r="6"/>
+            <path d="M14 14 L14 26 M26 14 L26 26" opacity="0.3"/>
+          </svg>
+        </div>
+        <h3>Intimacy & Connection</h3>
+        <p>Bridge the distance. Bring back the fire.</p>
+      </div>
+    </div>
+    <div class="topic" onclick="openChatWith('I do not know how to talk to my partner about what I actually want.')">
+      <svg class="topic-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+      <div>
+        <div class="topic-icon">
+          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M8 14 L8 26 L14 26 L18 30 L18 26 L32 26 L32 14 Z"/>
+            <line x1="14" y1="20" x2="26" y2="20"/><line x1="14" y1="16" x2="22" y2="16"/>
+          </svg>
+        </div>
+        <h3>Honest Conversations</h3>
+        <p>Find the words. Say the thing. No more guessing.</p>
+      </div>
+    </div>
+    <div class="topic" onclick="openChatWith('I want help with stamina and lasting longer.')">
+      <svg class="topic-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+      <div>
+        <div class="topic-icon">
+          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6">
+            <circle cx="20" cy="20" r="14"/>
+            <polyline points="20 12 20 20 26 24" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3>Stamina & Control</h3>
+        <p>Practical strategies. No shame. No gimmicks.</p>
+      </div>
+    </div>
+    <div class="topic" onclick="openChatWith('I struggle with body image and confidence in the bedroom.')">
+      <svg class="topic-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+      <div>
+        <div class="topic-icon">
+          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6">
+            <circle cx="20" cy="14" r="5"/>
+            <path d="M10 32 Q10 22 20 22 Q30 22 30 32" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3>Body & Self-Image</h3>
+        <p>Own your body. Own your presence.</p>
+      </div>
+    </div>
+    <div class="topic" onclick="openChatWith('I am curious about something but I do not know if it is normal.')">
+      <svg class="topic-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+      <div>
+        <div class="topic-icon">
+          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M14 16 Q14 10 20 10 Q26 10 26 16 Q26 20 20 22 L20 26"/>
+            <circle cx="20" cy="31" r="1.5" fill="currentColor"/>
+          </svg>
+        </div>
+        <h3>Curiosity & Fantasy</h3>
+        <p>Ask anything. There are no stupid questions here.</p>
+      </div>
+    </div>
+    <div class="topic" onclick="openChatWith('Things have been rough between us and I want to repair the connection.')">
+      <svg class="topic-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+      <div>
+        <div class="topic-icon">
+          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M8 20 L16 20 L18 24 L22 16 L24 20 L32 20" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3>Reconnection & Repair</h3>
+        <p>Rebuild trust. Find each other again.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="how-inner">
+    <div class="section-eyebrow">How it works</div>
+    <h2 class="section-title">Three steps. <em>That's it.</em></h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Open a chat</h3>
+        <p>Tap a topic, or just start typing. No forms. No insurance. No appointments.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>Talk it through</h3>
+        <p>Real conversation. Real answers. Type or listen with a calm, confident voice that walks you through it.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>Walk out lighter</h3>
+        <p>Leave with clarity, a plan, or just a weight off your chest. Come back any time.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STORIES -->
+<section class="stories" id="stories">
+  <div class="section-eyebrow">Real stories</div>
+  <h2 class="section-title">Men who finally <em>said it out loud.</em></h2>
+  <div class="stories-grid">
+    <div class="story">
+      <div class="story-img">
+        <img src="https://images.unsplash.com/photo-1507081323647-4d250478b919?w=600&q=80" alt="Tunde" onerror="this.src='https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?w=600&q=80'"/>
+      </div>
+      <div class="story-body">
+        <div class="story-stars">★★★★★</div>
+        <p class="story-quote">"I had carried this for years and not told a single person. One conversation and I felt human again."</p>
+        <div class="story-meta">
+          <div>
+            <div class="story-name">Tunde, 34</div>
+            <div class="story-loc">Lagos, Nigeria</div>
+          </div>
+          <span class="story-topic">Desire</span>
+        </div>
+      </div>
+    </div>
+    <div class="story">
+      <div class="story-img">
+        <img src="https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=600&q=80" alt="Marcus" onerror="this.src='https://images.unsplash.com/photo-1521119989659-a83eee488004?w=600&q=80'"/>
+      </div>
+      <div class="story-body">
+        <div class="story-stars">★★★★★</div>
+        <p class="story-quote">"My wife and I had been circling the same fight for two years. I learned how to actually say what I meant."</p>
+        <div class="story-meta">
+          <div>
+            <div class="story-name">Marcus, 41</div>
+            <div class="story-loc">Atlanta, USA</div>
+          </div>
+          <span class="story-topic">Couples</span>
+        </div>
+      </div>
+    </div>
+    <div class="story">
+      <div class="story-img">
+        <img src="https://images.unsplash.com/photo-1463453091185-61582044d556?w=600&q=80" alt="Lukas" onerror="this.src='https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&q=80'"/>
+      </div>
+      <div class="story-body">
+        <div class="story-stars">★★★★★</div>
+        <p class="story-quote">"Asked things I would never ask another person. Got real answers, not internet nonsense."</p>
+        <div class="story-meta">
+          <div>
+            <div class="story-name">Lukas, 29</div>
+            <div class="story-loc">Berlin, Germany</div>
+          </div>
+          <span class="story-topic">Self-Discovery</span>
+        </div>
+      </div>
+    </div>
+    <div class="story">
+      <div class="story-img">
+        <img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=600&q=80" alt="Chinedu" onerror="this.src='https://images.unsplash.com/photo-1542327897-d73f4005b533?w=600&q=80'"/>
+      </div>
+      <div class="story-body">
+        <div class="story-stars">★★★★★</div>
+        <p class="story-quote">"Performance anxiety had me on the bench. I have my confidence back and my head is finally quiet."</p>
+        <div class="story-meta">
+          <div>
+            <div class="story-name">Chinedu, 38</div>
+            <div class="story-loc">Abuja, Nigeria</div>
+          </div>
+          <span class="story-topic">Performance</span>
+        </div>
+      </div>
+    </div>
+    <div class="story">
+      <div class="story-img">
+        <img src="https://images.unsplash.com/photo-1504257432389-52343af06ae3?w=600&q=80" alt="James" onerror="this.src='https://images.unsplash.com/photo-1488161628813-04466f872be2?w=600&q=80'"/>
+      </div>
+      <div class="story-body">
+        <div class="story-stars">★★★★★</div>
+        <p class="story-quote">"After twelve years together we had stopped really seeing each other. This gave us a way back in."</p>
+        <div class="story-meta">
+          <div>
+            <div class="story-name">James, 47</div>
+            <div class="story-loc">London, UK</div>
+          </div>
+          <span class="story-topic">Reconnection</span>
+        </div>
+      </div>
+    </div>
+    <div class="story">
+      <div class="story-img">
+        <img src="https://images.unsplash.com/photo-1542178243-bc20204b769f?w=600&q=80" alt="Adewale" onerror="this.src='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80'"/>
+      </div>
+      <div class="story-body">
+        <div class="story-stars">★★★★★</div>
+        <p class="story-quote">"Finally somewhere I can be honest about all of it. No judgment, no lectures. Just useful talk."</p>
+        <div class="story-meta">
+          <div>
+            <div class="story-name">Adewale, 36</div>
+            <div class="story-loc">Port Harcourt, Nigeria</div>
+          </div>
+          <span class="story-topic">Honesty</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section class="cta-banner">
+  <h2>Stop wondering. <em>Start talking.</em></h2>
+  <p>Your first conversation is one tap away.</p>
+  <button onclick="openChat()">Talk to a Sexhapist</button>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <div class="section-eyebrow">Common questions</div>
+  <h2 class="section-title">The things you were <em>going to ask.</em></h2>
+  <div class="faq-list">
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">
+        <h4>Is this actually private?</h4>
+        <svg class="faq-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+      <div class="faq-a">Yes. No name required. Conversations are not tied to your real identity. We never share, sell, or pass your data to anyone.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">
+        <h4>Is the Sexhapist a real licensed therapist?</h4>
+        <svg class="faq-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+      <div class="faq-a">No. The Sexhapist is an AI-powered intimacy companion built to give you a private space to talk and learn. For licensed clinical care, we will point you to qualified professionals when it makes sense.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">
+        <h4>Can my partner and I use it together?</h4>
+        <svg class="faq-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+      <div class="faq-a">Absolutely. Many men use it solo first, then bring their partner in for guided conversations and exercises that build connection.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">
+        <h4>What if what I am dealing with is heavy?</h4>
+        <svg class="faq-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+      <div class="faq-a">If something serious comes up, like trauma, crisis, or a medical concern, your Sexhapist will treat it with care and connect you to proper human support and resources.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">
+        <h4>How much does it cost?</h4>
+        <svg class="faq-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+      <div class="faq-a">Your first conversation is free. Pricing for full access will be shared in your account. No insurance required.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-about">
+      <div class="logo">
+        <div class="logo-mark">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="Sexhapist">
+            <path d="M45.75 36.36 A24 24 0 1 0 45.75 63.64 A18 18 0 1 1 45.75 36.36 Z" fill="#0066cc"/>
+            <path d="M54.25 36.36 A24 24 0 1 1 54.25 63.64 A18 18 0 1 0 54.25 36.36 Z" fill="#b85a6e"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <div class="logo-name">SEX<em>HAPIST</em></div>
+          <div class="logo-tag">Established · Private · Honest</div>
+        </div>
+      </div>
+      <p>The first place men actually talk about it. Built for honesty, designed for privacy.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Product</h5>
+      <a href="#topics">Topics</a>
+      <a href="#how">How It Works</a>
+      <a href="#stories">Stories</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div class="footer-col">
+      <h5>Company</h5>
+      <a href="#">About</a>
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="#">Contact</a>
+    </div>
+    <div class="footer-col">
+      <h5>Connect</h5>
+      <a href="#">Instagram</a>
+      <a href="#">LinkedIn</a>
+      <a href="#">Newsletter</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Sexhapist. All rights reserved.</span>
+    <span class="disclaimer">AI INTIMACY COMPANION · NOT A LICENSED CLINICAL SERVICE</span>
+  </div>
+</footer>
+
+<!-- CHAT MODAL -->
+<div class="chat-overlay" id="chatOverlay">
+  <div class="chat-window">
+    <div class="chat-header">
+      <div class="chat-header-left">
+        <div class="orb" id="orb"></div>
+        <div class="chat-header-info">
+          <h4>Your Sexhapist</h4>
+          <span>Online · Listening</span>
+        </div>
+      </div>
+      <div class="chat-header-actions">
+        <button class="icon-btn" onclick="openSettings()" title="Settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+        <button class="icon-btn" onclick="closeChat()" title="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="chat-body" id="chatBody"></div>
+    <div class="quick-replies" id="quickReplies">
+      <button class="quick-reply" onclick="sendQuick('I feel disconnected from my partner.')">I feel disconnected from my partner</button>
+      <button class="quick-reply" onclick="sendQuick('My desire has dropped and I do not know why.')">My desire has dropped</button>
+      <button class="quick-reply" onclick="sendQuick('I deal with performance anxiety.')">Performance anxiety</button>
+      <button class="quick-reply" onclick="sendQuick('I want to last longer.')">I want to last longer</button>
+    </div>
+    <div class="chat-input-row">
+      <input type="text" class="chat-input" id="chatInput" placeholder="Say what is on your mind..." onkeypress="if(event.key==='Enter') sendMessage()"/>
+      <button class="send-btn" onclick="sendMessage()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="settings-modal" id="settingsModal">
+  <div class="settings-box">
+    <h3>Settings</h3>
+    <p class="intro">Add your API keys to power conversation and voice. Keys stay in your browser only.</p>
+    <div class="field">
+      <label>Anthropic API Key</label>
+      <input type="password" id="anthropicKey" placeholder="sk-ant-..."/>
+    </div>
+    <div class="field">
+      <label>ElevenLabs API Key (optional)</label>
+      <input type="password" id="elevenKey" placeholder="for voice playback"/>
+    </div>
+    <div class="field">
+      <label>ElevenLabs Voice ID</label>
+      <input type="text" id="voiceId" value="ErXwobaYiN019PkySvjV" placeholder="ErXwobaYiN019PkySvjV (Antoni)"/>
+    </div>
+    <div class="field">
+      <label>Voice playback</label>
+      <select id="voiceMode">
+        <option value="auto">Play automatically</option>
+        <option value="manual">Listen button</option>
+        <option value="off">Text only</option>
+      </select>
+    </div>
+    <button class="save-btn" onclick="saveSettings()">Save & Close</button>
+  </div>
+</div>
+
+<script>
+  // ===== STATE =====
+  const state = {
+    anthropicKey: '',
+    elevenKey: '',
+    voiceId: 'ErXwobaYiN019PkySvjV',
+    voiceMode: 'auto',
+    history: [],
+  };
+
+  const SYSTEM_PROMPT = `You are the Sexhapist, a private, calm, confident intimacy companion built primarily for men. You are not a licensed therapist; you are a thoughtful guide for honest conversations about sex, desire, intimacy, performance, communication, and connection.
+
+Tone: grounded, warm, masculine, never clinical, never preachy, never condescending. Sex-positive and judgment-free. Speak like an older brother or wise friend who has been around. Use plain language. Be direct without being crude.
+
+Style rules:
+- Do NOT use em dashes (—). Use periods, commas, or colons instead.
+- Keep responses focused and conversational. 2 to 5 short paragraphs is usually right.
+- Ask one good follow-up question when it helps the user open up.
+- Avoid bullet lists unless explicitly asked.
+
+Scope:
+- Help with desire, libido, performance anxiety, stamina, intimacy, communication, body image, curiosity, and reconnection in relationships.
+- For medical concerns (ED that may need a doctor, hormonal issues, pain), validate and recommend they consult a qualified clinician.
+- For trauma, abuse, or crisis: respond with care, do not push, and gently surface professional support and crisis resources.
+- No explicit sexual content. You can discuss sex frankly and clearly without being graphic.
+
+Always make the user feel heard first, then offer practical insight or a small next step.`;
+
+  // ===== UI HANDLERS =====
+  function openChat() {
+    document.getElementById('chatOverlay').classList.add('active');
+    if (state.history.length === 0) {
+      addBotMessage("Hey. Glad you stopped by. This is a private space, no one is watching, and there is nothing off limits. What is going on, or what is on your mind tonight?");
+    }
+    if (!state.anthropicKey) {
+      setTimeout(openSettings, 600);
+    }
+  }
+  function closeChat() {
+    document.getElementById('chatOverlay').classList.remove('active');
+  }
+  function openSettings() {
+    document.getElementById('settingsModal').classList.add('active');
+    document.getElementById('anthropicKey').value = state.anthropicKey;
+    document.getElementById('elevenKey').value = state.elevenKey;
+    document.getElementById('voiceId').value = state.voiceId;
+    document.getElementById('voiceMode').value = state.voiceMode;
+  }
+  function saveSettings() {
+    state.anthropicKey = document.getElementById('anthropicKey').value.trim();
+    state.elevenKey = document.getElementById('elevenKey').value.trim();
+    state.voiceId = document.getElementById('voiceId').value.trim() || 'ErXwobaYiN019PkySvjV';
+    state.voiceMode = document.getElementById('voiceMode').value;
+    document.getElementById('settingsModal').classList.remove('active');
+  }
+  function openChatWith(prefill) {
+    openChat();
+    setTimeout(() => {
+      document.getElementById('chatInput').value = prefill;
+      document.getElementById('chatInput').focus();
+    }, 300);
+  }
+  function sendQuick(text) {
+    document.getElementById('chatInput').value = text;
+    document.getElementById('quickReplies').style.display = 'none';
+    sendMessage();
+  }
+
+  // ===== MESSAGES =====
+  function addUserMessage(text) {
+    const body = document.getElementById('chatBody');
+    const div = document.createElement('div');
+    div.className = 'msg user';
+    div.textContent = text;
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+  }
+
+  function addBotMessage(text) {
+    const body = document.getElementById('chatBody');
+    const div = document.createElement('div');
+    div.className = 'msg bot';
+    div.textContent = text;
+    if (state.voiceMode === 'manual' && state.elevenKey) {
+      const btn = document.createElement('button');
+      btn.className = 'listen-btn';
+      btn.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg> Listen';
+      btn.onclick = () => playVoice(text);
+      div.appendChild(document.createElement('br'));
+      div.appendChild(btn);
+    }
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+    if (state.voiceMode === 'auto' && state.elevenKey) {
+      playVoice(text);
+    }
+  }
+
+  function showTyping() {
+    const body = document.getElementById('chatBody');
+    const div = document.createElement('div');
+    div.className = 'msg bot typing';
+    div.id = 'typing';
+    div.innerHTML = '<span></span><span></span><span></span>';
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+  }
+  function hideTyping() {
+    const t = document.getElementById('typing');
+    if (t) t.remove();
+  }
+
+  async function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    document.getElementById('quickReplies').style.display = 'none';
+    addUserMessage(text);
+    state.history.push({ role: 'user', content: text });
+
+    if (!state.anthropicKey) {
+      addBotMessage("Add your Anthropic API key in settings (gear icon) and I will be able to respond properly.");
+      return;
+    }
+
+    showTyping();
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': state.anthropicKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true',
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1024,
+          system: SYSTEM_PROMPT,
+          messages: state.history,
+        }),
+      });
+      const data = await res.json();
+      hideTyping();
+      if (data.error) {
+        addBotMessage("Something went wrong reaching the model. Check your API key and try again.");
+        return;
+      }
+      const reply = data.content?.[0]?.text || "Hmm, I lost the thread there. Try again?";
+      state.history.push({ role: 'assistant', content: reply });
+      addBotMessage(reply);
+    } catch (e) {
+      hideTyping();
+      addBotMessage("Connection issue on my end. Mind trying that again?");
+    }
+  }
+
+  async function playVoice(text) {
+    if (!state.elevenKey) return;
+    const orb = document.getElementById('orb');
+    try {
+      const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${state.voiceId}`, {
+        method: 'POST',
+        headers: {
+          'xi-api-key': state.elevenKey,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text,
+          model_id: 'eleven_turbo_v2_5',
+          voice_settings: { stability: 0.5, similarity_boost: 0.75 },
+        }),
+      });
+      if (!res.ok) return;
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      orb.classList.add('speaking');
+      audio.onended = () => orb.classList.remove('speaking');
+      audio.play();
+    } catch (e) {
+      orb.classList.remove('speaking');
+    }
+  }
+
+  // Close modals on overlay click
+  document.getElementById('chatOverlay').addEventListener('click', (e) => {
+    if (e.target.id === 'chatOverlay') closeChat();
+  });
+  document.getElementById('settingsModal').addEventListener('click', (e) => {
+    if (e.target.id === 'settingsModal') document.getElementById('settingsModal').classList.remove('active');
+  });
+</script>
+
+</body>
+</html>

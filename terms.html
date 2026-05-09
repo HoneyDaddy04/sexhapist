@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Terms · Sexhapist</title>
+<link rel="icon" href="brand/favicon/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="brand/favicon/apple-touch-icon.svg">
+<link rel="manifest" href="brand/favicon/site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-soft: #f5f5f7;
+    --bg-warm: #f7f3ee;
+    --ink: #1d1d1f;
+    --ink-soft: #424245;
+    --ink-muted: #6e6e73;
+    --line: #d2d2d7;
+    --line-soft: #e8e8ed;
+    --accent: #1d1d1f;
+    --accent-soft: #2c2c2e;
+    --blue: #0066cc;
+    --blush: #b85a6e;
+    --display: 'Fraunces', 'Times New Roman', serif;
+    --body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--body);
+    font-weight: 400;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--body); cursor: pointer; border: none; background: none; color: inherit; }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: 56px; padding: 0 24px; z-index: 100;
+    background: rgba(255,255,255,0.78);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid var(--line-soft);
+    display: flex; align-items: center;
+  }
+  .nav-inner {
+    width: 100%; max-width: 1024px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo { display: flex; align-items: center; gap: 8px; }
+  .logo-mark { width: 24px; height: 24px; flex-shrink: 0; }
+  .logo-mark svg { width: 100%; height: 100%; display: block; }
+  .logo-name {
+    font-family: var(--display);
+    font-size: 20px; font-weight: 500; letter-spacing: -0.01em;
+  }
+  .nav-cta {
+    background: var(--accent); color: #fff;
+    padding: 8px 18px; border-radius: 980px;
+    font-size: 13px; font-weight: 500; transition: background 0.2s;
+  }
+  .nav-cta:hover { background: var(--accent-soft); }
+
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 140px 24px 80px;
+  }
+  .eyebrow {
+    font-size: 13px;
+    color: var(--ink-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  h1 {
+    font-family: var(--display);
+    font-size: clamp(44px, 7vw, 72px);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    margin-bottom: 20px;
+  }
+  h1 em { font-style: italic; font-weight: 300; color: var(--ink-muted); }
+  .lede {
+    font-size: 20px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    margin-bottom: 12px;
+    letter-spacing: -0.005em;
+  }
+  .updated {
+    font-size: 13px;
+    color: var(--ink-muted);
+    margin-bottom: 56px;
+  }
+  h2 {
+    font-family: var(--display);
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.018em;
+    margin: 56px 0 14px;
+  }
+  h2 em { font-style: italic; font-weight: 300; color: var(--ink-muted); }
+  p {
+    font-size: 17px;
+    color: var(--ink-soft);
+    line-height: 1.65;
+    margin-bottom: 16px;
+  }
+  ul {
+    margin: 8px 0 18px 22px;
+    color: var(--ink-soft);
+    font-size: 17px;
+    line-height: 1.65;
+  }
+  ul li { margin-bottom: 8px; }
+  .pull {
+    background: var(--bg-warm);
+    border-radius: 18px;
+    padding: 24px 28px;
+    margin: 32px 0;
+    font-family: var(--display);
+    font-size: 22px;
+    line-height: 1.4;
+    color: var(--ink);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+  .pull em { font-style: italic; font-weight: 300; color: var(--ink-muted); }
+  a.inline { color: var(--blue); border-bottom: 1px solid rgba(0,102,204,0.2); }
+  a.inline:hover { border-bottom-color: var(--blue); }
+
+  footer {
+    background: var(--bg-soft);
+    padding: 28px 24px;
+    border-top: 1px solid var(--line-soft);
+  }
+  .footer-inner {
+    max-width: 1024px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 16px;
+    font-size: 12px; color: var(--ink-muted);
+  }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a:hover { color: var(--ink); }
+
+  @media (max-width: 640px) {
+    .page { padding: 110px 22px 60px; }
+    h2 { font-size: 24px; margin-top: 44px; }
+    .pull { font-size: 19px; padding: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="sexhapist%20(2).html" class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="Sexhapist">
+          <path d="M45.75 36.36 A24 24 0 1 0 45.75 63.64 A18 18 0 1 1 45.75 36.36 Z" fill="#0066cc"/>
+          <path d="M54.25 36.36 A24 24 0 1 1 54.25 63.64 A18 18 0 1 0 54.25 36.36 Z" fill="#b85a6e"/>
+        </svg>
+      </div>
+      <div class="logo-name">Se<em>x</em>hapist</div>
+    </a>
+    <a href="sexhapist%20(2).html" class="nav-cta">Talk now</a>
+  </div>
+</nav>
+
+<main class="page">
+  <p class="eyebrow">Terms of Service</p>
+  <h1>the <em>terms.</em></h1>
+  <p class="lede">the legal stuff, in plain english. you can read it once and feel ok.</p>
+  <p class="updated">Last updated: 9 May 2026</p>
+
+  <div class="pull">we're an AI companion, not a therapist. if something here feels bigger than this conversation can hold, that's worth knowing. we'll always tell you when we think a real human should take the next step.</div>
+
+  <h2>who we are</h2>
+  <p>"Sexhapist" (or "we", "us") is an AI-powered intimacy companion. when you use the product (through this site, the chat, or anything we publish under the Sexhapist name), these terms apply. by using it, you agree to them. if you don't, please don't use the product.</p>
+
+  <h2>who can use it</h2>
+  <p>you must be at least 18 years old. by using Sexhapist, you confirm that you are. we don't allow accounts for anyone under 18, and we'll close accounts where we have reason to believe the user is a minor.</p>
+
+  <h2>what we are, and what we are not</h2>
+  <p>Sexhapist is a private space to think out loud. it is <strong>not</strong>:</p>
+  <ul>
+    <li>a licensed therapist, psychologist, psychiatrist, sex therapist, or medical professional.</li>
+    <li>a substitute for clinical care, diagnosis, or treatment.</li>
+    <li>a crisis service. if you are in danger or thinking about harm, please contact local emergency services or a qualified professional in your country.</li>
+  </ul>
+  <p>nothing the product says should be taken as medical, legal, or psychological advice. it is one conversation, with an AI, on a screen.</p>
+
+  <h2>your account</h2>
+  <ul>
+    <li>you're responsible for what happens under your account. keep your password to yourself.</li>
+    <li>one person per account. don't share your login.</li>
+    <li>tell us if you suspect someone else has accessed it.</li>
+  </ul>
+
+  <h2>acceptable use</h2>
+  <p>this is meant to be a steady, honest, grown-up space. so a few clear no's:</p>
+  <ul>
+    <li><strong>no minors.</strong> any sexual content involving anyone under 18, real or fictional, is forbidden and will be reported to the appropriate authorities.</li>
+    <li><strong>no non-consensual content.</strong> nothing depicting or planning real-world harm to another person.</li>
+    <li><strong>no illegal activity.</strong> don't use the product to plan, commit, or facilitate crimes.</li>
+    <li><strong>no impersonation, spam, or abuse</strong> of the system or other users.</li>
+    <li><strong>no scraping or reverse-engineering</strong> the product, its models, or its data.</li>
+  </ul>
+  <p>if you cross any of these lines, we may suspend or terminate your access without notice and without refund. some violations we are legally required to report.</p>
+
+  <h2>your content</h2>
+  <p>your conversations belong to you. we store them so you can come back to them. we use them to operate the product (e.g. so the AI can remember the thread you were on). we do not sell them, share them with advertisers, or use them to train public AI models. for full details, see our <a class="inline" href="privacy.html">privacy policy</a>.</p>
+  <p>by submitting content, you grant us a limited license to host, process, and display it back to you for the purpose of running the service. that license ends when you delete the content.</p>
+
+  <h2>AI responses</h2>
+  <p>the AI generates language. sometimes it will be wrong, awkward, or off. we do our best to keep responses safe, useful, and aligned with our values, but we cannot guarantee the AI will be right, complete, or appropriate in every case. take its words as one perspective, not the truth. trust your own judgment. when in doubt, talk to a real human professional.</p>
+
+  <h2>payment, plans, refunds</h2>
+  <p>some features may require a paid subscription. prices, billing periods, and what's included will be shown clearly before you pay. you can cancel any time from your account settings. your access continues until the end of the period you've already paid for. we don't offer prorated refunds for partial periods, except where required by law.</p>
+
+  <h2>changes to the service</h2>
+  <p>we may add features, change features, or remove features. we may pause the service for maintenance. we'll do our best to give notice for anything significant.</p>
+
+  <h2>termination</h2>
+  <p>you can stop using the service whenever you want. you can delete your account in settings. we may suspend or terminate accounts that violate these terms or that pose a risk to other users, the service, or the public.</p>
+
+  <h2>warranties &amp; liability</h2>
+  <p>the service is provided "as is" and "as available," without warranties of any kind, express or implied, to the maximum extent permitted by law. to the maximum extent permitted by law, our total liability to you for any claim arising out of or relating to the service is limited to the amount you've paid us in the twelve months before the claim. we are not liable for indirect, incidental, special, consequential, or punitive damages.</p>
+  <p>nothing in these terms limits liability that cannot be limited under applicable law (for example, for fraud, gross negligence, or death caused by negligence).</p>
+
+  <h2>governing law &amp; disputes</h2>
+  <p>these terms are governed by the laws of the jurisdiction in which Sexhapist is operated, without regard to conflict-of-laws principles. you agree that any dispute will be resolved in the courts of that jurisdiction, except where local consumer-protection law gives you the right to bring it in your own. before filing a claim, please email us. most things we can resolve without a lawyer.</p>
+
+  <h2>changes to these terms</h2>
+  <p>if we change these terms in a way that meaningfully affects you, we'll let you know before they take effect. continued use after the changes means you accept them. if you don't, please stop using the product before the change date.</p>
+
+  <h2>contact</h2>
+  <p>email <a class="inline" href="mailto:talk@sexhapist.com">talk@sexhapist.com</a> or use the <a class="inline" href="contact.html">contact form</a>. a real person reads every message.</p>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>© 2026 Sexhapist · AI Intimacy Companion · Not a licensed clinical service.</span>
+    <div class="footer-links">
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

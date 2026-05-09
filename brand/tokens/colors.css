@@ -1,0 +1,39 @@
+:root {
+  /* Ink — primary text and the default mark */
+  --ink: #1d1d1f;
+  --ink-soft: #424245;
+  --muted: #6e6e73;
+
+  /* Path colors — Him & Her */
+  --him: #0066cc;
+  --him-soft: #4d8fd8;
+  --her: #b85a6e;
+  --her-soft: #d088a0;
+
+  /* Surfaces */
+  --bg: #ffffff;
+  --bg-soft: #f5f5f7;
+  --bg-warm: #f7f3ee;
+  --bg-peach: #f9f1ea;
+  --bg-ink: #1d1d1f;
+
+  /* Hairlines */
+  --border: #d2d2d7;
+  --border-soft: #e8e8ed;
+
+  /* Accents — use sparingly */
+  --accent-ok: #2f7d32;
+  --accent-alert: #b8413e;
+}
+
+[data-theme="dark"] {
+  --ink: #f5f5f7;
+  --ink-soft: #c7c7cc;
+  --muted: #8e8e93;
+  --bg: #1d1d1f;
+  --bg-soft: #2c2c2e;
+  --bg-warm: #2a2622;
+  --bg-peach: #2c2522;
+  --border: #3a3a3c;
+  --border-soft: #2c2c2e;
+}

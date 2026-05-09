@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Sexhapist">
+  <title>Sexhapist — coming into conversation</title>
+  <desc>Two crescents drift in from far apart, settle into the held mark, then come fully together — edges touching at the centerline — before releasing back into held space. The cycle repeats: held, joined, held, joined.</desc>
+
+  <g>
+    <path d="M45.75 36.36 A24 24 0 1 0 45.75 63.64 A18 18 0 1 1 45.75 36.36 Z" fill="#0066cc"/>
+    <animateTransform attributeName="transform" type="translate"
+      values="-60 0; 0 0" keyTimes="0; 1"
+      keySplines="0.22 0.61 0.36 1" calcMode="spline"
+      dur="1.6s" begin="0s" fill="freeze"/>
+    <animate attributeName="opacity" from="0" to="1"
+      dur="1.1s" begin="0s" fill="freeze"/>
+    <animateTransform attributeName="transform" type="translate"
+      values="0 0; 0 0; 4.25 0; 4.25 0; 0 0"
+      keyTimes="0; 0.2; 0.5; 0.65; 1"
+      keySplines="0.65 0 0.35 1; 0.65 0 0.35 1; 0 0 1 1; 0.65 0 0.35 1"
+      calcMode="spline"
+      additive="sum"
+      dur="6.4s" begin="2s" repeatCount="indefinite"/>
+  </g>
+
+  <g>
+    <path d="M54.25 36.36 A24 24 0 1 1 54.25 63.64 A18 18 0 1 0 54.25 36.36 Z" fill="#b85a6e"/>
+    <animateTransform attributeName="transform" type="translate"
+      values="60 0; 0 0" keyTimes="0; 1"
+      keySplines="0.22 0.61 0.36 1" calcMode="spline"
+      dur="1.6s" begin="0s" fill="freeze"/>
+    <animate attributeName="opacity" from="0" to="1"
+      dur="1.1s" begin="0s" fill="freeze"/>
+    <animateTransform attributeName="transform" type="translate"
+      values="0 0; 0 0; -4.25 0; -4.25 0; 0 0"
+      keyTimes="0; 0.2; 0.5; 0.65; 1"
+      keySplines="0.65 0 0.35 1; 0.65 0 0.35 1; 0 0 1 1; 0.65 0 0.35 1"
+      calcMode="spline"
+      additive="sum"
+      dur="6.4s" begin="2s" repeatCount="indefinite"/>
+  </g>
+</svg>

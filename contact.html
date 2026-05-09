@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Contact · Sexhapist</title>
+<link rel="icon" href="brand/favicon/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="brand/favicon/apple-touch-icon.svg">
+<link rel="manifest" href="brand/favicon/site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-soft: #f5f5f7;
+    --bg-warm: #f7f3ee;
+    --ink: #1d1d1f;
+    --ink-soft: #424245;
+    --ink-muted: #6e6e73;
+    --line: #d2d2d7;
+    --line-soft: #e8e8ed;
+    --accent: #1d1d1f;
+    --accent-soft: #2c2c2e;
+    --blue: #0066cc;
+    --blush: #b85a6e;
+    --display: 'Fraunces', 'Times New Roman', serif;
+    --body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--body);
+    font-weight: 400;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--body); cursor: pointer; border: none; background: none; color: inherit; }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: 56px; padding: 0 24px; z-index: 100;
+    background: rgba(255,255,255,0.78);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid var(--line-soft);
+    display: flex; align-items: center;
+  }
+  .nav-inner {
+    width: 100%; max-width: 1024px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo { display: flex; align-items: center; gap: 8px; }
+  .logo-mark { width: 24px; height: 24px; flex-shrink: 0; }
+  .logo-mark svg { width: 100%; height: 100%; display: block; }
+  .logo-name {
+    font-family: var(--display);
+    font-size: 20px; font-weight: 500; letter-spacing: -0.01em;
+  }
+  .nav-cta {
+    background: var(--accent); color: #fff;
+    padding: 8px 18px; border-radius: 980px;
+    font-size: 13px; font-weight: 500; transition: background 0.2s;
+  }
+  .nav-cta:hover { background: var(--accent-soft); }
+
+  .page {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 140px 24px 80px;
+  }
+  .eyebrow {
+    font-size: 13px;
+    color: var(--ink-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  h1 {
+    font-family: var(--display);
+    font-size: clamp(48px, 7.5vw, 80px);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    margin-bottom: 20px;
+  }
+  h1 em { font-style: italic; font-weight: 300; color: var(--ink-muted); }
+  .lede {
+    font-size: 20px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    margin-bottom: 18px;
+    letter-spacing: -0.005em;
+  }
+  .email-line {
+    font-size: 15px;
+    color: var(--ink-muted);
+    margin-bottom: 48px;
+  }
+  .email-line a {
+    color: var(--blue);
+    border-bottom: 1px solid rgba(0,102,204,0.2);
+    transition: border-color 0.2s;
+  }
+  .email-line a:hover { border-bottom-color: var(--blue); }
+
+  /* FORM */
+  form {
+    background: var(--bg-warm);
+    border-radius: 22px;
+    padding: 36px;
+  }
+  .field {
+    margin-bottom: 22px;
+  }
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+    letter-spacing: 0.01em;
+  }
+  input, textarea {
+    width: 100%;
+    font-family: var(--body);
+    font-size: 16px;
+    color: var(--ink);
+    background: #fff;
+    border: 1px solid var(--line-soft);
+    border-radius: 12px;
+    padding: 14px 16px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  input:focus, textarea:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.08);
+  }
+  textarea {
+    min-height: 160px;
+    resize: vertical;
+    line-height: 1.5;
+  }
+  .submit {
+    background: var(--accent);
+    color: #fff;
+    padding: 14px 28px;
+    border-radius: 980px;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1;
+    transition: background 0.2s, transform 0.15s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .submit:hover { background: var(--accent-soft); }
+  .submit:active { transform: scale(0.98); }
+  .submit:disabled { opacity: 0.5; cursor: default; }
+  .form-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 8px;
+  }
+  .form-note {
+    font-size: 13px;
+    color: var(--ink-muted);
+  }
+  .status {
+    margin-top: 16px;
+    font-size: 14px;
+    color: var(--ink-soft);
+    min-height: 20px;
+  }
+  .status.ok { color: #2b7a3d; }
+  .status.err { color: #b8412c; }
+
+  footer {
+    background: var(--bg-soft);
+    padding: 28px 24px;
+    border-top: 1px solid var(--line-soft);
+  }
+  .footer-inner {
+    max-width: 1024px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 16px;
+    font-size: 12px; color: var(--ink-muted);
+  }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a:hover { color: var(--ink); }
+
+  @media (max-width: 640px) {
+    .page { padding: 110px 22px 60px; }
+    form { padding: 26px; border-radius: 18px; }
+    .form-row { flex-direction: column-reverse; align-items: stretch; gap: 14px; }
+    .submit { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="sexhapist%20(2).html" class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="Sexhapist">
+          <path d="M45.75 36.36 A24 24 0 1 0 45.75 63.64 A18 18 0 1 1 45.75 36.36 Z" fill="#0066cc"/>
+          <path d="M54.25 36.36 A24 24 0 1 1 54.25 63.64 A18 18 0 1 0 54.25 36.36 Z" fill="#b85a6e"/>
+        </svg>
+      </div>
+      <div class="logo-name">Se<em>x</em>hapist</div>
+    </a>
+    <a href="sexhapist%20(2).html" class="nav-cta">Talk now</a>
+  </div>
+</nav>
+
+<main class="page">
+  <p class="eyebrow">Contact</p>
+  <h1>say <em>hello.</em></h1>
+  <p class="lede">questions, feedback, partnerships, press. a real person reads every message.</p>
+  <p class="email-line">or just email <a href="mailto:talk@sexhapist.com">talk@sexhapist.com</a></p>
+
+  <form id="contactForm" novalidate>
+    <div class="field">
+      <label for="name">your name</label>
+      <input type="text" id="name" name="name" autocomplete="name" required />
+    </div>
+    <div class="field">
+      <label for="email">your email</label>
+      <input type="email" id="email" name="email" autocomplete="email" required />
+    </div>
+    <div class="field">
+      <label for="message">what's on your mind</label>
+      <textarea id="message" name="message" required></textarea>
+    </div>
+    <div class="form-row">
+      <p class="form-note">we usually reply within 1-2 days.</p>
+      <button type="submit" class="submit" id="submitBtn">Send message</button>
+    </div>
+    <p class="status" id="formStatus" role="status" aria-live="polite"></p>
+  </form>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>© 2026 Sexhapist · AI Intimacy Companion · Not a licensed clinical service.</span>
+    <div class="footer-links">
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    const form = document.getElementById('contactForm');
+    const status = document.getElementById('formStatus');
+    const btn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      status.className = 'status';
+      status.textContent = '';
+
+      const name = form.name.value.trim();
+      const email = form.email.value.trim();
+      const message = form.message.value.trim();
+
+      if (!name || !email || !message) {
+        status.className = 'status err';
+        status.textContent = 'please fill in every field.';
+        return;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        status.className = 'status err';
+        status.textContent = 'that email doesn’t look right.';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Opening your mail app…';
+
+      const subject = 'Hello from ' + name;
+      const body = message + '\n\n' + name + ' (' + email + ')';
+      const href = 'mailto:talk@sexhapist.com'
+        + '?subject=' + encodeURIComponent(subject)
+        + '&body=' + encodeURIComponent(body);
+
+      window.location.href = href;
+
+      setTimeout(function () {
+        status.className = 'status ok';
+        status.textContent = 'thanks. your mail app should be opening. if it didn’t, email talk@sexhapist.com directly.';
+        btn.disabled = false;
+        btn.textContent = 'Send message';
+      }, 600);
+    });
+  })();
+</script>
+
+</body>
+</html>

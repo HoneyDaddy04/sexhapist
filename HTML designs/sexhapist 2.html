@@ -1,0 +1,1549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sexhapist · Be Bold. Be Honest. Be Happy.</title>
+<link rel="icon" href="../brand/favicon/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../brand/favicon/apple-touch-icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* White, soft gray, black, with a warm Apple-style blue */
+    --bg: #ffffff;
+    --bg-soft: #f5f5f7;
+    --bg-warm: #f7f3ee;          /* the warmth: a touch of cream */
+    --bg-dark: #1d1d1f;
+    --bg-darker: #000000;
+    --ink: #1d1d1f;
+    --ink-soft: #424245;
+    --ink-muted: #6e6e73;
+    --line: #d2d2d7;
+    --line-soft: #e8e8ed;
+    --accent: #1d1d1f;
+    --accent-soft: #2c2c2e;
+    --blue: #243f73;
+    --blue-hover: #1b315c;
+    --blue-soft: #eef3fb;
+    --display: 'Fraunces', 'Times New Roman', serif;
+    --body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--body);
+    font-weight: 400;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--body); cursor: pointer; border: none; background: none; color: inherit; }
+  img { display: block; max-width: 100%; }
+
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 56px;
+    padding: 0 24px;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid var(--line-soft);
+    display: flex;
+    align-items: center;
+  }
+  .nav-inner {
+    width: 100%;
+    max-width: 1024px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+  .logo-mark {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+  }
+  .logo-mark svg { width: 100%; height: 100%; display: block; }
+  .logo-name {
+    font-family: var(--display);
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .nav-links {
+    display: flex;
+    gap: 28px;
+    align-items: center;
+    font-size: 13px;
+  }
+  .nav-links a {
+    color: var(--ink-soft);
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--ink); }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 22px;
+    border-radius: 980px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent-soft); }
+  .btn-blue { background: var(--blue); color: #fff; }
+  .btn-blue:hover { background: var(--blue-hover); }
+  .btn-ghost { background: transparent; color: var(--blue); }
+  .btn-ghost:hover { text-decoration: underline; }
+  .btn-ghost::after { content: ' ›'; margin-left: 2px; }
+  .btn-large { padding: 14px 28px; font-size: 15px; }
+
+  /* ===== HERO ===== */
+  .hero {
+    padding: 140px 24px 60px;
+    text-align: center;
+  }
+  .hero-inner { max-width: 880px; margin: 0 auto; }
+  .hero-eyebrow {
+    font-size: 19px;
+    color: var(--ink-muted);
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  .hero h1 {
+    font-family: var(--display);
+    font-size: clamp(48px, 8vw, 88px);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    margin-bottom: 24px;
+  }
+  .hero h1 em { font-style: italic; font-weight: 300; color: var(--blue); }
+  .hero-sub {
+    font-size: 21px;
+    line-height: 1.45;
+    color: var(--ink-soft);
+    max-width: 580px;
+    margin: 0 auto 36px;
+    letter-spacing: -0.01em;
+  }
+  .hero-buttons {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  /* HERO PHOTO STRIP - 3 photos in a clean row */
+  .hero-photos {
+    margin: 80px auto 0;
+    max-width: 1100px;
+    display: grid;
+    grid-template-columns: 1fr 1.4fr 1fr;
+    gap: 16px;
+    padding: 0 8px;
+  }
+  .hero-photo {
+    border-radius: 22px;
+    overflow: hidden;
+    aspect-ratio: 3 / 4;
+    background: var(--bg-soft);
+    position: relative;
+    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .hero-photo.tall {
+    aspect-ratio: 4 / 5;
+    align-self: center;
+  }
+  .hero-photo:hover { transform: translateY(-6px); }
+  .hero-photo img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .hero-photo:hover img { transform: scale(1.04); }
+
+  section { padding: 100px 24px; }
+  .section-inner { max-width: 1024px; margin: 0 auto; }
+  .section-narrow { max-width: 780px; margin: 0 auto; }
+
+  .section-eyebrow {
+    font-size: 14px;
+    color: var(--ink-muted);
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  .section-title {
+    font-family: var(--display);
+    font-size: clamp(36px, 5.5vw, 56px);
+    font-weight: 400;
+    line-height: 1.08;
+    letter-spacing: -0.022em;
+    text-align: center;
+    margin: 0 auto 20px;
+    max-width: 760px;
+  }
+  .section-title em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--ink-muted);
+  }
+  .section-sub {
+    font-size: 19px;
+    color: var(--ink-soft);
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto 60px;
+    line-height: 1.5;
+  }
+
+  /* ===== TOPICS ===== */
+  .topics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .topic {
+    background: var(--bg-soft);
+    border-radius: 22px;
+    padding: 0;
+    cursor: pointer;
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    min-height: 360px;
+    overflow: hidden;
+    position: relative;
+  }
+  .topic:hover { transform: translateY(-4px); }
+
+  .topic-photo {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--bg-soft);
+  }
+  .topic-photo img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .topic:hover .topic-photo img { transform: scale(1.04); }
+
+  .topic-content {
+    padding: 36px 36px 40px;
+  }
+  .topic h3 {
+    font-family: var(--display);
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -0.018em;
+    margin-bottom: 8px;
+  }
+  .topic h3 em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--ink-muted);
+  }
+  .topic p {
+    font-size: 16px;
+    color: var(--ink-muted);
+    line-height: 1.45;
+    margin-bottom: 20px;
+    max-width: 360px;
+  }
+  .topic-cta {
+    display: inline-flex;
+    align-items: center;
+    color: var(--blue);
+    font-size: 15px;
+  }
+  .topic-cta::after {
+    content: '+';
+    margin-left: 8px;
+    font-size: 18px;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--blue);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    font-weight: 300;
+  }
+
+  .topic.featured {
+    grid-column: span 2;
+    background: var(--bg-dark);
+    color: #fff;
+    min-height: 460px;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+  }
+  .topic.featured .topic-photo {
+    aspect-ratio: auto;
+    height: 100%;
+    border-radius: 0;
+  }
+  .topic.featured .topic-content {
+    padding: 56px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .topic.featured h3 { color: #fff; font-size: 44px; }
+  .topic.featured h3 em { color: rgba(255,255,255,0.55); }
+  .topic.featured p { color: rgba(255,255,255,0.7); font-size: 18px; max-width: 480px; }
+  .topic.featured .topic-cta { color: #fff; }
+  .topic.featured .topic-cta::after { background: #fff; color: var(--ink); }
+
+  /* ===== HOW IT WORKS ===== */
+  .how { background: var(--bg-warm); }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 60px;
+  }
+  .step { text-align: center; padding: 0 16px; }
+  .step-num {
+    font-family: var(--display);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink-muted);
+    margin-bottom: 20px;
+    display: inline-block;
+    padding: 6px 14px;
+    background: #fff;
+    border-radius: 50px;
+    border: 1px solid var(--line);
+  }
+  .step h3 {
+    font-family: var(--display);
+    font-size: 28px;
+    font-weight: 500;
+    margin-bottom: 12px;
+    letter-spacing: -0.015em;
+  }
+  .step p {
+    font-size: 16px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    max-width: 280px;
+    margin: 0 auto;
+  }
+
+  /* ===== EDITORIAL BREAK (single warm photo) ===== */
+  .editorial {
+    padding: 0;
+    height: 60vh;
+    min-height: 460px;
+    overflow: hidden;
+    position: relative;
+  }
+  .editorial img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .editorial-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,0,0,0.4), rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.55));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+  }
+  .editorial-text {
+    max-width: 880px;
+    color: #fff;
+  }
+  .editorial-text p {
+    font-family: var(--display);
+    font-size: clamp(28px, 4vw, 46px);
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.25;
+    letter-spacing: -0.012em;
+  }
+  .editorial-text p strong {
+    font-style: normal;
+    font-weight: 500;
+  }
+  .editorial-attr {
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+    margin-top: 20px;
+    font-style: normal !important;
+    font-family: var(--body) !important;
+    letter-spacing: 0.04em;
+  }
+
+  /* ===== STORIES ===== */
+  .stories-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .story-group + .story-group {
+    margin-top: 88px;
+  }
+  .story-group-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 32px;
+    margin-bottom: 28px;
+  }
+  .story-group-head h3 {
+    font-family: var(--display);
+    font-size: clamp(34px, 4.5vw, 56px);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+  }
+  .story-group-head p {
+    max-width: 430px;
+    color: var(--ink-muted);
+    font-size: 15px;
+    line-height: 1.65;
+  }
+  .story {
+    background: var(--bg-soft);
+    border-radius: 22px;
+    overflow: hidden;
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .story:hover { transform: translateY(-4px); }
+  .story-photo {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+  }
+  .story-photo img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .story:hover .story-photo img { transform: scale(1.04); }
+  .story-body { padding: 32px 28px 28px; }
+  .story-quote {
+    font-family: var(--display);
+    font-size: 20px;
+    line-height: 1.4;
+    letter-spacing: -0.012em;
+    margin-bottom: 24px;
+    min-height: 110px;
+  }
+  .story-quote::before {
+    content: '“';
+    font-size: 32px;
+    color: var(--ink-muted);
+    line-height: 0;
+    position: relative;
+    top: 14px;
+    margin-right: 4px;
+  }
+  .story-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+  }
+  .story-id { font-size: 14px; font-weight: 500; }
+  .story-loc { font-size: 13px; color: var(--ink-muted); margin-top: 2px; }
+  .story-topic { font-size: 12px; color: var(--ink-muted); }
+
+  /* ===== STATS ===== */
+  .stats-band {
+    background: var(--bg-darker);
+    color: #fff;
+    padding: 90px 24px;
+    text-align: center;
+  }
+  .stats-band h2 {
+    font-family: var(--display);
+    font-size: clamp(36px, 5vw, 52px);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    max-width: 780px;
+    margin: 0 auto 50px;
+  }
+  .stats-band h2 em { font-style: italic; color: rgba(255,255,255,0.55); }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    max-width: 880px;
+    margin: 0 auto;
+  }
+  .stat-num {
+    font-family: var(--display);
+    font-size: 56px;
+    font-weight: 400;
+    line-height: 1;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+  .stat-label {
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+  }
+
+  /* ===== FAQ ===== */
+  .faq-list { margin-top: 50px; }
+  .faq-item {
+    border-bottom: 1px solid var(--line-soft);
+    padding: 24px 0;
+    cursor: pointer;
+  }
+  .faq-q {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+  }
+  .faq-q h4 {
+    font-size: 19px;
+    font-weight: 500;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
+  .faq-plus {
+    width: 22px; height: 22px;
+    flex-shrink: 0;
+    color: var(--ink-muted);
+    transition: transform 0.3s;
+  }
+  .faq-item.open .faq-plus { transform: rotate(45deg); }
+  .faq-a {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.4s ease;
+    color: var(--ink-soft);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  .faq-item.open .faq-a {
+    max-height: 240px;
+    padding-top: 14px;
+  }
+
+  .final-cta {
+    text-align: center;
+    padding: 110px 24px 130px;
+  }
+  .final-cta h2 {
+    font-family: var(--display);
+    font-size: clamp(44px, 7vw, 76px);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    margin: 0 auto 20px;
+    max-width: 780px;
+  }
+  .final-cta h2 em { font-style: italic; font-weight: 300; color: var(--blue); }
+  .final-cta p {
+    font-size: 19px;
+    color: var(--ink-soft);
+    margin-bottom: 36px;
+  }
+
+  footer {
+    background: var(--bg-soft);
+    padding: 28px 24px;
+    border-top: 1px solid var(--line-soft);
+  }
+  .footer-inner {
+    max-width: 1024px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 12px;
+    color: var(--ink-muted);
+  }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a:hover { color: var(--ink); }
+
+  /* ===== CHAT MODAL ===== */
+  .chat-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(6px);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .chat-overlay.active { display: flex; }
+  .chat-window {
+    background: #fff;
+    border-radius: 22px;
+    width: 100%;
+    max-width: 640px;
+    height: 78vh;
+    max-height: 720px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 30px 80px -20px rgba(0,0,0,0.4);
+    overflow: hidden;
+  }
+  .chat-header {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--line-soft);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .chat-header-left { display: flex; align-items: center; gap: 12px; }
+  .orb {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--ink);
+    transition: transform 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .orb::before {
+    content: '';
+    position: absolute;
+    top: 6px; left: 8px;
+    width: 8px; height: 8px;
+    background: rgba(255,255,255,0.4);
+    border-radius: 50%;
+    filter: blur(1px);
+  }
+  .orb.speaking { animation: orbPulse 1.2s ease-in-out infinite; }
+  @keyframes orbPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.12); }
+  }
+  .chat-header-info h4 {
+    font-family: var(--display);
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .chat-header-info span { font-size: 12px; color: var(--ink-muted); }
+  .chat-header-actions { display: flex; gap: 6px; }
+  .icon-btn {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    color: var(--ink-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .icon-btn:hover { background: var(--bg-soft); color: var(--ink); }
+  .icon-btn svg { width: 16px; height: 16px; }
+
+  .chat-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .chat-body::-webkit-scrollbar { width: 6px; }
+  .chat-body::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+
+  .msg {
+    max-width: 78%;
+    padding: 12px 16px;
+    border-radius: 18px;
+    font-size: 15px;
+    line-height: 1.45;
+  }
+  .msg.user {
+    align-self: flex-end;
+    background: var(--blue);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+  }
+  .msg.bot {
+    align-self: flex-start;
+    background: var(--bg-soft);
+    color: var(--ink);
+    border-bottom-left-radius: 4px;
+  }
+  .msg.bot.typing { display: flex; gap: 5px; padding: 16px; }
+  .msg.bot.typing span {
+    width: 7px; height: 7px;
+    background: var(--ink-muted);
+    border-radius: 50%;
+    animation: typing 1.4s infinite;
+  }
+  .msg.bot.typing span:nth-child(2) { animation-delay: 0.2s; }
+  .msg.bot.typing span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typing {
+    0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+    30% { opacity: 1; transform: translateY(-3px); }
+  }
+  .listen-btn {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--blue);
+    cursor: pointer;
+  }
+  .listen-btn:hover { text-decoration: underline; }
+
+  .quick-replies {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0 24px 12px;
+  }
+  .quick-reply {
+    padding: 8px 14px;
+    background: var(--bg-soft);
+    border-radius: 50px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .quick-reply:hover { background: var(--line-soft); color: var(--ink); }
+
+  .chat-input-row {
+    padding: 14px 20px 20px;
+    border-top: 1px solid var(--line-soft);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .chat-input {
+    flex: 1;
+    background: var(--bg-soft);
+    border: none;
+    border-radius: 50px;
+    padding: 12px 18px;
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 14.5px;
+    outline: none;
+    transition: background 0.2s;
+  }
+  .chat-input:focus { background: var(--line-soft); }
+  .send-btn {
+    width: 40px; height: 40px;
+    background: var(--blue);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .send-btn:hover { background: var(--blue-hover); }
+
+  .settings-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(6px);
+    z-index: 300;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .settings-modal.active { display: flex; }
+  .settings-box {
+    background: #fff;
+    border-radius: 22px;
+    width: 100%;
+    max-width: 440px;
+    padding: 32px;
+  }
+  .settings-box h3 {
+    font-family: var(--display);
+    font-size: 24px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    letter-spacing: -0.015em;
+  }
+  .settings-box p.intro {
+    color: var(--ink-muted);
+    font-size: 14px;
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+  .field { margin-bottom: 16px; }
+  .field label {
+    display: block;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  .field input, .field select {
+    width: 100%;
+    background: var(--bg-soft);
+    border: 1px solid transparent;
+    color: var(--ink);
+    padding: 11px 14px;
+    border-radius: 10px;
+    font-family: var(--body);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .field input:focus, .field select:focus {
+    border-color: var(--ink);
+    background: #fff;
+  }
+  .save-btn {
+    width: 100%;
+    padding: 13px;
+    background: var(--ink);
+    color: #fff;
+    font-weight: 500;
+    font-size: 14px;
+    border-radius: 50px;
+    margin-top: 12px;
+    transition: background 0.2s;
+  }
+  .save-btn:hover { background: var(--accent-soft); }
+
+  @media (max-width: 900px) {
+    .hero-photos { grid-template-columns: 1fr 1fr; }
+    .hero-photos > :nth-child(3) { display: none; }
+    .topic.featured { grid-template-columns: 1fr; min-height: auto; }
+    .topic.featured .topic-photo { aspect-ratio: 16 / 9; }
+    .topics-grid { grid-template-columns: 1fr; }
+    .topic.featured { grid-column: span 1; }
+    .stories-grid { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: 1fr; gap: 40px; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 36px; }
+    section { padding: 80px 20px; }
+  }
+  @media (max-width: 600px) {
+    nav { padding: 0 18px; }
+    .nav-links a:not(.btn) { display: none; }
+    .hero { padding: 100px 20px 40px; }
+    .hero-photos { grid-template-columns: 1fr; }
+    .hero-photos > :nth-child(2) { display: none; }
+    .topic.featured h3 { font-size: 32px; }
+    .topic.featured .topic-content { padding: 36px 28px; }
+    .topic-content { padding: 28px 28px 32px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="logo" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+      <div class="logo-mark">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="Sexhapist">
+          <path d="M45.75 36.36 A24 24 0 1 0 45.75 63.64 A18 18 0 1 1 45.75 36.36 Z" fill="#0066cc"/>
+          <path d="M54.25 36.36 A24 24 0 1 1 54.25 63.64 A18 18 0 1 0 54.25 36.36 Z" fill="#b85a6e"/>
+        </svg>
+      </div>
+      <div class="logo-name">Se<em>x</em>hapist</div>
+    </div>
+    <div class="nav-links">
+      <a href="#topics">Topics</a>
+      <a href="#how">How it works</a>
+      <a href="#stories">Stories</a>
+      <a href="#faq">FAQ</a>
+      <button class="btn btn-primary" onclick="openChat()" style="padding: 8px 18px; font-size: 13px;">Talk now</button>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <p class="hero-eyebrow">Introducing your Sexhapist.</p>
+    <h1>Be bold.<br/>Be honest.<br/><em>Be happy.</em></h1>
+    <p class="hero-sub">A private space to talk about the things most men never bring up. Honestly. Without judgment. Whenever you're ready.</p>
+    <div class="hero-buttons">
+      <button class="btn btn-primary btn-large" onclick="openChat()">Start a conversation</button>
+      <a href="#how" class="btn btn-ghost btn-large">Learn more</a>
+    </div>
+  </div>
+  <div class="hero-photos">
+    <div class="hero-photo">
+      <img src="https://images.unsplash.com/photo-1507081323647-4d250478b919?w=800&q=85" alt="" onerror="this.src='https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?w=800&q=85'"/>
+    </div>
+    <div class="hero-photo tall">
+      <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=900&q=85" alt="" onerror="this.src='https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=900&q=85'"/>
+    </div>
+    <div class="hero-photo">
+      <img src="https://images.unsplash.com/photo-1542178243-bc20204b769f?w=800&q=85" alt="" onerror="this.src='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=85'"/>
+    </div>
+  </div>
+</section>
+
+<section id="topics">
+  <div class="section-inner">
+    <p class="section-eyebrow">Topics</p>
+    <h2 class="section-title">Everything <em>you couldn't bring up.</em></h2>
+    <p class="section-sub">Real talk on the things that matter. Pick what's on your mind, or start anywhere.</p>
+
+    <div class="topics-grid">
+      <div class="topic featured" onclick="openChatWith('I want to talk about my desire and where it has gone.')">
+        <div class="topic-photo">
+          <img src="https://images.unsplash.com/photo-1488161628813-04466f872be2?w=1100&q=85" alt="" onerror="this.src='https://images.unsplash.com/photo-1504257432389-52343af06ae3?w=1100&q=85'"/>
+        </div>
+        <div class="topic-content">
+          <div>
+            <h3>Desire. <em>And where it went.</em></h3>
+            <p>When the spark feels off and you can't put your finger on why. Start here.</p>
+            <div class="topic-cta">Talk about it</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="topic" onclick="openChatWith('I deal with performance anxiety.')">
+        <div class="topic-photo">
+          <img src="https://images.unsplash.com/photo-1463453091185-61582044d556?w=900&q=85" alt="" onerror="this.src='https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=900&q=85'"/>
+        </div>
+        <div class="topic-content">
+          <h3>Performance.</h3>
+          <p>Get out of your head. Get back to the moment.</p>
+          <div class="topic-cta">Talk about it</div>
+        </div>
+      </div>
+
+      <div class="topic" onclick="openChatWith('I want to feel more connected to my partner.')">
+        <div class="topic-photo">
+          <img src="https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=900&q=85" alt="" onerror="this.src='https://images.unsplash.com/photo-1521119989659-a83eee488004?w=900&q=85'"/>
+        </div>
+        <div class="topic-content">
+          <h3>Connection.</h3>
+          <p>Bridge the distance. Bring back the warmth.</p>
+          <div class="topic-cta">Talk about it</div>
+        </div>
+      </div>
+
+      <div class="topic" onclick="openChatWith('I do not know how to talk to my partner about what I actually want.')">
+        <div class="topic-photo">
+          <img src="https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?w=900&q=85" alt="" onerror="this.src='https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=900&q=85'"/>
+        </div>
+        <div class="topic-content">
+          <h3>Honesty.</h3>
+          <p>Find the words. Say the thing. No more guessing.</p>
+          <div class="topic-cta">Talk about it</div>
+        </div>
+      </div>
+
+      <div class="topic" onclick="openChatWith('I want help with stamina and lasting longer.')">
+        <div class="topic-photo">
+          <img src="https://images.unsplash.com/photo-1542327897-d73f4005b533?w=900&q=85" alt="" onerror="this.src='https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=900&q=85'"/>
+        </div>
+        <div class="topic-content">
+          <h3>Stamina.</h3>
+          <p>Practical strategies. No shame. No gimmicks.</p>
+          <div class="topic-cta">Talk about it</div>
+        </div>
+      </div>
+
+      <div class="topic" onclick="openChatWith('Things have been rough between us and I want to repair the connection.')">
+        <div class="topic-photo">
+          <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=900&q=85" alt="" onerror="this.src='https://images.unsplash.com/photo-1504257432389-52343af06ae3?w=900&q=85'"/>
+        </div>
+        <div class="topic-content">
+          <h3>Repair.</h3>
+          <p>Rebuild trust. Find each other again.</p>
+          <div class="topic-cta">Talk about it</div>
+        </div>
+      </div>
+
+      <div class="topic" onclick="openChatWith('I am curious about something but do not know if it is normal.')">
+        <div class="topic-photo">
+          <img src="https://images.unsplash.com/photo-1521119989659-a83eee488004?w=900&q=85" alt="" onerror="this.src='https://images.unsplash.com/photo-1542178243-bc20204b769f?w=900&q=85'"/>
+        </div>
+        <div class="topic-content">
+          <h3>Curiosity.</h3>
+          <p>Ask anything. There are no stupid questions here.</p>
+          <div class="topic-cta">Talk about it</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="how" id="how">
+  <div class="section-inner">
+    <p class="section-eyebrow">How it works</p>
+    <h2 class="section-title">Three steps. <em>That's it.</em></h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Open a chat</h3>
+        <p>Tap a topic, or just start typing. No forms. No appointments.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>Talk it through</h3>
+        <p>Real conversation. Real answers. Type, or listen with a calm voice that walks you through it.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>Walk out lighter</h3>
+        <p>Leave with clarity, a plan, or a weight off your chest. Come back any time.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="editorial">
+  <img src="https://images.unsplash.com/photo-1542178243-bc20204b769f?w=1800&q=85" alt="" onerror="this.src='https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=1800&q=85'"/>
+  <div class="editorial-overlay">
+    <div class="editorial-text">
+      <p>"The men who say it out loud are the ones who get to live the rest of their lives <strong>lighter</strong>."</p>
+      <div class="editorial-attr">From the Sexhapist Manifesto</div>
+    </div>
+  </div>
+</section>
+
+<section id="stories">
+  <div class="section-inner">
+    <div class="story-group">
+    <p class="section-eyebrow">Real stories</p>
+    <h2 class="section-title">Men started <em>talking.</em></h2>
+    <p class="section-sub">Anonymous by design. Identities are never collected or shared.</p>
+
+    <div class="stories-grid">
+      <div class="story">
+        <div class="story-photo"><img src="https://images.pexels.com/photos/35037064/pexels-photo-35037064.jpeg?auto=compress&cs=tinysrgb&w=900" alt="" onerror="this.src='https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?w=700&q=85'"/></div>
+        <div class="story-body">
+          <p class="story-quote">I had carried this for years and not told a single person. One conversation and I felt human again.</p>
+          <div class="story-meta">
+            <div>
+              <div class="story-id">T.O., 34</div>
+              <div class="story-loc">Lagos</div>
+            </div>
+            <span class="story-topic">Desire</span>
+          </div>
+        </div>
+      </div>
+      <div class="story">
+        <div class="story-photo"><img src="https://images.pexels.com/photos/2442898/pexels-photo-2442898.jpeg?auto=compress&cs=tinysrgb&w=900" alt="" onerror="this.src='https://images.unsplash.com/photo-1521119989659-a83eee488004?w=700&q=85'"/></div>
+        <div class="story-body">
+          <p class="story-quote">My wife and I had been circling the same fight for two years. I learned how to actually say what I meant.</p>
+          <div class="story-meta">
+            <div>
+              <div class="story-id">M.R., 41</div>
+              <div class="story-loc">Atlanta</div>
+            </div>
+            <span class="story-topic">Connection</span>
+          </div>
+        </div>
+      </div>
+      <div class="story">
+        <div class="story-photo"><img src="https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=700&q=85" alt="" onerror="this.src='https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=700&q=85'"/></div>
+        <div class="story-body">
+          <p class="story-quote">Asked things I would never ask another person. Got real answers, not internet nonsense.</p>
+          <div class="story-meta">
+            <div>
+              <div class="story-id">L.W., 29</div>
+              <div class="story-loc">Berlin</div>
+            </div>
+            <span class="story-topic">Curiosity</span>
+          </div>
+        </div>
+      </div>
+      <div class="story">
+        <div class="story-photo"><img src="https://images.pexels.com/photos/1462980/pexels-photo-1462980.jpeg?auto=compress&cs=tinysrgb&w=900" alt="" onerror="this.src='https://images.unsplash.com/photo-1542327897-d73f4005b533?w=700&q=85'"/></div>
+        <div class="story-body">
+          <p class="story-quote">Performance anxiety had me on the bench. I have my confidence back and my head is finally quiet.</p>
+          <div class="story-meta">
+            <div>
+              <div class="story-id">C.A., 38</div>
+              <div class="story-loc">Abuja</div>
+            </div>
+            <span class="story-topic">Performance</span>
+          </div>
+        </div>
+      </div>
+      <div class="story">
+        <div class="story-photo"><img src="https://images.unsplash.com/photo-1504257432389-52343af06ae3?w=700&q=85" alt="" onerror="this.src='https://images.unsplash.com/photo-1488161628813-04466f872be2?w=700&q=85'"/></div>
+        <div class="story-body">
+          <p class="story-quote">After twelve years together we had stopped really seeing each other. This gave us a way back in.</p>
+          <div class="story-meta">
+            <div>
+              <div class="story-id">J.H., 47</div>
+              <div class="story-loc">London</div>
+            </div>
+            <span class="story-topic">Repair</span>
+          </div>
+        </div>
+      </div>
+      <div class="story">
+        <div class="story-photo"><img src="https://images.unsplash.com/photo-1542178243-bc20204b769f?w=700&q=85" alt="" onerror="this.src='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=700&q=85'"/></div>
+        <div class="story-body">
+          <p class="story-quote">Finally somewhere I can be honest about all of it. No judgment, no lectures. Just useful talk.</p>
+          <div class="story-meta">
+            <div>
+              <div class="story-id">A.B., 36</div>
+              <div class="story-loc">Port Harcourt</div>
+            </div>
+            <span class="story-topic">Honesty</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <div class="story-group">
+      <div class="story-group-head">
+        <div>
+          <p class="section-eyebrow">Partner perspective</p>
+          <h3>Women started <em>asking.</em></h3>
+        </div>
+        <p>Women can use Sexhapist to understand men better, prepare sensitive conversations, and ask for intimacy without turning the moment into a fight.</p>
+      </div>
+
+      <div class="stories-grid">
+        <div class="story">
+          <div class="story-photo"><img src="https://images.pexels.com/photos/19836044/pexels-photo-19836044.jpeg?auto=compress&cs=tinysrgb&w=900" alt=""/></div>
+          <div class="story-body">
+            <p class="story-quote">I understood his silence differently. It was not always rejection. Sometimes it was pressure.</p>
+            <div class="story-meta">
+              <div>
+                <div class="story-id">Woman, 31</div>
+                <div class="story-loc">Lagos</div>
+              </div>
+              <span class="story-topic">Perspective</span>
+            </div>
+          </div>
+        </div>
+        <div class="story">
+          <div class="story-photo"><img src="https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=700&q=85" alt=""/></div>
+          <div class="story-body">
+            <p class="story-quote">I asked without attacking. The words helped me stay warm and clear instead of frustrated.</p>
+            <div class="story-meta">
+              <div>
+                <div class="story-id">Woman, 36</div>
+                <div class="story-loc">Port Harcourt</div>
+              </div>
+              <span class="story-topic">Communication</span>
+            </div>
+          </div>
+        </div>
+        <div class="story">
+          <div class="story-photo"><img src="https://images.pexels.com/photos/13468492/pexels-photo-13468492.jpeg?auto=compress&cs=tinysrgb&w=900" alt=""/></div>
+          <div class="story-body">
+            <p class="story-quote">We talked before it became a fight. I used it to prepare my thoughts and soften my tone.</p>
+            <div class="story-meta">
+              <div>
+                <div class="story-id">Woman, 28</div>
+                <div class="story-loc">Johannesburg</div>
+              </div>
+              <span class="story-topic">Repair</span>
+            </div>
+          </div>
+        </div>
+        <div class="story">
+          <div class="story-photo"><img src="https://images.pexels.com/photos/19836044/pexels-photo-19836044.jpeg?auto=compress&cs=tinysrgb&w=900" alt=""/></div>
+          <div class="story-body">
+            <p class="story-quote">It helped me stop assuming the worst. I learned what to ask and when to pause.</p>
+            <div class="story-meta">
+              <div>
+                <div class="story-id">Woman, 33</div>
+                <div class="story-loc">Accra</div>
+              </div>
+              <span class="story-topic">Understanding</span>
+            </div>
+          </div>
+        </div>
+        <div class="story">
+          <div class="story-photo"><img src="https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?w=700&q=85" alt=""/></div>
+          <div class="story-body">
+            <p class="story-quote">It gave me better timing. I opened the conversation when we were connected, not tense.</p>
+            <div class="story-meta">
+              <div>
+                <div class="story-id">Woman, 30</div>
+                <div class="story-loc">Singapore</div>
+              </div>
+              <span class="story-topic">Timing</span>
+            </div>
+          </div>
+        </div>
+        <div class="story">
+          <div class="story-photo"><img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=700&q=85" alt=""/></div>
+          <div class="story-body">
+            <p class="story-quote">I felt less alone. It helped me name what I needed before asking him to understand it.</p>
+            <div class="story-meta">
+              <div>
+                <div class="story-id">Woman, 39</div>
+                <div class="story-loc">New York</div>
+              </div>
+              <span class="story-topic">Clarity</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="stats-band">
+  <h2>Built for the conversations <em>most men never have.</em></h2>
+  <div class="stats-grid">
+    <div>
+      <div class="stat-num">24/7</div>
+      <div class="stat-label">Always available</div>
+    </div>
+    <div>
+      <div class="stat-num">0</div>
+      <div class="stat-label">Awkward silences</div>
+    </div>
+    <div>
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Private</div>
+    </div>
+    <div>
+      <div class="stat-num">∞</div>
+      <div class="stat-label">Questions welcome</div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="section-narrow">
+    <p class="section-eyebrow">Common questions</p>
+    <h2 class="section-title">The things you were <em>going to ask.</em></h2>
+    <div class="faq-list">
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">
+          <h4>Is this actually private?</h4>
+          <svg class="faq-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </div>
+        <div class="faq-a">Yes. No name required. Conversations aren't tied to your real identity. We never share, sell, or pass your data to anyone.</div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">
+          <h4>Is the Sexhapist a licensed therapist?</h4>
+          <svg class="faq-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </div>
+        <div class="faq-a">No. The Sexhapist is an AI-powered intimacy companion built to give you a private space to talk and learn. For licensed clinical care, we'll point you to qualified professionals when it makes sense.</div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">
+          <h4>Can my partner and I use it together?</h4>
+          <svg class="faq-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </div>
+        <div class="faq-a">Absolutely. Many men use it solo first, then bring their partner in for guided conversations and exercises that build connection.</div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">
+          <h4>What if what I am dealing with is heavy?</h4>
+          <svg class="faq-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </div>
+        <div class="faq-a">If something serious comes up, like trauma, crisis, or a medical concern, your Sexhapist will treat it with care and connect you to proper human support and resources.</div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">
+          <h4>How much does it cost?</h4>
+          <svg class="faq-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </div>
+        <div class="faq-a">Your first conversation is free. Pricing for full access will be shared in your account. No insurance required.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="final-cta">
+  <h2>Stop wondering. <em>Start talking.</em></h2>
+  <p>Your first conversation is one tap away.</p>
+  <button class="btn btn-primary btn-large" onclick="openChat()">Talk to a Sexhapist</button>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <span>© 2026 Sexhapist · AI Intimacy Companion · Not a licensed clinical service.</span>
+    <div class="footer-links">
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="#">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<div class="chat-overlay" id="chatOverlay">
+  <div class="chat-window">
+    <div class="chat-header">
+      <div class="chat-header-left">
+        <div class="orb" id="orb"></div>
+        <div class="chat-header-info">
+          <h4>Your Sexhapist</h4>
+          <span>Online · Listening</span>
+        </div>
+      </div>
+      <div class="chat-header-actions">
+        <button class="icon-btn" onclick="openSettings()" title="Settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+        <button class="icon-btn" onclick="closeChat()" title="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="chat-body" id="chatBody"></div>
+    <div class="quick-replies" id="quickReplies">
+      <button class="quick-reply" onclick="sendQuick('I feel disconnected from my partner.')">I feel disconnected</button>
+      <button class="quick-reply" onclick="sendQuick('My desire has dropped lately.')">Desire is off</button>
+      <button class="quick-reply" onclick="sendQuick('I deal with performance anxiety.')">Performance anxiety</button>
+      <button class="quick-reply" onclick="sendQuick('I want to last longer.')">I want to last longer</button>
+    </div>
+    <div class="chat-input-row">
+      <input type="text" class="chat-input" id="chatInput" placeholder="What's on your mind?" onkeypress="if(event.key==='Enter') sendMessage()"/>
+      <button class="send-btn" onclick="sendMessage()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="settings-modal" id="settingsModal">
+  <div class="settings-box">
+    <h3>Settings</h3>
+    <p class="intro">Add your API keys to power conversation and voice. Keys stay in your browser only.</p>
+    <div class="field">
+      <label>Anthropic API Key</label>
+      <input type="password" id="anthropicKey" placeholder="sk-ant-..."/>
+    </div>
+    <div class="field">
+      <label>ElevenLabs API Key (optional)</label>
+      <input type="password" id="elevenKey" placeholder="for voice playback"/>
+    </div>
+    <div class="field">
+      <label>ElevenLabs Voice ID</label>
+      <input type="text" id="voiceId" value="ErXwobaYiN019PkySvjV"/>
+    </div>
+    <div class="field">
+      <label>Voice playback</label>
+      <select id="voiceMode">
+        <option value="auto">Play automatically</option>
+        <option value="manual">Listen button</option>
+        <option value="off">Text only</option>
+      </select>
+    </div>
+    <button class="save-btn" onclick="saveSettings()">Save</button>
+  </div>
+</div>
+
+<script>
+  const state = {
+    anthropicKey: '',
+    elevenKey: '',
+    voiceId: 'ErXwobaYiN019PkySvjV',
+    voiceMode: 'auto',
+    history: [],
+  };
+
+  const SYSTEM_PROMPT = `You are the Sexhapist, a private, calm, confident intimacy companion built primarily for men. You are not a licensed therapist. You are a thoughtful guide for honest conversations about sex, desire, intimacy, performance, communication, and connection.
+
+Tone: grounded, warm, masculine, never clinical, never preachy, never condescending. Sex-positive and judgment-free. Speak like a wise older brother. Use plain language. Be direct without being crude.
+
+Style rules:
+- Do NOT use em dashes. Use periods, commas, or colons instead.
+- Keep responses focused and conversational. 2 to 4 short paragraphs is usually right.
+- Ask one good follow-up question when it helps the user open up.
+- Avoid bullet lists unless explicitly asked.
+
+Scope:
+- Help with desire, libido, performance anxiety, stamina, intimacy, communication, body image, curiosity, and reconnection in relationships.
+- For medical concerns (ED that may need a doctor, hormonal issues, pain), validate and recommend a qualified clinician.
+- For trauma, abuse, or crisis: respond with care, do not push, and gently surface professional support and crisis resources.
+- No explicit sexual content. Discuss sex frankly and clearly without being graphic.
+
+Always make the user feel heard first, then offer practical insight or a small next step.`;
+
+  function openChat() {
+    document.getElementById('chatOverlay').classList.add('active');
+    if (state.history.length === 0) {
+      addBotMessage("Hey. Glad you stopped by. This is private, no one is watching, and there is nothing off limits. What is going on, or what is on your mind tonight?");
+    }
+    if (!state.anthropicKey) setTimeout(openSettings, 600);
+  }
+  function closeChat() {
+    document.getElementById('chatOverlay').classList.remove('active');
+  }
+  function openSettings() {
+    document.getElementById('settingsModal').classList.add('active');
+    document.getElementById('anthropicKey').value = state.anthropicKey;
+    document.getElementById('elevenKey').value = state.elevenKey;
+    document.getElementById('voiceId').value = state.voiceId;
+    document.getElementById('voiceMode').value = state.voiceMode;
+  }
+  function saveSettings() {
+    state.anthropicKey = document.getElementById('anthropicKey').value.trim();
+    state.elevenKey = document.getElementById('elevenKey').value.trim();
+    state.voiceId = document.getElementById('voiceId').value.trim() || 'ErXwobaYiN019PkySvjV';
+    state.voiceMode = document.getElementById('voiceMode').value;
+    document.getElementById('settingsModal').classList.remove('active');
+  }
+  function openChatWith(prefill) {
+    openChat();
+    setTimeout(() => {
+      document.getElementById('chatInput').value = prefill;
+      document.getElementById('chatInput').focus();
+    }, 300);
+  }
+  function sendQuick(text) {
+    document.getElementById('chatInput').value = text;
+    document.getElementById('quickReplies').style.display = 'none';
+    sendMessage();
+  }
+
+  function addUserMessage(text) {
+    const body = document.getElementById('chatBody');
+    const div = document.createElement('div');
+    div.className = 'msg user';
+    div.textContent = text;
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+  }
+  function addBotMessage(text) {
+    const body = document.getElementById('chatBody');
+    const div = document.createElement('div');
+    div.className = 'msg bot';
+    div.textContent = text;
+    if (state.voiceMode === 'manual' && state.elevenKey) {
+      const btn = document.createElement('button');
+      btn.className = 'listen-btn';
+      btn.textContent = '▶ Listen';
+      btn.onclick = () => playVoice(text);
+      div.appendChild(document.createElement('br'));
+      div.appendChild(btn);
+    }
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+    if (state.voiceMode === 'auto' && state.elevenKey) playVoice(text);
+  }
+  function showTyping() {
+    const body = document.getElementById('chatBody');
+    const div = document.createElement('div');
+    div.className = 'msg bot typing';
+    div.id = 'typing';
+    div.innerHTML = '<span></span><span></span><span></span>';
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+  }
+  function hideTyping() {
+    const t = document.getElementById('typing');
+    if (t) t.remove();
+  }
+
+  async function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    document.getElementById('quickReplies').style.display = 'none';
+    addUserMessage(text);
+    state.history.push({ role: 'user', content: text });
+
+    if (!state.anthropicKey) {
+      addBotMessage("Add your Anthropic API key in settings (gear icon) and I will be able to respond properly.");
+      return;
+    }
+
+    showTyping();
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': state.anthropicKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true',
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1024,
+          system: SYSTEM_PROMPT,
+          messages: state.history,
+        }),
+      });
+      const data = await res.json();
+      hideTyping();
+      if (data.error) {
+        addBotMessage("Something went wrong reaching the model. Check your API key and try again.");
+        return;
+      }
+      const reply = data.content?.[0]?.text || "Hmm, I lost the thread there. Try again?";
+      state.history.push({ role: 'assistant', content: reply });
+      addBotMessage(reply);
+    } catch (e) {
+      hideTyping();
+      addBotMessage("Connection issue on my end. Mind trying that again?");
+    }
+  }
+
+  async function playVoice(text) {
+    if (!state.elevenKey) return;
+    const orb = document.getElementById('orb');
+    try {
+      const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${state.voiceId}`, {
+        method: 'POST',
+        headers: {
+          'xi-api-key': state.elevenKey,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text,
+          model_id: 'eleven_turbo_v2_5',
+          voice_settings: { stability: 0.5, similarity_boost: 0.75 },
+        }),
+      });
+      if (!res.ok) return;
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      orb.classList.add('speaking');
+      audio.onended = () => orb.classList.remove('speaking');
+      audio.play();
+    } catch (e) {
+      orb.classList.remove('speaking');
+    }
+  }
+
+  document.getElementById('chatOverlay').addEventListener('click', (e) => {
+    if (e.target.id === 'chatOverlay') closeChat();
+  });
+  document.getElementById('settingsModal').addEventListener('click', (e) => {
+    if (e.target.id === 'settingsModal') document.getElementById('settingsModal').classList.remove('active');
+  });
+</script>
+
+</body>
+</html>

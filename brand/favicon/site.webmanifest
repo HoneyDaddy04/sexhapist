@@ -1,0 +1,22 @@
+{
+  "name": "Sexhapist",
+  "short_name": "Sexhapist",
+  "description": "Be Bold. Be Honest. Be Happy. Private, judgment-free conversations about intimacy.",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    },
+    {
+      "src": "apple-touch-icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "180x180",
+      "purpose": "any"
+    }
+  ],
+  "theme_color": "#1d1d1f",
+  "background_color": "#f7f3ee",
+  "display": "standalone",
+  "start_url": "/"
+}
