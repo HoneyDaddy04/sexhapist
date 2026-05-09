@@ -1,4 +1,4 @@
-import Anthropic from '@anthropic-ai/sdk';
+import OpenAI from 'openai';
 import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 
 const FREE_DURATION_MS = 3 * 60 * 1000;
@@ -125,8 +125,8 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'method_not_allowed' });
   }
 
-  if (!process.env.ANTHROPIC_API_KEY) {
-    return res.status(500).json({ error: 'server_misconfigured', detail: 'ANTHROPIC_API_KEY missing' });
+  if (!process.env.OPENAI_API_KEY) {
+    return res.status(500).json({ error: 'server_misconfigured', detail: 'OPENAI_API_KEY missing' });
   }
 
   let body = req.body;
@@ -172,20 +172,20 @@ export default async function handler(req, res) {
     });
   }
 
-  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
   try {
-    const completion = await client.messages.create({
-      model: 'claude-haiku-4-5-20251001',
+    const completion = await client.chat.completions.create({
+      model: 'gpt-4o-mini',
       max_tokens: 600,
-      system: systemPrompt,
-      messages,
+      temperature: 0.7,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        ...messages,
+      ],
     });
 
-    const reply = completion.content
-      .filter(b => b.type === 'text')
-      .map(b => b.text)
-      .join('\n')
+    const reply = (completion.choices?.[0]?.message?.content || '')
       .replace(/—/g, '.')
       .replace(/–/g, '.');
 
@@ -195,7 +195,7 @@ export default async function handler(req, res) {
       remainingMs: totalRemainingMs,
     });
   } catch (err) {
-    console.error('anthropic error', err);
+    console.error('openai error', err);
     return res.status(502).json({ error: 'upstream_error', detail: err?.message || 'unknown' });
   }
 }
