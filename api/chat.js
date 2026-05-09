@@ -1,5 +1,6 @@
 import OpenAI from 'openai';
 import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
+import { applyCors, cookieSameSite } from '../lib/cors.js';
 
 const FREE_DURATION_MS = 3 * 60 * 1000;
 const COOKIE_NAME = 'sx_session';
@@ -141,7 +142,7 @@ function setSessionCookie(res, session) {
     'Path=/',
     'HttpOnly',
     'Secure',
-    'SameSite=Lax',
+    `SameSite=${cookieSameSite()}`,
     `Max-Age=${COOKIE_MAX_AGE_S}`,
   ].join('; ');
   res.setHeader('Set-Cookie', cookie);
@@ -165,6 +166,7 @@ function sanitizeMessages(messages) {
 }
 
 export default async function handler(req, res) {
+  if (applyCors(req, res)) return;
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     return res.status(405).json({ error: 'method_not_allowed' });
