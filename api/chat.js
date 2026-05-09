@@ -221,7 +221,7 @@ export default async function handler(req, res) {
 
   try {
     const completion = await client.chat.completions.create({
-      model: 'gpt-4o-mini',
+      model: process.env.CHAT_MODEL || 'gpt-4o-mini',
       max_tokens: 600,
       temperature: 0.7,
       messages: [
@@ -240,7 +240,7 @@ export default async function handler(req, res) {
       remainingMs: totalRemainingMs,
     });
   } catch (err) {
-    console.error('openai error', err);
+    console.error('openrouter error', err);
     return res.status(502).json({ error: 'upstream_error', detail: err?.message || 'unknown' });
   }
 }

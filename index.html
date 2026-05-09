@@ -2576,9 +2576,36 @@
     const win = document.querySelector('.chat-window');
     win.classList.remove('mode-text', 'mode-record', 'mode-live');
     win.classList.add('mode-' + state.mode);
-    // Timer starts on first user message, not on chat open. The countdown
-    // shouldn't run while the user is just reading the welcome.
+    syncSessionFromServer();
     startTimer();
+  }
+
+  async function syncSessionFromServer() {
+    try {
+      const res = await fetch('/api/session', {
+        credentials: 'same-origin',
+        cache: 'no-store',
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      state.paid = !!data.paid;
+      const budget = data.freeBudgetMs || FREE_DURATION_MS;
+      if (data.hasSession) {
+        const remaining = Math.max(0, data.remainingMs || 0);
+        const elapsed = budget - remaining;
+        state.sessionStartedAt = Date.now() - elapsed;
+        state.remainingMs = remaining;
+      } else {
+        state.sessionStartedAt = null;
+        state.remainingMs = budget;
+      }
+      renderTimer();
+      if (!state.paid && state.remainingMs <= 0 && data.hasSession) {
+        showOutOfTime();
+      }
+    } catch (e) {
+      // network blip; client-side defaults remain
+    }
   }
   function closeChat() {
     document.getElementById('chatOverlay').classList.remove('active');

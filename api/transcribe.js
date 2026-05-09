@@ -138,14 +138,14 @@ export default async function handler(req, res) {
     const file = await toFile(buffer, `clip.${ext}`, { type: ct.split(';')[0] });
     const result = await client.audio.transcriptions.create({
       file,
-      model: 'whisper-1',
+      model: process.env.TRANSCRIBE_MODEL || 'whisper-1',
       language: 'en',
       prompt: 'Conversational Nigerian English. May include some Pidgin like "i dey hear", "wahala", "abi", "sef".',
     });
     setSessionCookie(res, session);
     return res.status(200).json({ text: (result.text || '').trim() });
   } catch (err) {
-    console.error('whisper error', err);
+    console.error('transcribe error', err);
     return res.status(502).json({ error: 'transcribe_failed', detail: err?.message || 'unknown' });
   }
 }
