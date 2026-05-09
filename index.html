@@ -772,12 +772,19 @@
     border-radius: 22px;
     width: 100%;
     max-width: 640px;
-    height: 78vh;
-    max-height: 720px;
+    height: 90vh;
+    max-height: 820px;
     display: flex;
     flex-direction: column;
     box-shadow: 0 30px 80px -20px rgba(0,0,0,0.4);
     overflow: hidden;
+  }
+  @media (max-width: 600px) {
+    .chat-overlay { padding: 0; }
+    .chat-window { height: 100vh; max-height: none; border-radius: 0; }
+    .stage { padding: 18px 20px 14px; }
+    .stage-orb-wrap { width: 170px; height: 170px; }
+    .stage-mic { width: 56px; height: 56px; }
   }
   .chat-header {
     padding: 18px 24px;
@@ -787,30 +794,248 @@
     justify-content: space-between;
     gap: 16px;
   }
-  .chat-header-left { display: flex; align-items: center; gap: 12px; }
-  .orb {
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    background: var(--ink);
-    transition: transform 0.3s, background 0.4s;
+  .chat-header-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+  .chat-header-info { min-width: 0; }
+  .chat-header-info .status-line {
+    font-size: 12px;
+    color: var(--ink-muted);
+    transition: color 0.4s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+  }
+
+  /* ===== STAGE (audio-first) ===== */
+  .stage {
+    --orb-amp: 0;
+    --orb-hue: 230;
+    --orb-warm: #ffb98a;
+    --orb-cool: #c4a8ff;
+    --orb-deep: #2a2540;
+    flex: 0 0 auto;
+    padding: 28px 24px 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    background:
+      radial-gradient(ellipse 80% 100% at 50% 0%, rgba(255,225,200,0.45), transparent 65%),
+      radial-gradient(ellipse 60% 80% at 50% 100%, rgba(196,168,255,0.18), transparent 60%),
+      linear-gradient(180deg, #fbf6ef 0%, #ffffff 100%);
+    border-bottom: 1px solid var(--line-soft);
     position: relative;
     overflow: hidden;
   }
-  body.path-her .orb { background: var(--blush); }
-  .orb::before {
+  body.path-her .stage {
+    --orb-warm: #ffc1cc;
+    --orb-cool: #ffb098;
+    background:
+      radial-gradient(ellipse 80% 100% at 50% 0%, rgba(255,200,210,0.45), transparent 65%),
+      radial-gradient(ellipse 60% 80% at 50% 100%, rgba(255,178,150,0.18), transparent 60%),
+      linear-gradient(180deg, #fdf4f1 0%, #ffffff 100%);
+  }
+
+  .stage-orb-wrap {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .stage-orb-halo,
+  .stage-orb-ring,
+  .stage-orb-core,
+  .stage-orb-glint,
+  .stage-orb-ripple {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .stage-orb-halo {
+    inset: -20%;
+    background: radial-gradient(circle at 50% 45%, rgba(255,200,160,0.55), rgba(196,168,255,0.25) 55%, transparent 75%);
+    filter: blur(28px);
+    animation: orbHaloDrift 14s ease-in-out infinite;
+    transform-origin: 50% 50%;
+  }
+  body.path-her .stage-orb-halo {
+    background: radial-gradient(circle at 50% 45%, rgba(255,194,206,0.55), rgba(255,178,150,0.25) 55%, transparent 75%);
+  }
+  .stage-orb-ring {
+    inset: 6%;
+    border: 1px solid rgba(0,0,0,0.05);
+    background: rgba(255,255,255,0.35);
+    backdrop-filter: blur(2px);
+    box-shadow: inset 0 0 30px rgba(255,255,255,0.45), 0 12px 40px -12px rgba(60,40,80,0.18);
+    transition: transform 0.6s cubic-bezier(.2,.8,.2,1);
+  }
+  .stage-orb-core {
+    inset: 18%;
+    background:
+      radial-gradient(circle at 35% 30%, #ffffff 0%, rgba(255,255,255,0.6) 14%, transparent 30%),
+      radial-gradient(circle at 50% 60%, var(--orb-warm), var(--orb-cool) 60%, var(--orb-deep) 105%);
+    box-shadow:
+      inset 0 -22px 40px rgba(40,30,70,0.45),
+      inset 0 14px 30px rgba(255,255,255,0.55),
+      0 18px 40px -12px rgba(80,40,120,0.35);
+    transform: scale(calc(1 + var(--orb-amp) * 0.18));
+    transition: transform 90ms linear, background 0.6s;
+    animation: orbBreathe 6s ease-in-out infinite;
+  }
+  .stage-orb-glint {
+    width: 26%;
+    height: 18%;
+    top: 22%;
+    left: 26%;
+    background: radial-gradient(ellipse at center, rgba(255,255,255,0.85), rgba(255,255,255,0) 70%);
+    filter: blur(2px);
+    opacity: 0.85;
+  }
+  .stage-orb-ripple {
+    inset: 0;
+    border: 1px solid rgba(184,90,110,0.22);
+    opacity: 0;
+  }
+  .stage.listening .stage-orb-ripple { animation: orbRipple 1.8s ease-out infinite; }
+  .stage.listening .stage-orb-ripple:nth-child(3) { animation-delay: 0.6s; }
+  .stage.listening .stage-orb-ripple:nth-child(4) { animation-delay: 1.2s; }
+  .stage.thinking .stage-orb-halo { animation: orbHaloSpin 5s linear infinite; }
+  .stage.speaking .stage-orb-halo { filter: blur(36px); }
+
+  @keyframes orbBreathe {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.06); }
+  }
+  @keyframes orbHaloDrift {
+    0%, 100% { transform: rotate(0deg) scale(1); opacity: 0.95; }
+    50% { transform: rotate(8deg) scale(1.04); opacity: 1; }
+  }
+  @keyframes orbHaloSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @keyframes orbRipple {
+    0% { transform: scale(0.94); opacity: 0.55; }
+    100% { transform: scale(1.4); opacity: 0; }
+  }
+
+  .stage-label {
+    font-family: var(--display);
+    font-size: 16px;
+    color: var(--ink-soft);
+    letter-spacing: -0.01em;
+    font-style: italic;
+    text-align: center;
+    min-height: 24px;
+    transition: color 0.3s, opacity 0.3s;
+  }
+  .stage.listening .stage-label { color: #b85a6e; }
+  body.path-her .stage.listening .stage-label { color: var(--blush); }
+  .stage.thinking .stage-label { color: var(--ink-muted); }
+  .stage.speaking .stage-label { color: var(--ink); }
+
+  .stage-controls {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .stage-mic {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(160deg, var(--ink) 0%, #2c2c2e 100%);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 14px 30px -8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.15);
+    transition: transform 0.15s ease, background 0.25s;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+  }
+  .stage-mic:hover { transform: translateY(-1px); }
+  .stage-mic:active { transform: scale(0.96); }
+  .stage-mic svg { width: 24px; height: 24px; }
+  .stage-mic.recording {
+    background: linear-gradient(160deg, #b85a6e 0%, #8a3c4d 100%);
+    animation: micRecording 1.4s ease-in-out infinite;
+  }
+  body.path-her .stage-mic.recording {
+    background: linear-gradient(160deg, var(--blush) 0%, #8a3c4d 100%);
+  }
+  .stage-mic.processing {
+    background: linear-gradient(160deg, #6e6e73 0%, #424245 100%);
+    pointer-events: none;
+  }
+  .stage-mic.processing svg { animation: micSpin 0.9s linear infinite; }
+  .stage-mic.disabled {
+    background: var(--bg-soft);
+    color: var(--ink-muted);
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+  .stage-mic[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    color: var(--ink-muted);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+  }
+  .stage-mic:hover[data-tooltip]::after { opacity: 1; }
+  @keyframes micRecording {
+    0%, 100% { box-shadow: 0 14px 30px -8px rgba(184,90,110,0.5), inset 0 1px 0 rgba(255,255,255,0.15), 0 0 0 0 rgba(184,90,110,0.45); }
+    50% { box-shadow: 0 14px 30px -8px rgba(184,90,110,0.5), inset 0 1px 0 rgba(255,255,255,0.15), 0 0 0 14px rgba(184,90,110,0); }
+  }
+  @keyframes micSpin {
+    from { transform: rotate(0); }
+    to { transform: rotate(360deg); }
+  }
+
+  .ambient-toggle {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    color: var(--ink-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .ambient-toggle:hover { background: var(--bg-soft); color: var(--ink); }
+  .ambient-toggle.on { color: var(--ink); background: var(--bg-soft); }
+  .ambient-toggle.on::after {
     content: '';
     position: absolute;
-    top: 6px; left: 8px;
-    width: 8px; height: 8px;
-    background: rgba(255,255,255,0.4);
+    bottom: 4px; right: 4px;
+    width: 6px; height: 6px;
     border-radius: 50%;
-    filter: blur(1px);
+    background: #2da94f;
   }
-  .orb.speaking { animation: orbPulse 1.2s ease-in-out infinite; }
-  @keyframes orbPulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.12); }
+  .ambient-toggle svg { width: 16px; height: 16px; }
+
+  .stage-recording-time {
+    font-size: 12px;
+    color: var(--ink-muted);
+    font-variant-numeric: tabular-nums;
+    min-width: 38px;
+    text-align: left;
+    opacity: 0;
+    transition: opacity 0.25s;
   }
+  .stage.recording .stage-recording-time { opacity: 1; color: #b85a6e; }
+  body.path-her .stage.recording .stage-recording-time { color: var(--blush); }
   .chat-header-info h4 {
     font-family: var(--display);
     font-size: 17px;
@@ -1565,13 +1790,15 @@
   <div class="chat-window">
     <div class="chat-header">
       <div class="chat-header-left">
-        <div class="orb" id="orb"></div>
         <div class="chat-header-info">
           <h4 id="chatPersonaName">Your Sexhapist</h4>
-          <span>Online · Listening</span>
+          <span class="status-line" id="statusLine">a private place to think out loud</span>
         </div>
       </div>
       <div class="chat-header-actions">
+        <button class="ambient-toggle" id="ambientToggle" type="button" aria-pressed="false" title="Ambient sound">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12c2-3 4-3 6 0s4 3 6 0 4-3 6 0"/></svg>
+        </button>
         <span class="timer-pill" id="timerPill" title="Free time remaining">
           <span class="dot"></span>
           <span id="timerText">3:00</span>
@@ -1581,10 +1808,30 @@
         </button>
       </div>
     </div>
+
+    <div class="stage" id="stage">
+      <div class="stage-orb-wrap" id="orb">
+        <div class="stage-orb-halo"></div>
+        <div class="stage-orb-ripple"></div>
+        <div class="stage-orb-ripple"></div>
+        <div class="stage-orb-ripple"></div>
+        <div class="stage-orb-ring"></div>
+        <div class="stage-orb-core"></div>
+        <div class="stage-orb-glint"></div>
+      </div>
+      <div class="stage-label" id="stageLabel">hold the mic to talk</div>
+      <div class="stage-controls">
+        <span class="stage-recording-time" id="stageRecTime">0:00</span>
+        <button class="stage-mic" id="stageMic" type="button" data-tooltip="hold to talk" aria-label="Hold to record">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        </button>
+      </div>
+    </div>
+
     <div class="chat-body" id="chatBody"></div>
     <div class="quick-replies" id="quickReplies"></div>
     <div class="chat-input-row">
-      <input type="text" class="chat-input" id="chatInput" placeholder="What's on your mind?" onkeypress="if(event.key==='Enter') sendMessage()"/>
+      <input type="text" class="chat-input" id="chatInput" placeholder="or type a message..." onkeypress="if(event.key==='Enter') sendMessage()"/>
       <button class="send-btn" onclick="sendMessage()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       </button>
@@ -1673,6 +1920,323 @@
     });
   }
 
+  // ===== AUDIO =====
+  const audio = {
+    ctx: null,
+    ambient: { master: null, nodes: [], on: false },
+    mic: { stream: null, recorder: null, chunks: [], analyser: null, raf: null, startedAt: 0, timerInterval: null, mime: '' },
+    speech: { current: null, analyser: null, raf: null },
+  };
+
+  function ensureCtx() {
+    if (!audio.ctx) {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return null;
+      audio.ctx = new Ctx();
+    }
+    if (audio.ctx.state === 'suspended') audio.ctx.resume().catch(() => {});
+    return audio.ctx;
+  }
+
+  const STAGE_LABELS = {
+    idle: 'hold the mic to talk',
+    recording: 'i’m listening',
+    thinking: 'thinking...',
+    speaking: 'speaking',
+  };
+  function setStageState(s) {
+    const stage = document.getElementById('stage');
+    if (!stage) return;
+    stage.classList.remove('idle', 'listening', 'thinking', 'speaking', 'recording');
+    if (s === 'recording') stage.classList.add('listening', 'recording');
+    else stage.classList.add(s);
+    if (STAGE_LABELS[s]) document.getElementById('stageLabel').textContent = STAGE_LABELS[s];
+    if (s !== 'speaking' && s !== 'recording') {
+      stage.style.setProperty('--orb-amp', '0');
+    }
+  }
+
+  function startAmplitudeFrom(analyser, store) {
+    if (!analyser) return;
+    const stage = document.getElementById('stage');
+    const data = new Uint8Array(analyser.frequencyBinCount);
+    let smoothed = 0;
+    const tick = () => {
+      analyser.getByteTimeDomainData(data);
+      let sum = 0;
+      for (let i = 0; i < data.length; i++) {
+        const v = (data[i] - 128) / 128;
+        sum += v * v;
+      }
+      const rms = Math.sqrt(sum / data.length);
+      const amp = Math.min(1, rms * 4.5);
+      smoothed = smoothed * 0.7 + amp * 0.3;
+      stage.style.setProperty('--orb-amp', smoothed.toFixed(3));
+      store.raf = requestAnimationFrame(tick);
+    };
+    tick();
+  }
+  function stopAmplitude(store) {
+    if (store.raf) cancelAnimationFrame(store.raf);
+    store.raf = null;
+    const stage = document.getElementById('stage');
+    if (stage) stage.style.setProperty('--orb-amp', '0');
+  }
+
+  function pickMime() {
+    const candidates = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4;codecs=mp4a.40.2', 'audio/mp4', 'audio/ogg;codecs=opus'];
+    if (typeof MediaRecorder === 'undefined') return '';
+    for (const c of candidates) {
+      try { if (MediaRecorder.isTypeSupported(c)) return c; } catch {}
+    }
+    return '';
+  }
+
+  async function startRecording() {
+    if (audio.mic.recorder && audio.mic.recorder.state === 'recording') return;
+    if (!state.paid && state.remainingMs <= 0) { showOutOfTime(); return; }
+    if (!navigator.mediaDevices || typeof MediaRecorder === 'undefined') {
+      document.getElementById('stageLabel').textContent = 'voice not supported on this browser. type instead.';
+      return;
+    }
+    if (audio.speech.current) {
+      try { audio.speech.current.audio.pause(); } catch {}
+      stopAmplitude(audio.speech);
+      audio.speech.current = null;
+    }
+    const ctx = ensureCtx();
+    if (!ctx) return;
+    try {
+      if (!audio.mic.stream) {
+        audio.mic.stream = await navigator.mediaDevices.getUserMedia({
+          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+        });
+      }
+      audio.mic.mime = pickMime();
+      const recorder = audio.mic.mime
+        ? new MediaRecorder(audio.mic.stream, { mimeType: audio.mic.mime })
+        : new MediaRecorder(audio.mic.stream);
+      audio.mic.recorder = recorder;
+      audio.mic.chunks = [];
+      recorder.ondataavailable = (e) => { if (e.data && e.data.size) audio.mic.chunks.push(e.data); };
+      recorder.onstop = onRecordingStop;
+      recorder.start();
+
+      const src = ctx.createMediaStreamSource(audio.mic.stream);
+      audio.mic.analyser = ctx.createAnalyser();
+      audio.mic.analyser.fftSize = 1024;
+      audio.mic.analyser.smoothingTimeConstant = 0.6;
+      src.connect(audio.mic.analyser);
+
+      audio.mic.startedAt = Date.now();
+      setStageState('recording');
+      document.getElementById('stageMic').classList.add('recording');
+      document.getElementById('stageRecTime').textContent = '0:00';
+      startAmplitudeFrom(audio.mic.analyser, audio.mic);
+      audio.mic.timerInterval = setInterval(() => {
+        const s = Math.floor((Date.now() - audio.mic.startedAt) / 1000);
+        document.getElementById('stageRecTime').textContent =
+          `${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`;
+        if (s >= 30) stopRecording();
+      }, 250);
+    } catch (err) {
+      console.error('mic error', err);
+      setStageState('idle');
+      document.getElementById('stageLabel').textContent =
+        err && err.name === 'NotAllowedError'
+          ? 'mic blocked. allow it in your browser, then try again.'
+          : 'could not start the mic. try the keyboard instead.';
+    }
+  }
+
+  function stopRecording() {
+    const r = audio.mic.recorder;
+    if (!r || r.state !== 'recording') return;
+    if (audio.mic.timerInterval) { clearInterval(audio.mic.timerInterval); audio.mic.timerInterval = null; }
+    document.getElementById('stageMic').classList.remove('recording');
+    try { r.stop(); } catch {}
+  }
+
+  async function onRecordingStop() {
+    stopAmplitude(audio.mic);
+    const chunks = audio.mic.chunks.slice();
+    audio.mic.chunks = [];
+    const dur = Date.now() - audio.mic.startedAt;
+    if (dur < 600 || chunks.length === 0) {
+      setStageState('idle');
+      document.getElementById('stageLabel').textContent = 'a bit longer next time';
+      setTimeout(() => {
+        if (!isStageBusy()) document.getElementById('stageLabel').textContent = STAGE_LABELS.idle;
+      }, 1400);
+      return;
+    }
+    setStageState('thinking');
+    document.getElementById('stageLabel').textContent = 'getting your words...';
+    const mic = document.getElementById('stageMic');
+    mic.classList.add('processing');
+
+    const blob = new Blob(chunks, { type: chunks[0].type || audio.mic.mime || 'audio/webm' });
+    try {
+      const res = await fetch('/api/transcribe', {
+        method: 'POST',
+        headers: { 'Content-Type': blob.type || 'audio/webm' },
+        credentials: 'same-origin',
+        body: blob,
+      });
+      const data = await res.json().catch(() => ({}));
+      mic.classList.remove('processing');
+      if (res.status === 402) {
+        state.remainingMs = 0;
+        renderTimer();
+        setStageState('idle');
+        showOutOfTime();
+        return;
+      }
+      if (!res.ok) {
+        setStageState('idle');
+        document.getElementById('stageLabel').textContent = 'i could not catch that. try again?';
+        return;
+      }
+      const text = (data.text || '').trim();
+      if (!text) {
+        setStageState('idle');
+        document.getElementById('stageLabel').textContent = 'i did not hear words. try again?';
+        return;
+      }
+      sendUserMessage(text);
+    } catch (e) {
+      mic.classList.remove('processing');
+      setStageState('idle');
+      document.getElementById('stageLabel').textContent = 'connection blip. try again?';
+    }
+  }
+
+  function isStageBusy() {
+    const cls = document.getElementById('stage').classList;
+    return cls.contains('thinking') || cls.contains('speaking') || cls.contains('recording');
+  }
+
+  function startAmbient() {
+    const ctx = ensureCtx();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+    const master = ctx.createGain();
+    master.gain.value = 0;
+    master.gain.linearRampToValueAtTime(0.085, now + 1.6);
+    master.connect(ctx.destination);
+
+    const tones = [
+      { freq: 220.00, gain: 0.55, det: -2 },
+      { freq: 277.18, gain: 0.40, det: 3 },
+      { freq: 110.00, gain: 0.45, det: 0 },
+    ];
+    const nodes = [];
+    tones.forEach(t => {
+      const o = ctx.createOscillator();
+      o.type = 'sine';
+      o.frequency.value = t.freq;
+      o.detune.value = t.det;
+      const g = ctx.createGain();
+      g.gain.value = t.gain;
+      o.connect(g).connect(master);
+      o.start();
+      nodes.push(o);
+    });
+
+    const lfo = ctx.createOscillator();
+    lfo.frequency.value = 0.07;
+    const lfoGain = ctx.createGain();
+    lfoGain.gain.value = 0.025;
+    lfo.connect(lfoGain).connect(master.gain);
+    lfo.start();
+    nodes.push(lfo);
+
+    const bufLen = ctx.sampleRate * 4;
+    const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+    const ch = buf.getChannelData(0);
+    let last = 0;
+    for (let i = 0; i < bufLen; i++) {
+      const w = Math.random() * 2 - 1;
+      last = (last + 0.02 * w) / 1.02;
+      ch[i] = last * 3;
+    }
+    const noise = ctx.createBufferSource();
+    noise.buffer = buf;
+    noise.loop = true;
+    const lp = ctx.createBiquadFilter();
+    lp.type = 'lowpass';
+    lp.frequency.value = 380;
+    lp.Q.value = 0.6;
+    const noiseGain = ctx.createGain();
+    noiseGain.gain.value = 0.16;
+    noise.connect(lp).connect(noiseGain).connect(master);
+    noise.start();
+    nodes.push(noise);
+
+    audio.ambient.master = master;
+    audio.ambient.nodes = nodes;
+    audio.ambient.on = true;
+  }
+
+  function stopAmbient() {
+    if (!audio.ambient.on || !audio.ctx) return;
+    const ctx = audio.ctx;
+    const master = audio.ambient.master;
+    if (master) {
+      const now = ctx.currentTime;
+      master.gain.cancelScheduledValues(now);
+      master.gain.setValueAtTime(master.gain.value, now);
+      master.gain.linearRampToValueAtTime(0.0001, now + 1.0);
+    }
+    const nodes = audio.ambient.nodes.slice();
+    setTimeout(() => {
+      nodes.forEach(n => { try { n.stop(); } catch {} });
+    }, 1100);
+    audio.ambient.master = null;
+    audio.ambient.nodes = [];
+    audio.ambient.on = false;
+  }
+
+  function toggleAmbient() {
+    const btn = document.getElementById('ambientToggle');
+    if (audio.ambient.on) {
+      stopAmbient();
+      btn.classList.remove('on');
+      btn.setAttribute('aria-pressed', 'false');
+    } else {
+      startAmbient();
+      btn.classList.add('on');
+      btn.setAttribute('aria-pressed', 'true');
+    }
+  }
+
+  function bindStageHandlers() {
+    const mic = document.getElementById('stageMic');
+    if (!mic) return;
+    let pressed = false;
+    const start = (e) => {
+      if (pressed) return;
+      pressed = true;
+      e.preventDefault();
+      startRecording();
+    };
+    const end = (e) => {
+      if (!pressed) return;
+      pressed = false;
+      e.preventDefault();
+      stopRecording();
+    };
+    mic.addEventListener('mousedown', start);
+    mic.addEventListener('touchstart', start, { passive: false });
+    mic.addEventListener('mouseup', end);
+    mic.addEventListener('mouseleave', end);
+    mic.addEventListener('touchend', end);
+    mic.addEventListener('touchcancel', end);
+
+    const ambBtn = document.getElementById('ambientToggle');
+    if (ambBtn) ambBtn.addEventListener('click', toggleAmbient);
+  }
+
   // ===== CHAT =====
   function openChat() {
     document.getElementById('chatOverlay').classList.add('active');
@@ -1690,6 +2254,7 @@
       });
     }
     renderQuickReplies();
+    setStageState('idle');
     if (!state.sessionStartedAt) {
       state.sessionStartedAt = Date.now();
     }
@@ -1698,6 +2263,12 @@
   function closeChat() {
     document.getElementById('chatOverlay').classList.remove('active');
     stopTimer();
+    if (audio.mic.recorder && audio.mic.recorder.state === 'recording') stopRecording();
+    if (audio.speech.current) {
+      try { audio.speech.current.audio.pause(); } catch {}
+      stopAmplitude(audio.speech);
+      audio.speech.current = null;
+    }
   }
   function openChatWith(prefill) {
     openChat();
@@ -1812,17 +2383,10 @@
     if (t) t.remove();
   }
 
-  async function sendMessage() {
-    const input = document.getElementById('chatInput');
-    const text = input.value.trim();
+  async function sendUserMessage(text) {
     if (!text) return;
+    if (!state.paid && state.remainingMs <= 0) { showOutOfTime(); return; }
 
-    if (!state.paid && state.remainingMs <= 0) {
-      showOutOfTime();
-      return;
-    }
-
-    input.value = '';
     document.getElementById('quickReplies').style.display = 'none';
     addUserMessage(text);
 
@@ -1832,7 +2396,10 @@
     if (!state.sessionStartedAt) state.sessionStartedAt = Date.now();
     startTimer();
 
+    setStageState('thinking');
+    document.getElementById('stageLabel').textContent = 'thinking...';
     showTyping();
+
     try {
       const res = await fetch('/api/chat', {
         method: 'POST',
@@ -1847,15 +2414,17 @@
       if (res.status === 402) {
         state.remainingMs = 0;
         renderTimer();
+        setStageState('idle');
         showOutOfTime();
         return;
       }
       if (!res.ok) {
-        addBotMessage("something glitched on my end. give it a second and try again.");
+        setStageState('idle');
+        addBotMessage('something glitched on my end. give it a second and try again.');
         return;
       }
 
-      const reply = data.message || "i lost the thread there. try that again?";
+      const reply = data.message || 'i lost the thread there. try that again?';
       if (typeof data.remainingMs === 'number') {
         state.remainingMs = data.remainingMs;
         renderTimer();
@@ -1864,12 +2433,26 @@
       addBotMessage(reply);
     } catch (e) {
       hideTyping();
-      addBotMessage("connection issue on my end. mind trying that again?");
+      setStageState('idle');
+      addBotMessage('connection issue on my end. mind trying that again?');
     }
   }
 
+  async function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    sendUserMessage(text);
+  }
+
   async function playVoice(text) {
-    const orb = document.getElementById('orb');
+    if (audio.speech.current) {
+      try { audio.speech.current.audio.pause(); } catch {}
+      stopAmplitude(audio.speech);
+      audio.speech.current = null;
+    }
+    const ctx = ensureCtx();
     try {
       const res = await fetch('/api/voice', {
         method: 'POST',
@@ -1877,15 +2460,55 @@
         credentials: 'same-origin',
         body: JSON.stringify({ text, path: state.path }),
       });
-      if (!res.ok) return;
+      if (!res.ok) {
+        if (isStageBusy()) setStageState('idle');
+        return;
+      }
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
-      const audio = new Audio(url);
-      orb.classList.add('speaking');
-      audio.onended = () => { orb.classList.remove('speaking'); URL.revokeObjectURL(url); };
-      audio.play();
+      const audioEl = new Audio(url);
+
+      let analyser = null;
+      if (ctx) {
+        try {
+          const src = ctx.createMediaElementSource(audioEl);
+          analyser = ctx.createAnalyser();
+          analyser.fftSize = 1024;
+          analyser.smoothingTimeConstant = 0.55;
+          src.connect(analyser);
+          src.connect(ctx.destination);
+        } catch (err) {
+          analyser = null;
+        }
+      }
+
+      audio.speech.analyser = analyser;
+      audio.speech.current = { audio: audioEl };
+
+      setStageState('speaking');
+      if (analyser) startAmplitudeFrom(analyser, audio.speech);
+
+      audioEl.onended = () => {
+        stopAmplitude(audio.speech);
+        audio.speech.current = null;
+        URL.revokeObjectURL(url);
+        setStageState('idle');
+      };
+      audioEl.onerror = () => {
+        stopAmplitude(audio.speech);
+        audio.speech.current = null;
+        URL.revokeObjectURL(url);
+        setStageState('idle');
+      };
+      audioEl.play().catch(() => {
+        stopAmplitude(audio.speech);
+        audio.speech.current = null;
+        setStageState('idle');
+      });
     } catch (e) {
-      orb.classList.remove('speaking');
+      stopAmplitude(audio.speech);
+      audio.speech.current = null;
+      setStageState('idle');
     }
   }
 
@@ -1895,6 +2518,7 @@
   document.getElementById('outOfTimeModal').addEventListener('click', (e) => {
     if (e.target.id === 'outOfTimeModal') closeOutOfTime();
   });
+  bindStageHandlers();
 </script>
 
 </body>
