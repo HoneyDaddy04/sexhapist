@@ -806,6 +806,56 @@
     display: block;
   }
 
+  /* ===== MODE BAR ===== */
+  .mode-bar {
+    display: flex;
+    gap: 6px;
+    padding: 12px 18px 10px;
+    background: #fff;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .mode-btn {
+    flex: 1;
+    padding: 9px 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-muted);
+    background: var(--bg-soft);
+    border-radius: 50px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    letter-spacing: 0.01em;
+  }
+  .mode-btn:hover { color: var(--ink); }
+  .mode-btn.active {
+    background: var(--ink);
+    color: #fff;
+  }
+  body.path-her .mode-btn.active { background: var(--blush); }
+  .mode-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+  .chat-window.mode-text .stage { display: none; }
+  .chat-window.mode-text .quick-replies { padding-top: 12px; }
+
+  /* live mode mic button morphs into a session toggle */
+  .stage-mic.live-active {
+    background: linear-gradient(160deg, #2da94f 0%, #1e6b3a 100%);
+  }
+  .stage-mic.live-active::before {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 2px solid rgba(45,169,79,0.35);
+    animation: liveRing 2.2s ease-out infinite;
+  }
+  @keyframes liveRing {
+    0% { transform: scale(0.95); opacity: 0.8; }
+    100% { transform: scale(1.25); opacity: 0; }
+  }
+
   /* ===== STAGE (audio-first) ===== */
   .stage {
     --orb-amp: 0;
@@ -1809,6 +1859,21 @@
       </div>
     </div>
 
+    <div class="mode-bar" role="tablist" aria-label="Chat mode">
+      <button class="mode-btn" data-mode="text" type="button" role="tab" onclick="setMode('text')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Text
+      </button>
+      <button class="mode-btn active" data-mode="record" type="button" role="tab" onclick="setMode('record')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
+        Hold to Talk
+      </button>
+      <button class="mode-btn" data-mode="live" type="button" role="tab" onclick="setMode('live')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        Live
+      </button>
+    </div>
+
     <div class="stage" id="stage">
       <div class="stage-orb-wrap" id="orb">
         <div class="stage-orb-halo"></div>
@@ -1855,7 +1920,10 @@
   const FREE_DURATION_MS = 3 * 60 * 1000;
   const state = {
     path: 'him',
+    mode: 'record',
     voiceMode: 'auto',
+    botSpeaking: false,
+    liveMode: false,
     historyHim: [],
     historyHer: [],
     sessionStartedAt: null,
@@ -2210,28 +2278,278 @@
     }
   }
 
+  // ===== MODE SWITCHING =====
+  function setMode(mode) {
+    if (state.mode === mode) return;
+    if (state.mode === 'live') stopLiveMode();
+    if (state.mode === 'record' && audio.mic.recorder && audio.mic.recorder.state === 'recording') {
+      stopRecording();
+    }
+    state.mode = mode;
+    document.querySelectorAll('.mode-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.mode === mode);
+    });
+    const win = document.querySelector('.chat-window');
+    win.classList.remove('mode-text', 'mode-record', 'mode-live');
+    win.classList.add('mode-' + mode);
+
+    const mic = document.getElementById('stageMic');
+    const tooltip = document.querySelector('.stage-mic[data-tooltip]');
+    if (mic) {
+      mic.classList.remove('recording', 'processing', 'live-active');
+    }
+    const label = document.getElementById('stageLabel');
+
+    if (mode === 'text') {
+      label && (label.textContent = '');
+      const input = document.getElementById('chatInput');
+      if (input) {
+        input.placeholder = "what's on your mind?";
+        setTimeout(() => input.focus(), 60);
+      }
+      setStageState('idle');
+    } else if (mode === 'record') {
+      label && (label.textContent = STAGE_LABELS.idle);
+      if (tooltip) tooltip.setAttribute('data-tooltip', 'hold to talk');
+      const input = document.getElementById('chatInput');
+      if (input) input.placeholder = 'or type a message...';
+      setStageState('idle');
+    } else if (mode === 'live') {
+      if (tooltip) tooltip.setAttribute('data-tooltip', 'tap to start');
+      label && (label.textContent = 'tap the mic to start a live session');
+      const input = document.getElementById('chatInput');
+      if (input) input.placeholder = 'or type a message...';
+      setStageState('idle');
+    }
+  }
+
+  // ===== LIVE MODE (VAD) =====
+  async function startLiveMode() {
+    if (!state.paid && state.remainingMs <= 0) { showOutOfTime(); return; }
+    if (state.liveMode) return;
+    if (!navigator.mediaDevices || typeof MediaRecorder === 'undefined') {
+      document.getElementById('stageLabel').textContent = 'live mode not supported here. try record instead.';
+      return;
+    }
+    const ctx = ensureCtx();
+    if (!ctx) return;
+    try {
+      if (!audio.mic.stream) {
+        audio.mic.stream = await navigator.mediaDevices.getUserMedia({
+          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+        });
+      }
+      const src = ctx.createMediaStreamSource(audio.mic.stream);
+      audio.mic.analyser = ctx.createAnalyser();
+      audio.mic.analyser.fftSize = 1024;
+      audio.mic.analyser.smoothingTimeConstant = 0.6;
+      src.connect(audio.mic.analyser);
+
+      state.liveMode = true;
+      document.getElementById('stageMic').classList.add('live-active');
+      const tooltip = document.querySelector('.stage-mic[data-tooltip]');
+      if (tooltip) tooltip.setAttribute('data-tooltip', 'tap to end');
+      setStageState('listening');
+      document.getElementById('stageLabel').textContent = 'i’m listening. talk anytime.';
+      startVADCycle();
+    } catch (err) {
+      console.error('live mode error', err);
+      state.liveMode = false;
+      document.getElementById('stageMic').classList.remove('live-active');
+      setStageState('idle');
+      document.getElementById('stageLabel').textContent =
+        err && err.name === 'NotAllowedError'
+          ? 'mic blocked. allow it, then try again.'
+          : 'could not start live mode.';
+    }
+  }
+
+  function stopLiveMode() {
+    state.liveMode = false;
+    if (audio.mic.timerInterval) { clearInterval(audio.mic.timerInterval); audio.mic.timerInterval = null; }
+    if (audio.mic.recorder && audio.mic.recorder.state === 'recording') {
+      try { audio.mic.recorder.onstop = null; audio.mic.recorder.stop(); } catch {}
+    }
+    if (audio.mic.raf) { cancelAnimationFrame(audio.mic.raf); audio.mic.raf = null; }
+    audio.mic.recorder = null;
+    audio.mic.chunks = [];
+    const mic = document.getElementById('stageMic');
+    if (mic) mic.classList.remove('live-active', 'recording', 'processing');
+    const tooltip = document.querySelector('.stage-mic[data-tooltip]');
+    if (tooltip && state.mode === 'live') tooltip.setAttribute('data-tooltip', 'tap to start');
+    document.getElementById('stage').style.setProperty('--orb-amp', '0');
+    if (audio.speech.current) {
+      try { audio.speech.current.audioEl.pause(); } catch {}
+    }
+    if (state.mode === 'live') {
+      document.getElementById('stageLabel').textContent = 'tap the mic to start a live session';
+    }
+    setStageState('idle');
+  }
+
+  function startVADCycle() {
+    if (!state.liveMode) return;
+    const mime = pickMime();
+    const recorder = mime
+      ? new MediaRecorder(audio.mic.stream, { mimeType: mime })
+      : new MediaRecorder(audio.mic.stream);
+    audio.mic.recorder = recorder;
+    audio.mic.chunks = [];
+    audio.mic.mime = mime;
+    recorder.ondataavailable = (e) => { if (e.data && e.data.size) audio.mic.chunks.push(e.data); };
+    recorder.onstop = onLiveSegmentStop;
+    try { recorder.start(120); } catch { try { recorder.start(); } catch {} }
+
+    const analyser = audio.mic.analyser;
+    if (!analyser) return;
+    const data = new Uint8Array(analyser.frequencyBinCount);
+    let smoothed = 0;
+    let speechStartedAt = 0;
+    let lastSpeechAt = 0;
+    let isSpeaking = false;
+    const SPEECH_RMS = 0.040;
+    const SILENCE_RMS = 0.020;
+    const SILENCE_AFTER_SPEECH_MS = 1200;
+    const MIN_SPEECH_MS = 500;
+    const MAX_SEGMENT_MS = 25000;
+    const segmentStartedAt = Date.now();
+
+    const stage = document.getElementById('stage');
+    const tick = () => {
+      if (!state.liveMode || audio.mic.recorder !== recorder) return;
+      analyser.getByteTimeDomainData(data);
+      let sum = 0;
+      for (let i = 0; i < data.length; i++) {
+        const v = (data[i] - 128) / 128;
+        sum += v * v;
+      }
+      const rms = Math.sqrt(sum / data.length);
+      smoothed = smoothed * 0.7 + rms * 0.3;
+
+      if (!state.botSpeaking) {
+        const visAmp = Math.min(1, smoothed * 5);
+        stage.style.setProperty('--orb-amp', visAmp.toFixed(3));
+      }
+
+      const now = Date.now();
+      if (!state.botSpeaking && smoothed > SPEECH_RMS) {
+        if (!isSpeaking) {
+          speechStartedAt = now;
+          isSpeaking = true;
+        }
+        lastSpeechAt = now;
+      }
+      if (isSpeaking && smoothed < SILENCE_RMS) {
+        if (now - lastSpeechAt > SILENCE_AFTER_SPEECH_MS && now - speechStartedAt > MIN_SPEECH_MS) {
+          isSpeaking = false;
+          try { recorder.stop(); } catch {}
+          return;
+        }
+      }
+      if (now - segmentStartedAt > MAX_SEGMENT_MS && isSpeaking) {
+        isSpeaking = false;
+        try { recorder.stop(); } catch {}
+        return;
+      }
+      audio.mic.raf = requestAnimationFrame(tick);
+    };
+    tick();
+  }
+
+  async function onLiveSegmentStop() {
+    if (!state.liveMode) return;
+    const chunks = audio.mic.chunks.slice();
+    audio.mic.chunks = [];
+    if (audio.mic.raf) { cancelAnimationFrame(audio.mic.raf); audio.mic.raf = null; }
+    if (chunks.length === 0) {
+      if (state.liveMode) startVADCycle();
+      return;
+    }
+    setStageState('thinking');
+    document.getElementById('stageLabel').textContent = 'getting your words...';
+    const blob = new Blob(chunks, { type: chunks[0].type || audio.mic.mime || 'audio/webm' });
+    if (blob.size < 1500) {
+      if (state.liveMode) startVADCycle();
+      setStageState('listening');
+      document.getElementById('stageLabel').textContent = 'i’m listening. talk anytime.';
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/transcribe', {
+        method: 'POST',
+        headers: { 'Content-Type': blob.type || 'audio/webm' },
+        credentials: 'same-origin',
+        body: blob,
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 402) {
+        state.remainingMs = 0;
+        renderTimer();
+        stopLiveMode();
+        showOutOfTime();
+        return;
+      }
+      if (!res.ok) {
+        if (state.liveMode) {
+          startVADCycle();
+          setStageState('listening');
+          document.getElementById('stageLabel').textContent = 'try that again?';
+        }
+        return;
+      }
+      const text = (data.text || '').trim();
+      if (!text) {
+        if (state.liveMode) {
+          startVADCycle();
+          setStageState('listening');
+          document.getElementById('stageLabel').textContent = 'i did not hear words. talk again.';
+        }
+        return;
+      }
+      sendUserMessage(text);
+    } catch (e) {
+      if (state.liveMode) {
+        startVADCycle();
+        setStageState('listening');
+        document.getElementById('stageLabel').textContent = 'connection blip. talk again.';
+      }
+    }
+  }
+
   function bindStageHandlers() {
     const mic = document.getElementById('stageMic');
     if (!mic) return;
     let pressed = false;
-    const start = (e) => {
+
+    const onPointerDown = (e) => {
+      if (state.mode !== 'record') return;
       if (pressed) return;
       pressed = true;
       e.preventDefault();
       startRecording();
     };
-    const end = (e) => {
+    const onPointerUp = (e) => {
+      if (state.mode !== 'record') return;
       if (!pressed) return;
       pressed = false;
       e.preventDefault();
       stopRecording();
     };
-    mic.addEventListener('mousedown', start);
-    mic.addEventListener('touchstart', start, { passive: false });
-    mic.addEventListener('mouseup', end);
-    mic.addEventListener('mouseleave', end);
-    mic.addEventListener('touchend', end);
-    mic.addEventListener('touchcancel', end);
+    const onClick = (e) => {
+      if (state.mode !== 'live') return;
+      e.preventDefault();
+      if (state.liveMode) stopLiveMode();
+      else startLiveMode();
+    };
+
+    mic.addEventListener('mousedown', onPointerDown);
+    mic.addEventListener('touchstart', onPointerDown, { passive: false });
+    mic.addEventListener('mouseup', onPointerUp);
+    mic.addEventListener('mouseleave', onPointerUp);
+    mic.addEventListener('touchend', onPointerUp);
+    mic.addEventListener('touchcancel', onPointerUp);
+    mic.addEventListener('click', onClick);
 
     const ambBtn = document.getElementById('ambientToggle');
     if (ambBtn) ambBtn.addEventListener('click', toggleAmbient);
@@ -2255,6 +2573,9 @@
     }
     renderQuickReplies();
     setStageState('idle');
+    const win = document.querySelector('.chat-window');
+    win.classList.remove('mode-text', 'mode-record', 'mode-live');
+    win.classList.add('mode-' + state.mode);
     // Timer starts on first user message, not on chat open. The countdown
     // shouldn't run while the user is just reading the welcome.
     startTimer();
@@ -2262,11 +2583,14 @@
   function closeChat() {
     document.getElementById('chatOverlay').classList.remove('active');
     stopTimer();
+    if (state.liveMode) stopLiveMode();
     if (audio.mic.recorder && audio.mic.recorder.state === 'recording') stopRecording();
     if (audio.speech.current) {
-      try { audio.speech.current.audio.pause(); } catch {}
+      try { audio.speech.current.audioEl.pause(); } catch {}
       stopAmplitude(audio.speech);
+      stopSpeechFallbackPulse();
       audio.speech.current = null;
+      state.botSpeaking = false;
     }
   }
   function openChatWith(prefill) {
@@ -2439,13 +2763,56 @@
     sendUserMessage(text);
   }
 
+  function startSpeechFallbackPulse() {
+    const stage = document.getElementById('stage');
+    if (!stage) return;
+    let phase = 0;
+    audio.speech.fallbackInterval = setInterval(() => {
+      phase += 0.18;
+      const v = 0.28 + 0.18 * Math.sin(phase) + 0.08 * Math.sin(phase * 2.7);
+      stage.style.setProperty('--orb-amp', Math.max(0, v).toFixed(3));
+    }, 50);
+  }
+  function stopSpeechFallbackPulse() {
+    if (audio.speech.fallbackInterval) {
+      clearInterval(audio.speech.fallbackInterval);
+      audio.speech.fallbackInterval = null;
+    }
+  }
+
+  function tryAttachAmpAnalyser(audioEl) {
+    if (!audio.ctx || audio.ctx.state !== 'running') return false;
+    let stream = null;
+    if (typeof audioEl.captureStream === 'function') {
+      try { stream = audioEl.captureStream(); } catch {}
+    } else if (typeof audioEl.mozCaptureStream === 'function') {
+      try { stream = audioEl.mozCaptureStream(); } catch {}
+    }
+    if (!stream || stream.getAudioTracks().length === 0) return false;
+    try {
+      const src = audio.ctx.createMediaStreamSource(stream);
+      const analyser = audio.ctx.createAnalyser();
+      analyser.fftSize = 1024;
+      analyser.smoothingTimeConstant = 0.55;
+      src.connect(analyser);
+      audio.speech.analyser = analyser;
+      stopSpeechFallbackPulse();
+      startAmplitudeFrom(analyser, audio.speech);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   async function playVoice(text) {
+    if (state.mode === 'text') return;
     if (audio.speech.current) {
-      try { audio.speech.current.audio.pause(); } catch {}
+      try { audio.speech.current.audioEl.pause(); } catch {}
       stopAmplitude(audio.speech);
+      stopSpeechFallbackPulse();
       audio.speech.current = null;
     }
-    const ctx = ensureCtx();
+    state.botSpeaking = true;
     try {
       const res = await fetch('/api/voice', {
         method: 'POST',
@@ -2454,54 +2821,51 @@
         body: JSON.stringify({ text, path: state.path }),
       });
       if (!res.ok) {
-        if (isStageBusy()) setStageState('idle');
+        state.botSpeaking = false;
+        if (isStageBusy() && !state.liveMode) setStageState('idle');
         return;
       }
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const audioEl = new Audio(url);
+      audioEl.preload = 'auto';
 
-      let analyser = null;
-      if (ctx) {
-        try {
-          const src = ctx.createMediaElementSource(audioEl);
-          analyser = ctx.createAnalyser();
-          analyser.fftSize = 1024;
-          analyser.smoothingTimeConstant = 0.55;
-          src.connect(analyser);
-          src.connect(ctx.destination);
-        } catch (err) {
-          analyser = null;
-        }
-      }
-
-      audio.speech.analyser = analyser;
-      audio.speech.current = { audio: audioEl };
-
+      audio.speech.current = { audioEl, url };
       setStageState('speaking');
-      if (analyser) startAmplitudeFrom(analyser, audio.speech);
+      startSpeechFallbackPulse();
 
-      audioEl.onended = () => {
+      audioEl.addEventListener('canplay', () => { tryAttachAmpAnalyser(audioEl); }, { once: true });
+
+      const cleanup = () => {
         stopAmplitude(audio.speech);
-        audio.speech.current = null;
+        stopSpeechFallbackPulse();
         URL.revokeObjectURL(url);
-        setStageState('idle');
-      };
-      audioEl.onerror = () => {
-        stopAmplitude(audio.speech);
         audio.speech.current = null;
-        URL.revokeObjectURL(url);
-        setStageState('idle');
+        state.botSpeaking = false;
+        if (state.liveMode && state.mode === 'live') {
+          setStageState('listening');
+          document.getElementById('stageLabel').textContent = 'i’m listening. talk anytime.';
+          startVADCycle();
+        } else {
+          setStageState('idle');
+        }
       };
-      audioEl.play().catch(() => {
-        stopAmplitude(audio.speech);
-        audio.speech.current = null;
-        setStageState('idle');
-      });
+      audioEl.onended = cleanup;
+      audioEl.onerror = cleanup;
+
+      try {
+        await audioEl.play();
+      } catch (err) {
+        console.warn('voice play blocked', err);
+        cleanup();
+      }
     } catch (e) {
+      console.error('playVoice error', e);
       stopAmplitude(audio.speech);
+      stopSpeechFallbackPulse();
       audio.speech.current = null;
-      setStageState('idle');
+      state.botSpeaking = false;
+      if (!state.liveMode) setStageState('idle');
     }
   }
 
