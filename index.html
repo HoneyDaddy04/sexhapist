@@ -2903,6 +2903,19 @@
     if (e.target.id === 'outOfTimeModal') closeOutOfTime();
   });
   bindStageHandlers();
+
+  // If the user refreshes the page after their free time was already up,
+  // wipe the expired session cookie so they get a fresh 3 minutes and a
+  // fresh conversation. Mid-session refreshes are preserved (server-side
+  // /api/reset only clears expired sessions).
+  (function maybeResetExpiredSession() {
+    try {
+      const navEntries = performance.getEntriesByType('navigation');
+      const navType = navEntries && navEntries[0] && navEntries[0].type;
+      if (navType !== 'reload') return;
+      fetch('/api/reset', { method: 'POST', credentials: 'same-origin' }).catch(() => {});
+    } catch (e) {}
+  })();
 </script>
 
 </body>
