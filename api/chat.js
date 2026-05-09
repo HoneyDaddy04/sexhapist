@@ -170,8 +170,9 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'method_not_allowed' });
   }
 
-  if (!process.env.OPENAI_API_KEY) {
-    return res.status(500).json({ error: 'server_misconfigured', detail: 'OPENAI_API_KEY missing' });
+  const useOpenRouter = !!process.env.OPENROUTER_API_KEY;
+  if (!useOpenRouter && !process.env.OPENAI_API_KEY) {
+    return res.status(500).json({ error: 'server_misconfigured', detail: 'set OPENAI_API_KEY (Vercel) or OPENROUTER_API_KEY (proxy)' });
   }
 
   let body = req.body;
@@ -217,11 +218,22 @@ export default async function handler(req, res) {
     });
   }
 
-  const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  const client = useOpenRouter
+    ? new OpenAI({
+        apiKey: process.env.OPENROUTER_API_KEY,
+        baseURL: 'https://openrouter.ai/api/v1',
+        defaultHeaders: {
+          'HTTP-Referer': process.env.OPENROUTER_REFERER || 'https://sexhapist.com',
+          'X-Title': 'Sexhapist',
+        },
+      })
+    : new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
   try {
     const completion = await client.chat.completions.create({
-      model: process.env.CHAT_MODEL || 'gpt-4o-mini',
+      model: useOpenRouter
+        ? (process.env.OPENROUTER_MODEL || 'openai/gpt-4o')
+        : (process.env.CHAT_MODEL || 'gpt-4o-mini'),
       max_tokens: 600,
       temperature: 0.7,
       messages: [

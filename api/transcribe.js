@@ -98,8 +98,9 @@ export default async function handler(req, res) {
     res.setHeader('Allow', 'POST');
     return res.status(405).json({ error: 'method_not_allowed' });
   }
-  if (!process.env.OPENAI_API_KEY) {
-    return res.status(500).json({ error: 'server_misconfigured', detail: 'OPENAI_API_KEY missing' });
+  const useOpenRouter = !!process.env.OPENROUTER_API_KEY;
+  if (!useOpenRouter && !process.env.OPENAI_API_KEY) {
+    return res.status(500).json({ error: 'server_misconfigured', detail: 'set OPENAI_API_KEY (Vercel) or OPENROUTER_API_KEY (proxy)' });
   }
 
   const cookies = parseCookies(req.headers.cookie);
@@ -134,11 +135,22 @@ export default async function handler(req, res) {
   const ext = extFromContentType(ct);
 
   try {
-    const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const client = useOpenRouter
+      ? new OpenAI({
+          apiKey: process.env.OPENROUTER_API_KEY,
+          baseURL: 'https://openrouter.ai/api/v1',
+          defaultHeaders: {
+            'HTTP-Referer': process.env.OPENROUTER_REFERER || 'https://sexhapist.com',
+            'X-Title': 'Sexhapist',
+          },
+        })
+      : new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
     const file = await toFile(buffer, `clip.${ext}`, { type: ct.split(';')[0] });
     const result = await client.audio.transcriptions.create({
       file,
-      model: process.env.TRANSCRIBE_MODEL || 'whisper-1',
+      model: useOpenRouter
+        ? (process.env.OPENROUTER_TRANSCRIBE_MODEL || 'openai/gpt-4o-mini-transcribe')
+        : (process.env.TRANSCRIBE_MODEL || 'whisper-1'),
       language: 'en',
       prompt: 'Conversational Nigerian English. May include some Pidgin like "i dey hear", "wahala", "abi", "sef".',
     });
