@@ -4,8 +4,10 @@ const COOKIE_NAME = 'sx_session';
 const COOKIE_MAX_AGE_S = 24 * 60 * 60;
 const FREE_DURATION_MS = 3 * 60 * 1000;
 
-const VOICE_HIM = process.env.VOICE_ID_HIM || 'ErXwobaYiN019PkySvjV';
-const VOICE_HER = process.env.VOICE_ID_HER || 'EXAVITQu4vr4xnSDxMAL';
+// Nigerian voices from the ElevenLabs public library.
+// Him: "NZ The African Man - Nigerian Voice Pro". Her: "Bukola - Young Nigerian, Gentle, Clear, Warm".
+const VOICE_HIM = process.env.VOICE_ID_HIM || 'gsyHQ9kWCDIipR26RqQ1';
+const VOICE_HER = process.env.VOICE_ID_HER || 'oC2pCZZWEDRe6lmZpaaw';
 
 function getSecret() {
   const s = process.env.SESSION_SECRET;
@@ -110,8 +112,14 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         text,
-        model_id: 'eleven_turbo_v2_5',
-        voice_settings: { stability: 0.5, similarity_boost: 0.75 },
+        // multilingual_v2 preserves accent character better than turbo for Nigerian voices.
+        model_id: process.env.VOICE_MODEL || 'eleven_multilingual_v2',
+        voice_settings: {
+          stability: 0.45,
+          similarity_boost: 0.85,
+          style: 0.35,
+          use_speaker_boost: true,
+        },
       }),
     });
 
