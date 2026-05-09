@@ -67,6 +67,19 @@
     font-size: 13px; font-weight: 500; transition: background 0.2s;
   }
   .nav-cta:hover { background: var(--accent-soft); }
+  .nav-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .nav-center a {
+    color: var(--ink-soft);
+    transition: color 0.2s;
+  }
+  .nav-center a:hover { color: var(--ink); }
 
   .page {
     max-width: 640px;
@@ -210,7 +223,7 @@
 
 <nav>
   <div class="nav-inner">
-    <a href="sexhapist%20(2).html" class="logo">
+    <a href="index.html" class="logo">
       <div class="logo-mark">
         <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="Sexhapist">
           <path d="M45.75 36.36 A24 24 0 1 0 45.75 63.64 A18 18 0 1 1 45.75 36.36 Z" fill="#0066cc"/>
@@ -219,7 +232,11 @@
       </div>
       <div class="logo-name">Se<em>x</em>hapist</div>
     </a>
-    <a href="sexhapist%20(2).html" class="nav-cta">Talk now</a>
+    <div class="nav-center">
+      <a href="index.html">Home</a>
+      <a href="blogs.html">Notes</a>
+    </div>
+    <a href="index.html#topics" class="nav-cta">Talk now</a>
   </div>
 </nav>
 

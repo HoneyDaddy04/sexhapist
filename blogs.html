@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Notes · Sexhapist</title>
+<meta name="description" content="Stories and lessons from years of working with men and women who came in not knowing how to ask." />
+<link rel="icon" href="brand/favicon/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="brand/favicon/apple-touch-icon.svg">
+<link rel="manifest" href="brand/favicon/site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-soft: #f5f5f7;
+    --bg-warm: #f7f3ee;
+    --bg-warm-2: #f9f1ea;
+    --ink: #1d1d1f;
+    --ink-soft: #424245;
+    --ink-muted: #6e6e73;
+    --line: #d2d2d7;
+    --line-soft: #e8e8ed;
+    --accent: #1d1d1f;
+    --accent-soft: #2c2c2e;
+    --blue: #0066cc;
+    --blush: #b85a6e;
+    --display: 'Fraunces', 'Times New Roman', serif;
+    --body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--body);
+    font-weight: 400;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    transition: background 0.5s;
+  }
+  body.path-her { background: var(--bg-warm-2); }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--body); cursor: pointer; border: none; background: none; color: inherit; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: 56px; padding: 0 24px; z-index: 100;
+    background: rgba(255,255,255,0.78);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid var(--line-soft);
+    display: flex; align-items: center;
+  }
+  body.path-her nav { background: rgba(249,241,234,0.78); }
+  .nav-inner {
+    width: 100%; max-width: 1100px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px;
+  }
+  .logo { display: flex; align-items: center; gap: 8px; }
+  .logo-mark { width: 24px; height: 24px; flex-shrink: 0; }
+  .logo-mark svg { width: 100%; height: 100%; display: block; }
+  .logo-name {
+    font-family: var(--display);
+    font-size: 20px; font-weight: 500; letter-spacing: -0.01em;
+  }
+  .logo-name em { font-style: italic; color: var(--blush); font-weight: 400; }
+  .nav-right { display: flex; align-items: center; gap: 18px; }
+  .nav-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .nav-center a {
+    color: var(--ink-soft);
+    transition: color 0.2s;
+  }
+  .nav-center a:hover { color: var(--ink); }
+  .path-switch {
+    display: inline-flex;
+    background: var(--bg-soft);
+    border-radius: 980px;
+    padding: 3px;
+    font-size: 13px;
+  }
+  .path-switch button {
+    padding: 6px 14px;
+    border-radius: 980px;
+    color: var(--ink-muted);
+    transition: all 0.25s;
+    font-weight: 500;
+  }
+  .path-switch button.active {
+    background: #fff;
+    color: var(--blue);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  body.path-her .path-switch button.active { color: var(--blush); }
+  .nav-cta {
+    background: var(--accent); color: #fff;
+    padding: 8px 18px; border-radius: 980px;
+    font-size: 13px; font-weight: 500; transition: background 0.2s;
+  }
+  .nav-cta:hover { background: var(--accent-soft); }
+
+  /* HERO */
+  .hero {
+    max-width: 760px; margin: 0 auto;
+    padding: 140px 24px 32px;
+  }
+  .eyebrow {
+    font-size: 13px; color: var(--ink-muted);
+    letter-spacing: 0.08em; text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  h1 {
+    font-family: var(--display);
+    font-size: clamp(48px, 7.5vw, 80px);
+    font-weight: 400; line-height: 1.05;
+    letter-spacing: -0.025em;
+    margin-bottom: 20px;
+  }
+  h1 em { font-style: italic; font-weight: 300; color: var(--ink-muted); }
+  .lede {
+    font-size: 20px; color: var(--ink-soft);
+    line-height: 1.5;
+    margin-bottom: 14px;
+    letter-spacing: -0.005em;
+  }
+  .lede.for-her { display: none; }
+  body.path-her .lede.for-him { display: none; }
+  body.path-her .lede.for-her { display: block; }
+
+  /* POSTS */
+  .posts {
+    max-width: 880px;
+    margin: 56px auto 100px;
+    padding: 0 24px;
+    display: grid;
+    gap: 22px;
+  }
+  .post {
+    background: var(--bg-warm);
+    border-radius: 22px;
+    transition: background 0.3s;
+  }
+  body.path-her .post { background: #ffffff; border: 1px solid var(--line-soft); }
+  .post[data-path="her"] { display: none; }
+  body.path-her .post[data-path="him"] { display: none; }
+  body.path-her .post[data-path="her"] { display: block; }
+
+  .post-card {
+    padding: 32px 36px;
+    cursor: pointer;
+    position: relative;
+  }
+  .post-tag {
+    font-size: 12px;
+    color: var(--blue);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+  body.path-her .post-tag { color: var(--blush); }
+  .post-title {
+    font-family: var(--display);
+    font-size: clamp(28px, 4vw, 38px);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.018em;
+    margin-bottom: 14px;
+  }
+  .post-title em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--ink-muted);
+  }
+  .post-excerpt {
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin-bottom: 18px;
+  }
+  .post-read {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--blue);
+    font-weight: 500;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(0,102,204,0.25);
+    padding-bottom: 2px;
+    transition: all 0.2s;
+  }
+  body.path-her .post-read {
+    color: var(--blush);
+    border-bottom-color: rgba(184,90,110,0.25);
+  }
+  .post-read:hover { border-bottom-color: currentColor; }
+  .post-read::after { content: '→'; transition: transform 0.2s; }
+  .post:hover .post-read::after { transform: translateX(3px); }
+  .post.is-open .post-read::after { content: '↑'; }
+
+  .post-body {
+    display: none;
+    padding: 0 36px 40px;
+    max-width: 720px;
+    border-top: 1px solid var(--line-soft);
+    margin: 0 36px;
+    padding-top: 28px;
+    padding-bottom: 40px;
+  }
+  body.path-her .post-body { border-top-color: var(--line); }
+  .post.is-open .post-body { display: block; }
+  .post-body p {
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+    margin-bottom: 18px;
+  }
+  .post-body h4 {
+    font-family: var(--display);
+    font-size: 21px;
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: -0.005em;
+    color: var(--ink);
+    margin-top: 32px;
+    margin-bottom: 8px;
+  }
+  .post-body h4 + p { margin-top: 0; }
+  .post-body p strong { color: var(--ink); font-weight: 500; }
+
+  /* FINAL CTA */
+  .final {
+    max-width: 760px;
+    margin: 80px auto 100px;
+    padding: 56px 36px;
+    background: var(--bg-soft);
+    border-radius: 22px;
+    text-align: center;
+  }
+  body.path-her .final { background: #fff; border: 1px solid var(--line-soft); }
+  .final h2 {
+    font-family: var(--display);
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 14px;
+  }
+  .final h2 em { font-style: italic; color: var(--blue); }
+  body.path-her .final h2 em { color: var(--blush); }
+  .final p {
+    font-size: 17px;
+    color: var(--ink-soft);
+    margin-bottom: 28px;
+  }
+  .btn-primary {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    padding: 14px 32px;
+    border-radius: 980px;
+    font-size: 15px;
+    font-weight: 500;
+    transition: background 0.2s;
+  }
+  .btn-primary:hover { background: var(--accent-soft); }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--line-soft);
+    padding: 32px 24px;
+    color: var(--ink-muted);
+    font-size: 13px;
+  }
+  .footer-inner {
+    max-width: 1024px; margin: 0 auto;
+    display: flex; justify-content: space-between;
+    align-items: center; gap: 16px; flex-wrap: wrap;
+  }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a:hover { color: var(--ink); }
+
+  @media (max-width: 700px) {
+    .post-card { padding: 26px 24px; }
+    .post-body { margin: 0 24px; padding: 24px 0 32px; }
+    .nav-right { gap: 10px; }
+    .path-switch button { padding: 6px 10px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="Sexhapist">
+          <path d="M45.75 36.36 A24 24 0 1 0 45.75 63.64 A18 18 0 1 1 45.75 36.36 Z" fill="#0066cc"/>
+          <path d="M54.25 36.36 A24 24 0 1 1 54.25 63.64 A18 18 0 1 0 54.25 36.36 Z" fill="#b85a6e"/>
+        </svg>
+      </div>
+      <div class="logo-name">Se<em>x</em>hapist</div>
+    </a>
+    <div class="nav-center">
+      <a href="index.html">Home</a>
+    </div>
+    <div class="nav-right">
+      <div class="path-switch">
+        <button data-path="him" class="active" onclick="setPath('him')">For him</button>
+        <button data-path="her" onclick="setPath('her')">For her</button>
+      </div>
+      <a href="index.html#topics" class="nav-cta">Talk now</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <p class="eyebrow">Notes from the chair</p>
+  <h1>Real talk, <em>written down.</em></h1>
+  <p class="lede for-him">Stories and lessons from years of sitting across from men who came in not knowing how to ask. New ones land here every week.</p>
+  <p class="lede for-her">Stories and lessons from years of sitting across from women trying to reach the men they love. New ones land here every week.</p>
+</section>
+
+<div class="posts">
+
+  <!-- HIM 1 -->
+  <article class="post" data-path="him">
+    <div class="post-card" onclick="togglePost(this)">
+      <p class="post-tag">For him · Desire</p>
+      <h2 class="post-title">Desire. <em>And where it went.</em></h2>
+      <p class="post-excerpt">There's a man I used to see on Wednesdays. He came in twenty minutes early every week, sat in the green chair, and for the first six months he never once said the word "sex."</p>
+      <button class="post-read">Read</button>
+    </div>
+    <div class="post-body">
+      <p>There's a man I used to see on Wednesdays. He came in twenty minutes early every week, sat in the green chair, and for the first six months he never once said the word "sex." We talked about his job. We talked about his father. We talked about the ache in his lower back that came and went on no schedule. And then one Wednesday in April he said, very quietly, "I think I'm broken."</p>
+      <p>He wasn't broken. He was thirty-seven, married eight years, two kids, and the desire he used to recognize in himself had gone somewhere he could not follow. It had not been replaced by something dramatic. It had just thinned out. The reach was still there. The wanting was not.</p>
+      <p>If you are reading this, you probably know what he meant.</p>
+      <p>We tend to talk about male desire as if it's a switch. On or off. Working or broken. A lot of the men I've worked with come in convinced something is wrong with them, because the simple version of the story (men want sex always, all the time, more than their partner) does not match what they actually feel. So they stay quiet. They blame work, sleep, age, the kids, the wife, themselves. They Google in incognito. They schedule a doctor's appointment they never go to.</p>
+      <p>Here is what I have learned, sitting across from hundreds of versions of that man.</p>
+      <h4>Desire is a feedback loop, not a fuel tank.</h4>
+      <p>You don't run out. You stop topping it up. Every hour spent in a state of low-grade anxiety, performance pressure, unresolved resentment, or pure exhaustion sends the system a message: now is not the time. Do that for long enough and the system stops volunteering. It waits to be told it's safe.</p>
+      <h4>The thing that killed it is rarely the thing that brings it back.</h4>
+      <p>Men come in wanting to fix their testosterone. Or their wife. Or their stamina. Sometimes those matter. More often, the thing in the way is something quieter. A moment from a year ago where you asked for something and the answer hurt. A version of yourself you stopped recognizing in the mirror. A creeping sense of being needed but not wanted.</p>
+      <h4>You can rebuild it. It just isn't loud.</h4>
+      <p>Real desire returns the way a stream comes back after a drought. Slowly, in the corners. A song you used to like. A glance across the kitchen. The first morning your body wakes up and you don't immediately reach for your phone. You do not muscle it back. You make conditions. You wait.</p>
+      <p>The man in the green chair came back six months later, slower in his shoulders, easier in his face, and told me his wife had asked him on a Tuesday night if he wanted to take a walk. He said yes. They walked for forty minutes and didn't talk about anything important. When they got home, he kissed her in the doorway. Nothing else happened that night.</p>
+      <p>But something had returned, and they both knew it.</p>
+      <p>If your desire feels like it has gone somewhere you can't reach, you are not broken. You are not finished. You are in the middle of a conversation your body is trying to have with you, and the first job is just to listen.</p>
+      <p>That is what we are doing here.</p>
+    </div>
+  </article>
+
+  <!-- HIM 2 -->
+  <article class="post" data-path="him">
+    <div class="post-card" onclick="togglePost(this)">
+      <p class="post-tag">For him · Performance</p>
+      <h2 class="post-title">Performance.</h2>
+      <p class="post-excerpt">The first time it happened to David, he was thirty-one and wildly in love. He told me about it three years later, with the kind of careful slowness men use when they are circling something they have never said out loud.</p>
+      <button class="post-read">Read</button>
+    </div>
+    <div class="post-body">
+      <p>The first time it happened to David, he was thirty-one and wildly in love. He told me about it three years later, with the kind of careful slowness men use when they are circling something they have never said out loud. They had been seeing each other six months. She was on top of him. She paused, in the most ordinary way, to take off a necklace that was getting in the way, and in that pause something in his head turned around and walked out.</p>
+      <p>He couldn't get it back that night. He couldn't get it back for two weeks. By the time he could, the relationship had already absorbed the silence, and they ended things the following spring without ever having a real conversation about it.</p>
+      <p>He came in to talk about something else. The performance thing came out by accident.</p>
+      <p>I have heard variations of David's story from hundreds of men. The pause before she put the necklace down. The first time after the baby. The night his boss called as he was getting into bed. The morning after a bad sleep. One thing pulls his attention out of his body and the body, deprived of attention, simply stops cooperating. The next time, his body is not the only thing in the room. His head is also there, watching, waiting to fail.</p>
+      <p>Here is what I want every man who has lived this to hear.</p>
+      <h4>Performance anxiety is a focus problem, not a virility problem.</h4>
+      <p>Erections do not happen because you are man enough. They happen because your nervous system has decided the situation is safe and your attention is in the right place. Yank attention away (by self-monitoring, by worrying, by trying) and the system reads it as a threat. The harder you push, the further it retreats. This is not a moral failing. It is wiring.</p>
+      <h4>The cure is not more pressure. It is more permission.</h4>
+      <p>Most men try to fix performance anxiety by gritting their teeth. They try to power through. They psych themselves up. None of it works, because the problem is exactly the part of you that is gritting and powering and psyching. The first move is to take sex off the line. Not forever. For long enough that your body stops bracing.</p>
+      <h4>You will need a partner who knows what's happening.</h4>
+      <p>This is the part most men try to avoid, and it is the part that breaks the pattern. The shame says: don't tell her, fix it first. The shame is wrong. A partner who knows you are working through this is a partner who will stop scanning your face for signs of fading interest. The script can be as simple as, "Sometimes my body checks out and it has nothing to do with you. I'm working on it." That sentence has rebuilt more sex lives than any pill.</p>
+      <p>David is married now. Different woman. He told me last summer that the anxiety still visits, occasionally, like an old roommate stopping by. But it does not own the room anymore.</p>
+      <p>If your head walked out of the bedroom and you don't know how to call it back, that is the work we do here.</p>
+    </div>
+  </article>
+
+  <!-- HIM 3 -->
+  <article class="post" data-path="him">
+    <div class="post-card" onclick="togglePost(this)">
+      <p class="post-tag">For him · Connection</p>
+      <h2 class="post-title">Connection.</h2>
+      <p class="post-excerpt">Tunde had been married for eleven years when he came in and told me, in a tone I have heard so many times, "We're fine. We just live in different rooms."</p>
+      <button class="post-read">Read</button>
+    </div>
+    <div class="post-body">
+      <p>Tunde had been married for eleven years when he came in and told me, in a tone I have heard so many times, "We're fine. We just live in different rooms."</p>
+      <p>He didn't mean literally. They slept in the same bed. They raised two children together. They took a holiday to Cape Coast every March. But somewhere along the way, the easy current that used to run between them had gone underground. They were partners. They were not lovers. They were both unhappy and neither of them knew how to bring it up.</p>
+      <p>This is the most common form of long-term-relationship suffering I see. Not affair. Not abuse. Not a fight that lit the house on fire. Just a slow, quiet drift. Two people who used to face each other and now mostly face the world together, side by side, never looking back at each other for very long.</p>
+      <p>Here is the thing about that drift.</p>
+      <h4>Distance accumulates in micro-moments. So does closeness.</h4>
+      <p>A relationship is not held together by anniversaries. It is held together by a thousand tiny exchanges that each take less than ten seconds. The look across the room when she laughs at something on TV. The hand on the small of the back walking through a crowd. The stupid, specific question that says: I am still curious about you. Stop doing those small things and the whole thing dries out, even when nothing is officially wrong.</p>
+      <h4>The way back is shorter than you think.</h4>
+      <p>Couples in long drift usually expect the climb back to be enormous. A trip. A reset. A conversation about everything. It almost never works that way. What works is one small shift, repeated. Ask one real question at dinner. Hold one hug for a few seconds longer. Look at her, properly, when she is talking. Most distance unravels not in dramatic gestures but in the willingness to be slightly more present than yesterday.</p>
+      <h4>Connection is not a feeling first. It is a practice first.</h4>
+      <p>You will not always feel close before you act close. You act close, and the feeling follows. Many men wait for desire or affection to return before they reach for their partner. That is the wrong order. Reach first, with no agenda, and the warmth has somewhere to come back to.</p>
+      <p>I told Tunde to put a sticky note on his bathroom mirror with one word: notice. For two weeks his job was to notice his wife once a day. Anything. Her hair. Something she said. The way she dealt with their son's tantrum. He was not allowed to compliment her. He was just allowed to notice.</p>
+      <p>Three weeks in, she asked him what was different. He said nothing. She said, "You're looking at me again."</p>
+      <p>If you and your partner have become roommates with shared paperwork, this is the room where we begin to climb out.</p>
+    </div>
+  </article>
+
+  <!-- HIM 4 -->
+  <article class="post" data-path="him">
+    <div class="post-card" onclick="togglePost(this)">
+      <p class="post-tag">For him · Honesty</p>
+      <h2 class="post-title">Honesty.</h2>
+      <p class="post-excerpt">A man named Ola, forty-four, sat in my office for the better part of an hour describing a sexual dissatisfaction he had been carrying for almost a decade. Then, on the way out the door, almost as a joke, he turned around and said the thing he came in to say.</p>
+      <button class="post-read">Read</button>
+    </div>
+    <div class="post-body">
+      <p>A man named Ola, forty-four, sat in my office for the better part of an hour describing a sexual dissatisfaction he had been carrying for almost a decade. He used very careful language. He said his wife was "amazing." He said their sex life was "fine." He said he was "grateful." Then, on the way out the door, almost as a joke, he turned around and said, "I just wish she'd ever, in our entire marriage, asked me what I actually liked."</p>
+      <p>There it was. The thing he came in to say. The thing he had not yet said to her, in nine years of marriage.</p>
+      <p>Most men I see have one of these. A request, a preference, a thing they used to do with a previous partner and miss, a fantasy, a longing. It sits in a small dark drawer that gets harder to open the longer it stays shut. They tell themselves it is selfish. They tell themselves it would hurt her feelings. They tell themselves she should already know.</p>
+      <p>Here is the trap.</p>
+      <h4>Unspoken requests do not stay neutral. They sour.</h4>
+      <p>What starts as "I'll just wait for the right moment" turns into "she should be able to read me" turns into "she doesn't really care about my pleasure" turns into resentment, and resentment is the slow death of attraction. The longer a man holds something back, the bigger and more loaded it gets, until even saying it out loud feels like an indictment.</p>
+      <h4>Most partners want to know. They are afraid you don't.</h4>
+      <p>Almost every woman I have ever spoken to wishes her man would tell her what he wanted. Not because she is desperate to perform. Because she is tired of guessing. The fear that "she'll be hurt if I ask for something different" is real but usually backwards. What hurts is being kept on the outside of his actual desire while pretending everything is fine.</p>
+      <h4>You don't have to make it a confession. You can make it a curiosity.</h4>
+      <p>The first time you say a thing out loud, it does not have to be a heavy speech. "I've been thinking about something I'd love to try" is a sentence. "I love this thing you do, and I want more of it" is a sentence. "Have you ever wondered what it would feel like if we..." is a sentence. None of those are confessions. All of them are doors.</p>
+      <p>I asked Ola if I could send him home with one sentence to try. He said yes. The sentence was, "There's something I've been wanting to tell you for a long time, and I'm a little nervous to say it." That was it. He was not allowed to follow it with the actual content for at least a week.</p>
+      <p>When he came back, he was a different shape. They had stayed up until two in the morning the night he said the sentence, and the actual content turned out to be much smaller than the weight of holding it.</p>
+      <p>If you have a sentence stuck in your throat that has been there for years, this is where we start to free it.</p>
+    </div>
+  </article>
+
+  <!-- HIM 5 -->
+  <article class="post" data-path="him">
+    <div class="post-card" onclick="togglePost(this)">
+      <p class="post-tag">For him · Stamina</p>
+      <h2 class="post-title">Stamina.</h2>
+      <p class="post-excerpt">Lasting longer is a learnable skill. It is not a gift you were born with or denied. It is not a sign of how much you love your partner. It is closer to a sport.</p>
+      <button class="post-read">Read</button>
+    </div>
+    <div class="post-body">
+      <p>I am going to start here with something most men have never been told plainly. Lasting longer is a learnable skill. It is not a gift you were born with or denied. It is not a sign of how much you love your partner. It is not a measure of how much of a man you are. It is closer to a sport. People learn it, train at it, get better at it.</p>
+      <p>The reason this surprises so many men is that almost no one teaches it. We teach driving. We teach cooking. We don't teach this. So men either trip over the right answers by accident, or they don't, and they spend years carrying private shame about a problem with a known solution.</p>
+      <p>Let me name the most common version of the problem first. A man finishes faster than he or his partner would like. Sometimes by a lot. Sometimes early in a relationship, sometimes after years. Sometimes always. Sometimes only with new partners. He has tried thinking about football, biting his cheek, taking himself out for a few seconds. None of it works the way he hoped. He starts avoiding sex.</p>
+      <p>Here is what I would tell him in my office.</p>
+      <h4>Speed is mostly arousal management, not willpower.</h4>
+      <p>You cannot grit your way out of finishing fast. The whole game is staying in the part of arousal that is intense but sustainable, and stepping back from the edge before you cross it. That requires noticing the edge before you arrive. Most men finish fast because they have never been taught to feel the gradient. They feel "fine, fine, fine, gone."</p>
+      <h4>You build the skill alone before you bring it to a partner.</h4>
+      <p>This is the unsexy part. Men who want to last longer almost always need to practice solo first. Slow down. Stop. Notice the sensation just before the point of no return, and then back off. Get familiar with the feeling of the edge. Do this until you can stay in that range for as long as you want. Then bring it to your partner. People who skip the solo work get frustrated and quit.</p>
+      <h4>Talk to your partner about what's happening.</h4>
+      <p>Stamina improves much faster when your partner is on the team. A man who has to perform in silence is also performing under pressure, and pressure shortens the runway. A simple "I'm working on lasting longer, can we slow down when I tap your hip" turns sex from a test into a project you are doing together. The pressure drops. The runway extends.</p>
+      <p>I have watched men who came in convinced they had a permanent physical defect rebuild their stamina in eight to twelve weeks of consistent practice. I have also seen men who didn't bother and stayed exactly where they started.</p>
+      <p>If you have been carrying this quietly, you don't have to. The shame is louder than the problem.</p>
+    </div>
+  </article>
+
+  <!-- HIM 6 -->
+  <article class="post" data-path="him">
+    <div class="post-card" onclick="togglePost(this)">
+      <p class="post-tag">For him · Repair</p>
+      <h2 class="post-title">Repair.</h2>
+      <p class="post-excerpt">There is a kind of couple who comes in after the worst is over. The fight has already happened. The thing has already been said. The trust has already cracked. The question they want me to answer is always the same.</p>
+      <button class="post-read">Read</button>
+    </div>
+    <div class="post-body">
+      <p>There is a kind of couple who comes in after the worst is over. The fight has already happened. The thing has already been said. The trust has already cracked, sometimes from one act, sometimes from a thousand small ones. They are not fighting anymore. They are sitting in two chairs across from me with the look of people who have just survived a fire and are not yet sure what they have left.</p>
+      <p>The question they want me to answer is always the same. Can we come back from this?</p>
+      <p>The honest answer is: that depends almost entirely on what you both do in the next ninety days.</p>
+      <p>I want to be careful with this one, because repair is not a five-step program. It is a posture. It is a way of facing each other after someone has been hurt and the hurt is still in the room. But there are patterns. Couples who come back share a lot. Couples who don't, also share a lot.</p>
+      <h4>Repair is not "moving on." It is moving through.</h4>
+      <p>The temptation, especially for men, is to skip ahead. Get past it. Stop talking about it. Make her feel better by being normal again. That is not repair. That is suppression with a smile. Repair means staying in the conversation about what happened, on her timeline, for as long as it takes for the wound to actually start closing. If you rush it, you don't get her back. You get a quieter version of her.</p>
+      <h4>Accountability without defense is the thing that turns the corner.</h4>
+      <p>The single most powerful sentence in repair is the one without a "but" in it. "I did this. It hurt you. I see why." When a man can sit in that sentence without immediately explaining or defending or contextualizing, his partner's nervous system gets a piece of information she has been missing: he understands what he did. That single piece of information starts the clock on healing. Defending stops it.</p>
+      <h4>Trust comes back through repetition, not declarations.</h4>
+      <p>You do not earn trust back by promising. You earn it back by doing small, consistent things, over and over, for a longer time than feels fair. Coming home when you said you would. Telling her where you are. Not flinching when she brings it up again three months later. The small things, repeated, are the only currency that buys back what was lost.</p>
+      <p>I had a couple last year who almost ended their marriage in November and were laughing together at a wedding by the following August. The husband said something to me on the way out of our last session that I have repeated to other men ever since: "I stopped trying to convince her I had changed and started just behaving like I had."</p>
+      <p>If something has cracked between you and you don't know if you can come back from it, that is the question this work answers.</p>
+    </div>
+  </article>
+
+  <!-- HIM 7 -->
+  <article class="post" data-path="him">
+    <div class="post-card" onclick="togglePost(this)">
+      <p class="post-tag">For him · Curiosity</p>
+      <h2 class="post-title">Curiosity.</h2>
+      <p class="post-excerpt">A man came in once, sat down, and the first thing out of his mouth, before he even said his name, was, "I have a question I've never been able to ask anyone."</p>
+      <button class="post-read">Read</button>
+    </div>
+    <div class="post-body">
+      <p>A man came in once, sat down, and the first thing out of his mouth, before he even said his name, was, "I have a question I've never been able to ask anyone."</p>
+      <p>I waited.</p>
+      <p>He looked at the ceiling. He looked at the door. He looked at his hands. Eventually he asked the question, and it was, in clinical terms, a very small question. A question about an extremely common bodily function. He was forty-six and had been wondering about it since he was a teenager.</p>
+      <p>That is the thing about sexual questions men carry. They are almost never as exotic as the man fears. They are almost always things many other men also wonder about. But men have very few places to ask, because most of the channels available to them treat the questions either as a joke (locker room, comedy) or a problem (porn, doctor's office). There is a missing third place: somewhere quiet, where you can ask the small and the strange and the embarrassing without anyone making it bigger than it is.</p>
+      <p>Here is what I want every man holding an unasked question to know.</p>
+      <h4>Most of what worries you is normal. The worry is the bigger problem.</h4>
+      <p>By far, the most common outcome when a man finally asks the thing is that the thing is fine. Bodies do that. People want that. That changes over a lifetime. The pattern you are noticing is well-known. The questions that turn out to need actual attention are rare. The shame that has built up around the question is usually the larger thing to deal with, because it has been training you to hide for years.</p>
+      <h4>Curiosity in your own sexuality is an asset, not a liability.</h4>
+      <p>Men get the message early that wanting to know more about sex, their bodies, or their partner's body is somehow shameful. That message is wrong. The men with the best sex lives I see are the ones who stayed curious. They asked. They learned. They updated. The men with the most stuck sex lives are the ones who decided long ago that they should already know everything and stopped asking.</p>
+      <h4>A safe place to ask is more important than the right answer.</h4>
+      <p>What men need first is not information. It is permission. A space where you can say "I have wondered about this for years, and here's what I want to know," without bracing for judgment. Once that space exists, the questions come out faster than you expect, and most of them turn out to be much lighter than they felt while you were holding them.</p>
+      <p>The man with the small question, by the way, had three more questions after that one. We covered them all in the same hour. He left lighter than he came in.</p>
+      <p>If you have a question that has been sitting in you for a long time, this is where you can finally put it down.</p>
+    </div>
+  </article>
+
+  <!-- HER 1 -->
+  <article class="post" data-path="her">
+    <div class="post-card" onclick="togglePost(this)">
+      <p class="post-tag">For her · He shut down</p>
+      <h2 class="post-title">He shut down. <em>In bed.</em></h2>
+      <p class="post-excerpt">She came to me in March, and the way she described it, it sounded like a slow door closing. There was no fight. There was no other woman, as far as she knew. He just stopped reaching for her.</p>
+      <button class="post-read">Read</button>
+    </div>
+    <div class="post-body">
+      <p>She came to me in March, and the way she described it, it sounded like a slow door closing. There was no fight. There was no other woman, as far as she knew. He just stopped reaching for her. Not all at once. The good night kiss got shorter. The hand on the small of her back disappeared. By the time she counted, it had been a year and three months since he had initiated anything in bed.</p>
+      <p>"I think he's gone off me," she said. "I don't know what I did."</p>
+      <p>Most of the women I see who carry this story arrive convinced of one of two things. Either they've become unattractive, or he's checked out. Both feel terrible. Both miss the point.</p>
+      <p>Here is what I have learned, watching this play out across hundreds of marriages.</p>
+      <h4>Most men do not stop wanting their partner. They stop trusting their own body to perform.</h4>
+      <p>Somewhere along the way (often after one bad night that they've never spoken about), a man begins to associate sex with potential humiliation. The answer his nervous system reaches for is to avoid the situation entirely. He doesn't tell you because he can't tell himself. He just stops initiating, and then he hopes you don't notice, and then he hopes you don't ask.</p>
+      <h4>The shutdown is rarely about you. It is almost always about him.</h4>
+      <p>Erectile worry, performance anxiety, a body that doesn't move the way it did at twenty-five, shame about weight or age, a stressful season at work, mild depression, a medication side effect nobody bothered to warn him about. Any one of these can quietly take a man's desire offline. Most men can't bring it up because they've spent their entire lives being told their job is to want it more than you do.</p>
+      <h4>He is not waiting for you to seduce him out of it.</h4>
+      <p>This is the cruel part. Many women, when they finally name what's happening, try to fix it by being sexier. Lingerie. Initiation. Compliments. It usually doesn't work, because the problem isn't desire. It's safety. He is in a small private war with himself, and what he needs first is permission to lose it without losing you.</p>
+      <p>There was a moment in the work with the woman in March. She had been describing what she'd tried (the lingerie, the late-night moves, the careful escalations), and I asked her what would happen if she said nothing about sex for a month. Just held him. Just made the bedroom a place where his body did not have to perform. She looked at me like I'd told her to give up.</p>
+      <p>But she tried it.</p>
+      <p>A few weeks in, on a Sunday afternoon, he started crying in the kitchen. He told her something he had been carrying since their second year of marriage, about an episode of bad sex he'd convinced himself she was still angry about. She wasn't. She'd forgotten it. He had been quietly bleeding for nine years.</p>
+      <p>That conversation didn't fix their sex life. But it started it. The reaching came back slowly, in small ways, the way it usually does. A hand on the back. A kiss that lingered. The first night he initiated, six weeks later, and was scared, and tried anyway, and she just held his hand.</p>
+      <p>If your husband or partner has gone quiet in bed and you don't know why, you are not the problem. He is not broken either. There is something underneath this that neither of you have had the language for, and most of the time it can be reached.</p>
+      <p>That is the work we do here.</p>
+    </div>
+  </article>
+
+  <!-- HER 2 -->
+  <article class="post" data-path="her">
+    <div class="post-card" onclick="togglePost(this)">
+      <p class="post-tag">For her · The dry spell</p>
+      <h2 class="post-title">The dry spell.</h2>
+      <p class="post-excerpt">A friend of a friend called me a few years ago, late on a Tuesday, and asked me a question I have heard, in different forms, more times than I can count. "When did you and your husband last have sex?"</p>
+      <button class="post-read">Read</button>
+    </div>
+    <div class="post-body">
+      <p>A friend of a friend called me a few years ago, late on a Tuesday, and asked me a question I have heard, in different forms, more times than I can count. "When did you and your husband last have sex?" That was the opening line. No greeting. No preamble. She skipped the whole pleasantry tier.</p>
+      <p>She had been keeping a private count. She was at four months. She had not told anyone. She was certain she was the only woman in her circle living this. She was, of course, not. She was simply the only woman in her circle who had decided to ask.</p>
+      <p>If you are reading this with your own number in the back of your head, hello. You have a lot of company.</p>
+      <p>The dry spell, in the kind of relationship where two people love each other and nothing terrible has happened, is one of the most common and least talked-about features of long-term partnership. It usually does not arrive with a thunderclap. It arrives by accumulation. Babies. Work. Aging parents. A bad few months that became a habit. A growing mismatch in energy. Then one day you look up and a season of your relationship has gone by without much physical contact and you are not sure exactly when that started.</p>
+      <p>Here is what I want women who are in one of these to know.</p>
+      <h4>A dry spell is information, not a verdict.</h4>
+      <p>It does not mean he doesn't love you. It does not mean you are no longer attractive. It does not mean the relationship is broken. It usually means something underneath has been ignored for too long and the body, which is honest, has gone quiet. The work is to figure out what that something is. The work is not to panic.</p>
+      <h4>The longer it goes, the less it is about sex.</h4>
+      <p>After a while, the not-having-sex becomes its own atmosphere in the relationship. Both people are aware. Both people are walking around the topic. Bringing it up feels increasingly loaded. This is the part where many couples freeze. They wait for the other person to break the silence, and the silence keeps not breaking, and time keeps passing. Naming it gently, without blame, is almost always the first move out.</p>
+      <h4>You don't have to fix it. You have to ask about it.</h4>
+      <p>The pressure women often put on themselves in a dry spell is to be the one who solves it. Be sexier. Initiate more. Plan a weekend away. Sometimes those help. More often what helps is a conversation that doesn't try to schedule sex and instead tries to understand what has changed. "I miss this. I've been trying not to make it a problem. Can we talk about what's been happening for both of us?" is a sentence that has restarted a lot of bedrooms.</p>
+      <p>The friend of a friend stayed on the phone with me for over an hour. By the end of it she had a plan. Not for sex. For a conversation. Two weeks later she texted me a single line. "We talked. There's a lot to work with." A few months after that, the count had started again, in a happier direction.</p>
+      <p>If you are in your own dry spell and don't know who is allowed to break the silence, this is where we begin.</p>
+    </div>
+  </article>
+
+  <!-- HER 3 -->
+  <article class="post" data-path="her">
+    <div class="post-card" onclick="togglePost(this)">
+      <p class="post-tag">For her · What he won't say</p>
+      <h2 class="post-title">What he won't say.</h2>
+      <p class="post-excerpt">Women who come to me about their husbands almost always arrive with the same baseline assumption: he is fine. The possibility that he might be carrying something he hasn't told her gets very little airtime.</p>
+      <button class="post-read">Read</button>
+    </div>
+    <div class="post-body">
+      <p>Women who come to me about their husbands almost always arrive with the same baseline assumption: he is fine. Or, more precisely, that whatever is happening between them sexually is a function of how she is showing up. If something has gone quiet, she did something. If something is missing, she is missing it. The possibility that he might be carrying something he hasn't told her gets very little airtime, because nothing about how men move through the world tends to advertise that he is carrying it.</p>
+      <p>Let me tell you what I see, hour after hour, in the privacy of the room.</p>
+      <p>A lot of men, especially after thirty-five, are walking around with sexual worries they have never said to anyone. Not their friends. Not their doctor. Not their wife. Sometimes not even fully to themselves. The worry sits in a small private compartment that slowly leaks into the rest of the marriage in ways the wife feels but cannot name. He is more distant. He is more avoidant. He picks fights at bedtime. He stops initiating. She wonders what she did. He does not have the language for what he has done.</p>
+      <p>Here is some of what is usually in that compartment.</p>
+      <h4>Performance worry that pre-dates the relationship.</h4>
+      <p>Many men have had one or two experiences in their lives where their body did not do what they wanted it to. They never spoke about it. They built up a low-grade dread around being expected to perform. Years later, that dread is still active. It is the thing you feel when he gets quiet around the bedroom. It often has nothing to do with you and everything to do with a moment in 2007.</p>
+      <h4>Body shame they would never tell you about.</h4>
+      <p>Men are taught to act like they don't care how they look. Many of them do, intensely, and the older they get, the more they care, and the less they will admit it. Weight. Hairline. Stomach. The way they look in the mirror has been shifting for years and they have been pretending not to notice. By the time their wife sees them, they are already braced. That is what is happening when he won't undress with the lights on.</p>
+      <h4>A version of desire that he does not know how to bring to you.</h4>
+      <p>Men have inner lives. Many of them have a version of what they would love their sex life to look like that they have never offered, because they assume she would think they were strange, or perverted, or that she would be hurt that the version isn't her exactly as she is. So he keeps it inside, lives it in private, and the actual marriage gets the watered-down public version of his desire. She feels something missing and she is right.</p>
+      <p>The reason any of this matters is that you cannot meet a man in a place he will not show you. A lot of marriages get stuck for years on the wrong question. She is asking, "What more do I need to do?" The actual question is, "What is he not telling me?"</p>
+      <p>I am not telling you to interrogate him. I am telling you to suspect there is more than he has shown. And to make a small, ongoing space in your relationship where the things he never thought he could say have somewhere to land.</p>
+      <p>That is what we are doing here.</p>
+    </div>
+  </article>
+
+  <!-- HER 4 -->
+  <article class="post" data-path="her">
+    <div class="post-card" onclick="togglePost(this)">
+      <p class="post-tag">For her · Bringing it up</p>
+      <h2 class="post-title">How to bring sex up.</h2>
+      <p class="post-excerpt">Here is a moment a lot of women describe almost word for word. They have been thinking about a conversation for weeks. They take a breath, they say something carefully phrased, and within ninety seconds his face has closed.</p>
+      <button class="post-read">Read</button>
+    </div>
+    <div class="post-body">
+      <p>Here is a moment a lot of women I work with describe almost word for word. They have been thinking about a conversation for weeks. Maybe months. They finally decide tonight is the night. They wait until the kids are asleep. They turn off the television. They take a breath, and they say something carefully phrased about wanting more sex, or different sex, or any sex, and within ninety seconds his face has closed and the conversation is over. He says he's sorry. He says he's tired. He says he doesn't know what's wrong with him. He goes upstairs.</p>
+      <p>She sits in the living room and replays what she said.</p>
+      <p>She did not say anything wrong. She brought up a real, important topic in good faith. So why did it land like a hand grenade?</p>
+      <p>It usually comes down to three things.</p>
+      <h4>The when matters more than the what.</h4>
+      <p>Most attempts to talk about sex happen too close to actual sex. In the bedroom. After a missed initiation. Right before sleep. These are all moments when his nervous system is already on guard. Even a gentle word about the topic will be heard as an evaluation of him at the place he feels most exposed. The conversations that go best almost always happen in neutral territory, far from the bed. On a walk. In the car. At brunch. Hours from anything sexual, when his guard is not up.</p>
+      <h4>Frame as longing, not lack.</h4>
+      <p>"I miss us" lands differently than "we never have sex." They are technically about the same thing, but his brain processes them in opposite directions. Lack is a problem he has caused. Longing is a feeling that he is part of. Most men want very badly to be the answer to your longing. Very few men want to be the cause of your problem. Frame matters.</p>
+      <h4>Open with a question, not a complaint.</h4>
+      <p>The fastest way to keep a man in the conversation is to ask him something instead of telling him something. "Have you noticed how busy we've been?" "Do you ever feel like we've drifted?" "What was it like for you when [specific time]?" Open with curiosity about him, not announcement of you. Once he is in the conversation as a participant, he has somewhere to go. Once he is in it as a defendant, he has nowhere to go but out.</p>
+      <p>I gave a client three things to try once. Walk, not bedroom. Longing, not lack. Question, not complaint. She picked a Saturday afternoon. They were walking by the river. She said, "Can I ask you something I've been thinking about? Have you been feeling close to me lately?" That was it. The whole opener.</p>
+      <p>He stopped walking. He told her, slowly, that he had not been feeling close. He had not known how to bring it up. They talked for over an hour about things that had nothing and everything to do with sex. The conversation that had been going badly for months started going well that day.</p>
+      <p>If you have a conversation in you that you have been afraid to start, this is where we figure out how to start it.</p>
+    </div>
+  </article>
+
+  <!-- HER 5 -->
+  <article class="post" data-path="her">
+    <div class="post-card" onclick="togglePost(this)">
+      <p class="post-tag">For her · Inviting him in</p>
+      <h2 class="post-title">Inviting him in.</h2>
+      <p class="post-excerpt">There is a particular flavor of nervousness women carry about asking for something specific in the bedroom. The fantasy stays a private thing. The marriage stays the same. Both partners are slightly less present than they could be, and neither of them knows why.</p>
+      <button class="post-read">Read</button>
+    </div>
+    <div class="post-body">
+      <p>There is a particular flavor of nervousness women carry about asking for something specific in the bedroom. Not just more sex. Something specific. A pace. A word. A scene. A position they read about. A fantasy they have had since they were twenty-two. They want to bring it up, and they don't, because the imagined cost of bringing it up feels enormous. He might think she is broken. He might think she has been doing it with someone else. He might think she has been fantasizing about that all these years and he has been failing the test.</p>
+      <p>So she keeps the request in. The fantasy stays a private thing. The marriage stays the same. Both partners are slightly less present than they could be, and neither of them knows why.</p>
+      <p>I have had hundreds of versions of this conversation, and I want to give you what I have learned.</p>
+      <h4>Most men are relieved, not threatened, by a specific request.</h4>
+      <p>The story women tell themselves is that asking for something will hurt him. The story men actually live is the opposite. A man who is given a specific request gets a piece of information he has been missing his whole sexual life. He gets to know what to do. He gets to be useful. He gets to participate in your pleasure as a partner instead of guessing his way through it. The fear that "he'll feel inadequate" is real and almost always smaller than the relief he feels when you finally tell him what you want.</p>
+      <h4>Frame it as discovery, not correction.</h4>
+      <p>"I've been wanting to try something" lands differently than "we never do this and I want to." One opens a door. The other walks past him to do it. Most invitations work best when they sound like a thing the two of you are exploring together, not a deficit you are correcting. He wants to be invited into the next chapter of your sex life. He doesn't want to be informed he has been failing the previous one.</p>
+      <h4>Pace the asks. You don't need to give him the whole list.</h4>
+      <p>A common mistake is treating the conversation as a one-time event where you list every fantasy and request you have ever had. That is overwhelming for most men. What works better is small, occasional, specific. One thing. Try it. See how it goes. Notice what the request taught you about each other. Come back another night with another thing. The bedroom expands gradually, not in one evening.</p>
+      <p>I had a client who had been wanting, for ten years of marriage, to try something very specific that mattered to her a lot. She was in tears when she told me, because she was certain her husband would refuse. We worked out the script for weeks. She asked him on a Tuesday night, simply and without apology. He said, "I had no idea you wanted that. I'd love to."</p>
+      <p>That was it. Ten years of carrying it. One real sentence. A new chapter.</p>
+      <p>If you have a request in you that has been waiting, this is where we get it out of the dark.</p>
+    </div>
+  </article>
+
+  <!-- HER 6 -->
+  <article class="post" data-path="her">
+    <div class="post-card" onclick="togglePost(this)">
+      <p class="post-tag">For her · His desire dropped</p>
+      <h2 class="post-title">His desire dropped.</h2>
+      <p class="post-excerpt">When a man's desire falls off, the woman in his life is usually the first to notice and the last to be told. There is a long, quiet period where she is trying to reason her way through it.</p>
+      <button class="post-read">Read</button>
+    </div>
+    <div class="post-body">
+      <p>When a man's desire falls off, the woman in his life is usually the first to notice and the last to be told. There is a long, quiet period where she is trying to reason her way through it. Maybe he's tired. Maybe it's the new job. Maybe it's me. She does not bring it up because she does not want to make it bigger than it is. She thinks if she just waits, it will pass.</p>
+      <p>Sometimes it does. More often, it doesn't, and the silence hardens into a feature of the relationship.</p>
+      <p>I want to walk you through what is usually actually happening, because it almost always isn't what you fear.</p>
+      <h4>Male libido is more sensitive than the cultural script admits.</h4>
+      <p>The script says men want it always, more than us, regardless. Real life is more complicated. Male desire dips and surges with stress, sleep, hormones, mood, alcohol use, weight, certain medications, a new baby, an aging parent, a death, a season of overwork, an unresolved fight that lives in the body. Most men experience desire dips and don't have a vocabulary for them. So they don't say. They just go quiet.</p>
+      <h4>A dropped libido is a symptom. The cause is usually not in the bedroom.</h4>
+      <p>By the time desire has fallen off, the cause is almost always somewhere else in his life. Burnout. Depression he hasn't named. A health issue he's been ignoring. A medication side effect. A buildup of unspoken resentment. A specific moment from earlier in the relationship he never recovered from. The bedroom is where the symptom shows up. Treating the bedroom directly almost never works, because the bedroom is not where the problem lives.</p>
+      <h4>You are not the doctor. You are the witness.</h4>
+      <p>A common mistake is to take the dropped desire on as a project you must fix. Lingerie. Initiation. Books. Weekends. Sometimes those help. Mostly what helps is being the person who notices, says something kind, and gives him room to investigate his own life. "I've noticed you've felt far away lately. Not just from me, but from yourself. Is something going on?" That sentence opens more than any seductive gesture I've seen.</p>
+      <p>I had a couple where his desire had been low for three years. She had tried everything she knew. She came in convinced he had stopped loving her. He came in convinced he was broken. We worked together for two months before they realized he was clinically depressed and had been hiding it from himself since their second child was born. He started treatment. The desire came back, slowly, in the order desire usually returns. First the affection. Then the curiosity. Then the body.</p>
+      <p>If his desire has dropped and you do not know what to do, the answer is rarely on the surface. It is rarely about you. And it is almost always reachable, if both of you are willing to look.</p>
+    </div>
+  </article>
+
+  <!-- HER 7 -->
+  <article class="post" data-path="her">
+    <div class="post-card" onclick="togglePost(this)">
+      <p class="post-tag">For her · Reigniting it</p>
+      <h2 class="post-title">Reigniting it.</h2>
+      <p class="post-excerpt">I want to write to the woman who has been in the same relationship for a long time. Long enough that the stretch of time without much sex has become its own background hum. You love him. He loves you. But the thing that used to feel alive between you has gone elsewhere.</p>
+      <button class="post-read">Read</button>
+    </div>
+    <div class="post-body">
+      <p>I want to write to the woman who has been in the same relationship for a long time. Long enough that you used to know each other in a way you do not now. Long enough that the stretch of time without much sex has become its own background hum. You are not on the way out of the marriage. You love him. He loves you. But the thing that used to feel alive between you has gone elsewhere, and you do not know if it knows how to come back.</p>
+      <p>I have watched a lot of couples come back from this. Not all of them. The ones who do tend to share certain things. I want to give you those things now.</p>
+      <h4>Reigniting starts before the bedroom. Often months before.</h4>
+      <p>Couples who try to fix sexual disconnection by going straight to sex almost always fail. The body knows. It does not respond to scheduled fixing. What works is rebuilding the conditions in which desire was once possible: lightness, curiosity, time alone together that is not transactional, eye contact that lingers. The bedroom is the last room you renovate, not the first.</p>
+      <h4>One person almost always has to lead. It is not unfair.</h4>
+      <p>Many women wait for it to be mutual. We agreed on this together, we go in together, we both initiate. In long disconnection, that often does not happen, because both people are scared and scared people don't initiate. Usually one partner has to be willing to be slightly braver than the other for a while. To reach first. To name it first. To hold the warmth open even when it isn't being matched yet. That is not weakness. That is the work.</p>
+      <h4>Old fires do not relight as the same fire.</h4>
+      <p>This is the part most couples don't expect. The sex that comes back after long disconnection is rarely identical to the sex you had at thirty. It is slower, often more honest, often more connected, sometimes less athletic. Couples who try to recreate what they had at the beginning frequently get discouraged because the imitation never works. Couples who let themselves build something new on top of what they have learned about each other almost always end up with something better.</p>
+      <p>I had a woman once who told me, in our last session, that the sex she and her husband were having at fifty-two was the best of their marriage. She had been sure, at forty-six, that they were over. The thing they rebuilt was not the thing they used to have. It was something they had grown into.</p>
+      <p>If you and your partner have been disconnected for longer than you would like to admit, and you are not sure if it can come back, that is the question this work answers. Sometimes the answer is yes. Often, it is yes, in a different shape than you expected. And the way back almost always begins with one person willing to make the first reach.</p>
+    </div>
+  </article>
+
+</div>
+
+<section class="final">
+  <h2>Talk it out, <em>not in your head.</em></h2>
+  <p>Everything you just read started as a conversation. You can have one too.</p>
+  <a href="index.html#topics" class="btn-primary">Talk to a Sexhapist</a>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <span>© 2026 Sexhapist · AI Intimacy Companion · Not a licensed clinical service.</span>
+    <div class="footer-links">
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function setPath(path) {
+    if (path === 'her') {
+      document.body.classList.add('path-her');
+    } else {
+      document.body.classList.remove('path-her');
+    }
+    document.querySelectorAll('.path-switch button').forEach(function (b) {
+      b.classList.toggle('active', b.dataset.path === path);
+    });
+    document.querySelectorAll('.post.is-open').forEach(function (p) {
+      p.classList.remove('is-open');
+      var btn = p.querySelector('.post-read');
+      if (btn) btn.textContent = 'Read';
+    });
+    try { localStorage.setItem('sexhapist_path', path); } catch (e) {}
+  }
+
+  function togglePost(card) {
+    var post = card.closest('.post');
+    var btn = post.querySelector('.post-read');
+    var open = post.classList.toggle('is-open');
+    if (btn) btn.textContent = open ? 'Close' : 'Read';
+    if (!open) {
+      post.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  (function () {
+    try {
+      var saved = localStorage.getItem('sexhapist_path');
+      if (saved === 'her') setPath('her');
+    } catch (e) {}
+  })();
+</script>
+
+</body>
+</html>

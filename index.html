@@ -129,6 +129,19 @@
     transition: color 0.2s;
   }
   .nav-links a:hover { color: var(--ink); }
+  .nav-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .nav-center a {
+    color: var(--ink-soft);
+    transition: color 0.2s;
+  }
+  .nav-center a:hover { color: var(--ink); }
 
   /* Path switcher in nav */
   .path-switch {
@@ -1109,6 +1122,9 @@
         </svg>
       </div>
       <div class="logo-name">Se<em>x</em>hapist</div>
+    </div>
+    <div class="nav-center">
+      <a href="blogs.html">Notes</a>
     </div>
     <div class="nav-links">
       <div class="path-switch" id="pathSwitch">
