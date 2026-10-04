@@ -121,6 +121,17 @@ a{color:inherit;text-decoration:none}
 .bubble.pending{color:var(--label-2);font-style:italic}
 .banner{display:flex;gap:12px;align-items:center;padding:14px 16px;border-radius:20px;background:var(--tc);color:var(--ontc);font-family:var(--tfont)}
 .banner b{display:block;font-size:14px}.banner small{display:block;font-size:12px;opacity:.85}
+.gate{border-radius:24px;padding:18px;background:linear-gradient(135deg,var(--pc),var(--tc));color:var(--on);font-family:var(--tfont);display:grid;gap:10px;max-width:560px;align-self:center;width:100%}
+.gate .gt{display:flex;gap:12px;align-items:center}
+.gate .gt .shp{width:40px;height:40px;background:var(--s);color:var(--t)}
+.gate b{display:block;font-size:16px;line-height:22px;font-weight:700}
+.gate small{display:block;font-size:13px;line-height:18px;color:var(--onv)}
+.gate form{display:flex;gap:8px;background:var(--s);border-radius:999px;padding:5px 5px 5px 16px;align-items:center}
+.gate input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:inherit;font-size:15px;color:var(--on);height:40px}
+.gate button{height:40px;padding:0 18px;border-radius:20px;background:var(--p);color:var(--onp);font-weight:650;flex:none}
+.gate button[disabled]{opacity:.6}
+.gate .err{font-size:12px;color:#BA1A1A}
+.gate .fine{font-size:11px;color:var(--onv)}
 
 .dock{flex:none;background:linear-gradient(to top,var(--bg) 70%,transparent);padding-bottom:10px}
 .chips{display:flex;gap:8px;padding:6px 0 10px;overflow-x:auto;scrollbar-width:none}
@@ -556,7 +567,7 @@ a{color:inherit;text-decoration:none}
   const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const fmt=s=>esc(s).replace(/\*\*([^*\n]+)\*\*/g,'<b>$1</b>').replace(/\*([^*\n]+)\*/g,'<i>$1</i>');
   function scrollDown(){const t=$('thread');t.scrollTop=t.scrollHeight;}
-  function syncEmpty(){const empty=!state.history.length&&!$('messages').querySelector('.bubble');$('hello').hidden=!empty;$('newChat').hidden=empty;$('chips').hidden=empty||state.history.length>2;}
+  function syncEmpty(){const empty=!state.history.length&&!$('messages').querySelector('.bubble,.gate,.banner');$('hello').hidden=!empty;$('newChat').hidden=empty;$('chips').hidden=empty||state.history.length>2;}
   function dayLabel(){const d=document.createElement('div');d.className='daylbl';const now=new Date(),h=now.getHours(),when=h>=21||h<4?'Tonight':h<12?'This morning':h<17?'This afternoon':'This evening';d.textContent=when+' '+now.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});const sub=document.createElement('div');sub.textContent='Nothing here is saved to your name.';d.appendChild(sub);return d;}
   function addMessage(text,role){
     const m=$('messages');if(!m.children.length)m.appendChild(dayLabel());
@@ -579,8 +590,31 @@ a{color:inherit;text-decoration:none}
   function stopSpeaking(){try{state.ttsAudio&&state.ttsAudio.pause();}catch{}try{speechSynthesis.cancel();}catch{}}
 
   // ---- Ambience ----
-  function startAmbience(){const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;try{const ctx=new Ctx();state.ambient.context=ctx;ctx.resume();const master=ctx.createGain();master.gain.value=0;master.gain.linearRampToValueAtTime(.045,ctx.currentTime+1.8);master.connect(ctx.destination);state.ambient.master=master;const nodes=[];[[110,.22],[164.81,.14],[220,.055]].forEach(([frequency,level])=>{const osc=ctx.createOscillator(),gain=ctx.createGain();osc.type='sine';osc.frequency.value=frequency;gain.gain.value=level;osc.connect(gain).connect(master);osc.start();nodes.push(osc);});const length=ctx.sampleRate*3,buffer=ctx.createBuffer(1,length,ctx.sampleRate),data=buffer.getChannelData(0);let drift=0;for(let i=0;i<length;i++){drift=(drift+.035*(Math.random()*2-1))/1.035;data[i]=drift*.55;}const noise=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),noiseGain=ctx.createGain();noise.buffer=buffer;noise.loop=true;filter.type='lowpass';filter.frequency.value=360;noiseGain.gain.value=.035;noise.connect(filter).connect(noiseGain).connect(master);noise.start();nodes.push(noise);const lfo=ctx.createOscillator(),depth=ctx.createGain();lfo.frequency.value=.07;depth.gain.value=.004;lfo.connect(depth).connect(master.gain);lfo.start();nodes.push(lfo);state.ambient.nodes=nodes;state.ambient.on=true;$('ambience').setAttribute('aria-pressed','true');toast('Ambience on');}catch{toast('Could not start ambience on this device.');}}
-  function stopAmbience(){const ambient=state.ambient;if(!ambient||!ambient.on)return;const ctx=ambient.context,master=ambient.master;if(ctx&&master){const now=ctx.currentTime;master.gain.cancelScheduledValues(now);master.gain.setValueAtTime(master.gain.value,now);master.gain.linearRampToValueAtTime(.0001,now+1.2);}const nodes=ambient.nodes.slice();setTimeout(()=>{nodes.forEach(n=>{try{n.stop();}catch{}});if(ctx&&ctx.state!=='closed')ctx.close().catch(()=>{});},1250);ambient.nodes=[];ambient.master=null;ambient.context=null;ambient.on=false;$('ambience').setAttribute('aria-pressed','false');}
+  // Ambience: a seamless 30s loop generated with ElevenLabs sound effects (audio/ambience.mp3).
+  // Web Audio keeps the loop gapless; the gain dips while the AI is speaking.
+  const AMB_LEVEL=.32,AMB_DUCK=.12;
+  let ambBuffer=null;
+  async function startAmbience(){
+    const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx||state.ambient.on)return;
+    try{
+      const ctx=state.ambient.context||new Ctx();state.ambient.context=ctx;await ctx.resume();
+      if(!ambBuffer){const r=await fetch('audio/ambience.mp3');ambBuffer=await ctx.decodeAudioData(await r.arrayBuffer());}
+      if(!state.voiceMode)return;
+      const src=ctx.createBufferSource(),gain=ctx.createGain();src.buffer=ambBuffer;src.loop=true;
+      gain.gain.value=0;gain.gain.linearRampToValueAtTime(state.speakingCount>0?AMB_DUCK:AMB_LEVEL,ctx.currentTime+2.5);
+      src.connect(gain).connect(ctx.destination);src.start();
+      state.ambient.nodes=[src];state.ambient.master=gain;state.ambient.on=true;$('ambience').setAttribute('aria-pressed','true');
+    }catch{toast('Could not start ambience on this device.');}
+  }
+  function duckAmbience(on){const a=state.ambient;if(!a.on||!a.master)return;const t=a.context.currentTime;a.master.gain.cancelScheduledValues(t);a.master.gain.setValueAtTime(a.master.gain.value,t);a.master.gain.linearRampToValueAtTime(on?AMB_DUCK:AMB_LEVEL,t+.6);}
+  function stopAmbience(){
+    const a=state.ambient;if(!a||!a.on)return;
+    const ctx=a.context,g=a.master,nodes=a.nodes.slice();
+    if(ctx&&g){const t=ctx.currentTime;g.gain.cancelScheduledValues(t);g.gain.setValueAtTime(g.gain.value,t);g.gain.linearRampToValueAtTime(.0001,t+1.2);}
+    setTimeout(()=>nodes.forEach(n=>{try{n.stop();}catch{}}),1300);
+    a.nodes=[];a.master=null;a.on=false;$('ambience').setAttribute('aria-pressed','false');
+  }
+  const ambPref=()=>store.get('sx_amb')!=='off';
 
   // ---- Send ----
   async function readReplyStream(response,pending){const reader=response.body.getReader(),decoder=new TextDecoder();let wire='',reply='',spoken='';const consume=line=>{if(!line.startsWith('data:'))return;let event;try{event=JSON.parse(line.slice(5).trim());}catch{return;}if(event.error)throw new Error(event.error);if(!event.text)return;reply+=event.text;pending.classList.remove('pending');pending.innerHTML=fmt(reply);scrollDown();if(state.voiceMode)$('voiceCaption').textContent=reply.replace(/\*/g,'');spoken+=event.text;const sentences=spoken.match(/^.*?[.!?](?:\s|$)/s);if(sentences&&sentences[0].trim()){const part=sentences[0].trim();if(state.voiceMode)queueElevenLabs(part.replace(/\*/g,''));spoken=spoken.slice(sentences[0].length);}};while(true){const{value,done}=await reader.read();wire+=decoder.decode(value||new Uint8Array(),{stream:!done});const lines=wire.split('\n');wire=lines.pop()||'';for(const line of lines)consume(line.replace(/\r$/,''));if(done)break;}if(wire)consume(wire);if(spoken.trim()&&state.voiceMode)queueElevenLabs(spoken.replace(/\*/g,''));return reply.trim()||'I lost the thread there. Try that again?';}
@@ -593,7 +627,13 @@ a{color:inherit;text-decoration:none}
     $('messageInput').disabled=true;
     try{
       const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json','X-Requested-With':'sexhapist'},credentials:'same-origin',body:JSON.stringify({messages:state.history,path:state.path,stream:true})});
-      if(r.status===402){removeMessage(pending);state.history.pop();persist();addBanner('Your free time is up','You can come back when you’re ready. Nothing here is linked to you.');if(state.voiceMode){$('voiceCaption').textContent='Your free time is up. You can come back when you’re ready.';setVoiceState('idle');}markBudget(0);return;}
+      if(r.status===402){
+        const d=await r.json().catch(()=>({}));
+        removeMessage(pending);state.history.pop();persist();removeLastUser();markBudget(0);
+        if(d.error==='email_required'){if(state.voiceMode)closeVoice();showEmailGate(text);}
+        else{addBanner('Your free time is up','You can come back tomorrow. Nothing here is linked to you.');if(state.voiceMode){$('voiceCaption').textContent='Your free time is up. You can come back tomorrow.';setVoiceState('idle');}}
+        return;
+      }
       if(!r.ok)throw new Error('reply_failed');
       startClock();
       let reply;
@@ -639,7 +679,7 @@ a{color:inherit;text-decoration:none}
   const VOICE_LABEL={idle:'Tap to talk',listening:'Listening…',thinking:'Thinking with you…',speaking:'Speaking…'};
   function setVoiceState(s){
     const v=$('voice');v.classList.toggle('listening',s==='listening');v.classList.toggle('speaking',s==='speaking');
-    $('voiceLabel').textContent=VOICE_LABEL[s];
+    $('voiceLabel').textContent=VOICE_LABEL[s];duckAmbience(s==='speaking');
     const live=s==='listening';$('voiceMicK').classList.toggle('live',live);
     $('voiceMicIcon').querySelector('use').setAttribute('href',live?'#i-mic-off':'#i-mic');$('voiceMicLbl').textContent=live?'Mute':'Talk';
   }
@@ -648,6 +688,7 @@ a{color:inherit;text-decoration:none}
     state.voiceMode=true;unlockVoiceAudio();setVoiceState('idle');
     $('voiceCaption').textContent='Speak naturally. Your words appear here as you talk.';
     $('voice').hidden=false;document.querySelector('meta[name=theme-color]').content='#07081A';refreshBudget();
+    if(ambPref())startAmbience(); // soft background by default; the music button turns it off
     if(Recognition)setTimeout(()=>listen('voice'),250); // Live starts listening straight away, like Gemini Live.
   }
   function closeVoice(){state.voiceMode=false;stopListening();stopSpeaking();stopAmbience();$('voice').hidden=true;document.querySelector('meta[name=theme-color]').content='#FBF8FF';show('talk');}
@@ -660,11 +701,44 @@ a{color:inherit;text-decoration:none}
     if(p?.voice)openVoice();else if(p?.topic)send(p.topic);
   }
 
+  // ---- Email gate: after the free 5 minutes, an email unlocks more time ----
+  function removeLastUser(){const u=[...$('messages').querySelectorAll('.bubble.user')].pop();if(u)u.remove();syncEmpty();}
+  function showEmailGate(pendingText){
+    if(pendingText)state.pendingSend=pendingText;
+    if($('emailGate')){$('emailGate').querySelector('input').focus();return;}
+    show('talk');
+    const g=document.createElement('div');g.className='gate';g.id='emailGate';
+    g.innerHTML='<div class="gt"><span class="shp ova"><span class="ms f i20">schedule</span></span><div><b>Want to keep talking?</b><small>Your free 5 minutes are up. Add your email and carry on, up to 30 minutes today.</small></div></div>'+
+      '<form novalidate><input type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" aria-label="Email address" required><button type="submit">Keep talking</button></form>'+
+      '<div class="err" hidden></div><div class="fine">We use it only to give you more time and the occasional update. It is never linked to what you say here.</div>';
+    $('messages').appendChild(g);syncEmpty();scrollDown();
+    const f=g.querySelector('form'),inp=g.querySelector('input'),btn=g.querySelector('button'),err=g.querySelector('.err');
+    f.onsubmit=async e=>{
+      e.preventDefault();const email=inp.value.trim();
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){err.hidden=false;err.textContent='That email doesn’t look right. Check it and try again.';inp.focus();return;}
+      btn.disabled=true;btn.textContent='One moment…';err.hidden=true;
+      try{
+        const r=await fetch('/api/unlock',{method:'POST',headers:{'Content-Type':'application/json','X-Requested-With':'sexhapist'},credentials:'same-origin',body:JSON.stringify({email,path:state.path})});
+        const d=await r.json().catch(()=>({}));
+        if(!r.ok)throw new Error(d.error||'unlock_failed');
+        g.remove();syncEmpty();
+        state.budget={remaining:d.remainingMs,total:d.freeBudgetMs,paid:false,started:true,emailUnlocked:true,ipRemaining:d.ipRemainingMs,at:Date.now()};startClock(true);renderBudget();
+        toast('You’re in. Take your time.');
+        const t=state.pendingSend;state.pendingSend=null;if(t)send(t);else focusInputSoon();
+      }catch(ex){
+        btn.disabled=false;btn.textContent='Keep talking';err.hidden=false;
+        err.textContent=String(ex.message)==='invalid_email'?'That email doesn’t look right. Check it and try again.':String(ex.message)==='rate_limited'?'Too many tries. Wait a minute and try again.':'Something went wrong. Please try again.';
+      }
+    };
+    setTimeout(()=>inp.focus(),50);
+  }
+  function focusInputSoon(){if(matchMedia('(hover:hover)').matches)setTimeout(()=>$('messageInput').focus(),0);}
+
   // ---- Free-time budget (GET /api/session) ----
   const mmss=ms=>{const s=Math.max(0,Math.round(ms/1000));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
-  async function refreshBudget(){try{const r=await fetch('/api/session',{credentials:'same-origin'});if(!r.ok)throw 0;const d=await r.json();state.budget={remaining:d.remainingMs,total:d.freeBudgetMs,paid:d.paid,started:d.hasSession,at:Date.now()};if(d.hasSession&&!d.paid)startClock(true);renderBudget();}catch{renderBudget();}}
+  async function refreshBudget(){try{const r=await fetch('/api/session',{credentials:'same-origin'});if(!r.ok)throw 0;const d=await r.json();state.budget={remaining:d.remainingMs,total:d.freeBudgetMs||300000,paid:d.paid,started:d.hasSession,needsEmail:d.needsEmail,emailUnlocked:d.emailUnlocked,ipRemaining:d.ipRemainingMs,at:Date.now()};if(d.needsEmail&&!$('emailGate'))showEmailGate();if(d.hasSession&&!d.paid)startClock(true);renderBudget();}catch{renderBudget();}}
   function startClock(fresh){if(!state.budget||state.budget.paid)return;if(state.timer&&!fresh)return;state.budget.started=true;if(!fresh)state.budget.at=Date.now();clearInterval(state.timer);state.timer=setInterval(renderBudget,1000);}
-  function markBudget(ms){if(!state.budget)state.budget={total:180000,paid:false,started:true};state.budget.remaining=ms;state.budget.at=Date.now();clearInterval(state.timer);state.timer=null;renderBudget();}
+  function markBudget(ms){if(!state.budget)state.budget={total:300000,paid:false,started:true};state.budget.remaining=ms;state.budget.at=Date.now();clearInterval(state.timer);state.timer=null;renderBudget();}
   function remainingNow(){const b=state.budget;if(!b)return null;return Math.max(0,state.timer?b.remaining-(Date.now()-b.at):b.remaining);}
   function renderBudget(){
     const b=state.budget,t=$('voiceTime'),p=$('voiceProg');
@@ -673,8 +747,8 @@ a{color:inherit;text-decoration:none}
     const rem=remainingNow(),used=b.total-rem;
     t.textContent=mmss(used)+' / '+mmss(b.total)+' free';p.hidden=false;p.firstElementChild.style.width=Math.min(100,used/b.total*100)+'%';
     $('freeLeft').textContent=rem>0?mmss(rem)+' of free time left':'Free time used';
-    $('freeLeftSub').textContent=b.started?(rem>0?'The clock started with your first message.':'You can come back when you’re ready.'):'The clock starts with your first message.';
-    if(rem<=0&&state.timer){clearInterval(state.timer);state.timer=null;}
+    $('freeLeftSub').textContent=b.emailUnlocked?'Extended with your email. Up to 30 minutes a day.':b.started?(rem>0?'5 free minutes per session. Add your email for more.':'Add your email to keep talking.'):'5 free minutes. The clock starts with your first message.';
+    if(rem<=0&&state.timer){clearInterval(state.timer);state.timer=null;if(!b.emailUnlocked&&b.ipRemaining!==0)refreshBudget();}
   }
 
   // ---- Wiring ----
@@ -690,7 +764,7 @@ a{color:inherit;text-decoration:none}
   const talk=()=>{if(state.busy)return;unlockVoiceAudio();listen('voice');};
   $('voiceMic').onclick=talk;$('orbTap').onclick=talk;
   $('voiceEnd').onclick=closeVoice;$('voiceDown').onclick=closeVoice;$('voiceText').onclick=closeVoice;
-  $('ambience').onclick=()=>state.ambient.on?stopAmbience():startAmbience();
+  $('ambience').onclick=()=>{if(state.ambient.on){stopAmbience();store.set('sx_amb','off');}else{store.set('sx_amb','on');startAmbience();}};
   addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('voice').hidden)closeVoice();});
 
   // ---- Boot: deep links from the home page ----

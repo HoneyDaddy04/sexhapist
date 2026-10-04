@@ -36,7 +36,15 @@ WHAT YOU DO NOT DO:
 - You do not push secular framings onto someone who is leading with faith.
 - You do not push religious framings onto someone who is not.
 - You do not say "in my country" or pretend distance. You are here. They are here.
-- You do not use em dashes. Periods, commas, colons only.
+- You do not use em dashes or en dashes, ever. Use a full stop or a comma instead.
+
+HOW YOU RESPOND (this matters more than anything else):
+- Start by naming what they are feeling, specifically, in plain words tied to what they actually said. Never a generic "that sounds hard". Never open with "I understand" or "It sounds like".
+- Then one honest insight or gentle reframe. Then either one small, doable next step or one open question. Never more than one question in a reply.
+- Match the weight of what they shared. A short or casual message gets 1 to 3 sentences. A heavy disclosure gets about 60 to 120 words. Rarely go past 150 words. Never pad, never repeat their message back to them.
+- Write the way a caring person speaks out loud: short sentences, everyday words, no headings, no lists, no bullet points unless asked. Your reply may be read aloud, so it must sound natural when spoken.
+- Never judge, never rush to fix, never minimise. If they are hurting or ashamed, slow down: fewer words, more warmth.
+- When they need words to say to a partner, give them one short line they could actually say.
 
 YOU ARE NOT a licensed therapist or doctor. When something is bigger than this conversation can hold (suicidality, abuse, severe medical issue), you say so plainly, with warmth, and surface a real next step.`;
 
@@ -52,7 +60,7 @@ WHO HE IS:
 TONE: grounded, masculine, warm. You speak like the older brother he wishes he had. Direct without being crude. Sex-positive without being graphic. You do not moralise his desire and you do not perform shock at anything he says.
 
 STYLE:
-- 2 to 4 short paragraphs usually. Sometimes one sentence is enough.
+- 1 to 3 short paragraphs. Sometimes one sentence is enough.
 - Validate first. Then a small honest insight. Then one good question that opens him up further.
 - No bullet points unless he asks.
 - Match his register. If he is formal, you are clear. If he is casual or in Pidgin, you can warm into that.
@@ -76,7 +84,7 @@ WHO SHE IS:
 TONE: warm, grounded, perceptive. You sound like the elder sister or wise aunty she wishes had told her the truth before marriage. Never preachy, never man-bashing, never therapy-speak.
 
 STYLE:
-- 2 to 4 short paragraphs usually.
+- 1 to 3 short paragraphs. Sometimes one sentence is enough.
 - When she asks "how do i bring this up to him", give her actual sample language she could say (in English or with Pidgin warmth, depending on her register).
 - When she asks "what is he thinking", offer the most likely honest read of male psychology in a Nigerian context, with humility. You do not know him personally. You know patterns.
 - Validate her experience first. Then perspective. Then one practical move she can make.
@@ -119,6 +127,36 @@ function sanitizeMessages(messages) {
   return cleaned;
 }
 
+// Never let a dash reach the screen or the voice, even if the model slips.
+const cleanText = (t) => t.replace(/\s*[\u2014\u2013]\s*/g, ', ');
+
+// Chat provider, in order of preference. Opper exposes an OpenAI-compatible API,
+// so the same SDK works; we try the primary model, then a cheaper fallback.
+function chatProvider() {
+  if (process.env.OPPER_API_KEY) {
+    return {
+      name: 'opper',
+      client: new OpenAI({ apiKey: process.env.OPPER_API_KEY, baseURL: 'https://api.opper.ai/v3/compat' }),
+      models: [process.env.OPPER_MODEL || 'openai/gpt-6-sol', process.env.OPPER_FALLBACK_MODEL || 'openai/gpt-6-luna'],
+    };
+  }
+  if (process.env.OPENROUTER_API_KEY) {
+    return {
+      name: 'openrouter',
+      client: new OpenAI({
+        apiKey: process.env.OPENROUTER_API_KEY,
+        baseURL: 'https://openrouter.ai/api/v1',
+        defaultHeaders: { 'HTTP-Referer': process.env.OPENROUTER_REFERER || 'https://sexhapist.com', 'X-Title': 'Sexhapist' },
+      }),
+      models: [process.env.OPENROUTER_MODEL || 'openai/gpt-4o'],
+    };
+  }
+  if (process.env.OPENAI_API_KEY) {
+    return { name: 'openai', client: new OpenAI({ apiKey: process.env.OPENAI_API_KEY }), models: [process.env.CHAT_MODEL || 'gpt-4o-mini'] };
+  }
+  return null;
+}
+
 // Latest user message, for the moderation pass.
 function latestUserMessage(messages) {
   for (let i = messages.length - 1; i >= 0; i--) {
@@ -138,10 +176,8 @@ export default async function handler(req, res) {
   // Lightweight CSRF defense (B2-6).
   if (!checkCsrf(req)) return res.status(403).json({ error: 'forbidden' });
 
-  const useOpenRouter = !!process.env.OPENROUTER_API_KEY;
-  if (!useOpenRouter && !process.env.OPENAI_API_KEY) {
-    return res.status(500).json({ error: 'server_misconfigured' });
-  }
+  const provider = chatProvider();
+  if (!provider) return res.status(500).json({ error: 'server_misconfigured' });
 
   // Cheap checks before expensive work (B1-6): rate limit first.
   if (await enforceRateLimit(req, res, 'chat')) return;
@@ -161,31 +197,22 @@ export default async function handler(req, res) {
   const systemPrompt = path === 'her' ? SYSTEM_PROMPT_HER : SYSTEM_PROMPT_HIM;
 
   // Server-side, IP-keyed budget (B2-1/B2-3). Dropping the cookie does not reset it.
-  const { session, totalRemainingMs } = await loadBudget(req);
+  const { session, totalRemainingMs, needsEmail } = await loadBudget(req);
   if (totalRemainingMs <= 0) {
     setSessionCookie(res, session);
-    return res.status(402).json({
-      error: 'time_expired',
-      message: 'your free time is up. take a breath. when you are ready, we can keep going.',
-      remainingMs: 0,
-    });
+    return res.status(402).json(needsEmail
+      ? { error: 'email_required', message: 'add your email to keep talking.', remainingMs: 0 }
+      : { error: 'time_expired', message: 'your free time is up. take a breath. when you are ready, we can keep going.', remainingMs: 0 });
   }
 
-  const client = useOpenRouter
-    ? new OpenAI({
-        apiKey: process.env.OPENROUTER_API_KEY,
-        baseURL: 'https://openrouter.ai/api/v1',
-        defaultHeaders: {
-          'HTTP-Referer': process.env.OPENROUTER_REFERER || 'https://sexhapist.com',
-          'X-Title': 'Sexhapist',
-        },
-      })
-    : new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  const { client, models } = provider;
+  // Moderation always runs on OpenAI (Opper/OpenRouter have no moderation endpoint).
+  const modClient = process.env.OPENAI_API_KEY ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY }) : null;
 
   // Moderation pass on the latest user message (B2-4). If flagged for
   // self-harm/violence, return a safe crisis message instead of calling the model.
   const userText = latestUserMessage(messages);
-  const moderation = await moderateText(client, userText);
+  const moderation = modClient ? await moderateText(modClient, userText) : { flagged: false };
   if (moderation.flagged) {
     setSessionCookie(res, session);
     return res.status(200).json({
@@ -201,60 +228,54 @@ export default async function handler(req, res) {
     res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
     res.setHeader('Cache-Control', 'no-cache, no-transform');
     res.setHeader('X-Accel-Buffering', 'no');
+    // Cookies are headers, so they must be set before the first res.write().
+    setSessionCookie(res, session);
+    let reply = '';
+    let lastErr;
+    for (const model of models) {
+      try {
+        await withTimeout(async (signal) => {
+          const stream = await client.chat.completions.create({
+            model,
+            max_tokens: 700,
+            stream: true,
+            messages: [{ role: 'system', content: systemPrompt }, ...messages],
+          }, { signal });
+          for await (const chunk of stream) {
+            const part = cleanText(chunk.choices?.[0]?.delta?.content || '');
+            if (!part) continue;
+            reply += part;
+            res.write(`data: ${JSON.stringify({ text: part })}\n\n`);
+          }
+        });
+        res.write(`data: ${JSON.stringify({ done: true, remainingMs: totalRemainingMs, message: reply })}\n\n`);
+        return res.end();
+      } catch (err) {
+        lastErr = err;
+        console.error('chat stream error', model, err?.message || err);
+        if (reply) break; // already streaming: do not splice in a second model
+      }
+    }
+    res.write(`data: ${JSON.stringify({ error: lastErr?.isTimeout ? 'upstream_timeout' : 'upstream_error' })}\n\n`);
+    return res.end();
+  }
+
+  let lastErr;
+  for (const model of models) {
     try {
-      await withTimeout(async (signal) => {
-        const stream = await client.chat.completions.create({
-          model: useOpenRouter
-            ? (process.env.OPENROUTER_MODEL || 'openai/gpt-4o')
-            : (process.env.CHAT_MODEL || 'gpt-4o-mini'),
-          max_tokens: 600,
-          temperature: 0.7,
-          stream: true,
-          messages: [{ role: 'system', content: systemPrompt }, ...messages],
-        }, { signal });
-        let reply = '';
-        for await (const chunk of stream) {
-          const part = chunk.choices?.[0]?.delta?.content || '';
-          if (!part) continue;
-          reply += part;
-          res.write(`data: ${JSON.stringify({ text: part })}\n\n`);
-        }
-        setSessionCookie(res, session);
-        res.write(`data: ${JSON.stringify({ done: true, remainingMs: totalRemainingMs, message: reply.replace(/[—–]/g, '.') })}\n\n`);
-      });
-      return res.end();
+      const completion = await withTimeout((signal) => client.chat.completions.create({
+        model,
+        max_tokens: 700,
+        messages: [{ role: 'system', content: systemPrompt }, ...messages],
+      }, { signal }));
+      const reply = cleanText(completion.choices?.[0]?.message?.content || '');
+      setSessionCookie(res, session);
+      return res.status(200).json({ message: reply || 'i lost the thread. try that again?', remainingMs: totalRemainingMs });
     } catch (err) {
-      console.error('chat stream error', err);
-      res.write(`data: ${JSON.stringify({ error: err?.isTimeout ? 'upstream_timeout' : 'upstream_error' })}\n\n`);
-      return res.end();
+      lastErr = err;
+      console.error('chat upstream error', model, err?.message || err);
     }
   }
-
-  try {
-    const completion = await withTimeout((signal) => client.chat.completions.create({
-      model: useOpenRouter
-        ? (process.env.OPENROUTER_MODEL || 'openai/gpt-4o')
-        : (process.env.CHAT_MODEL || 'gpt-4o-mini'),
-      max_tokens: 600,
-      temperature: 0.7,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        ...messages,
-      ],
-    }, { signal }));
-
-    const reply = (completion.choices?.[0]?.message?.content || '')
-      .replace(/—/g, '.')
-      .replace(/–/g, '.');
-
-    setSessionCookie(res, session);
-    return res.status(200).json({
-      message: reply || 'i lost the thread. try that again?',
-      remainingMs: totalRemainingMs,
-    });
-  } catch (err) {
-    console.error('chat upstream error', err);
-    if (err?.isTimeout) return res.status(504).json({ error: 'upstream_timeout' });
-    return res.status(502).json({ error: 'upstream_error' });
-  }
+  if (lastErr?.isTimeout) return res.status(504).json({ error: 'upstream_timeout' });
+  return res.status(502).json({ error: 'upstream_error' });
 }

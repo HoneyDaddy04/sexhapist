@@ -1,5 +1,5 @@
 import { applyCors } from '../lib/cors.js';
-import { ensureConfigured, peekBudget, FREE_DURATION_MS } from '../lib/session.js';
+import { ensureConfigured, peekBudget, SESSION_FREE_MS, IP_FREE_MS } from '../lib/session.js';
 
 // GET /api/session — reports the caller's remaining budget.
 //
@@ -18,25 +18,17 @@ export default async function handler(req, res) {
 
   res.setHeader('Cache-Control', 'no-store');
 
-  const { hasSession, seen, totalRemainingMs, paidActive, firstSeenAt } = await peekBudget(req);
-
-  // hasSession reflects whether the server has started this caller's clock
-  // (either a valid cookie exists OR the IP has a firstSeenAt record).
-  const started = hasSession || seen;
-  if (!started) {
-    return res.status(200).json({
-      hasSession: false,
-      remainingMs: FREE_DURATION_MS,
-      freeBudgetMs: FREE_DURATION_MS,
-      paid: false,
-    });
-  }
-
+  const b = await peekBudget(req);
   return res.status(200).json({
-    hasSession: true,
-    remainingMs: totalRemainingMs,
-    freeBudgetMs: FREE_DURATION_MS,
-    paid: paidActive,
-    startedAt: firstSeenAt,
+    hasSession: b.started,
+    remainingMs: b.totalRemainingMs,
+    usedMs: b.sessionUsedMs,
+    freeBudgetMs: b.limitMs,
+    sessionFreeMs: SESSION_FREE_MS,
+    ipFreeMs: IP_FREE_MS,
+    ipRemainingMs: b.ipRemainingMs,
+    needsEmail: b.needsEmail,
+    emailUnlocked: b.emailUnlocked,
+    paid: b.paidActive,
   });
 }
