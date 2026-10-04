@@ -145,6 +145,37 @@ a{color:inherit;text-decoration:none}
 .cbtn .i{width:21px;height:21px;stroke-width:2}
 .cbtn.send{background:var(--tint);color:#fff}
 .cbtn.recording{background:var(--rose);color:#fff;animation:pulse 1.2s infinite}
+/* Voice-note recording bar (replaces the composer contents while recording) */
+.composer.rec>:not(.recbar){display:none!important}
+.recbar{flex:1;display:flex;align-items:center;gap:10px;min-width:0}
+.composer:not(.rec) .recbar{display:none}
+.recdot{width:10px;height:10px;border-radius:50%;background:#FF3B30;animation:blink 1s infinite;flex:none;margin-left:4px}
+.rectime{font-family:var(--font);font-variant-numeric:tabular-nums;font-size:15px;font-weight:600;color:var(--label);min-width:38px}
+.reclevel{flex:1;min-width:0;display:flex;align-items:center;justify-content:flex-end;gap:3px;height:28px;overflow:hidden}
+.reclevel i{display:block;width:3px;border-radius:2px;background:var(--rose);height:4px;flex:none;transition:height .08s}
+.rechint{font-size:12px;color:var(--label-2);font-family:var(--font);white-space:nowrap}
+@media (max-width:480px){.rechint{display:none}}
+@keyframes blink{50%{opacity:.25}}
+/* Voice-note bubbles */
+.vbub{padding:8px 12px 8px 8px!important}
+.vnote{display:flex;align-items:center;gap:10px;width:min(300px,62vw)}
+.vnote .pl{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--tint);color:#fff}
+.bubble.user .vnote .pl{background:rgba(255,255,255,.22)}
+.vnote .pl .ms{font-size:24px;font-variation-settings:"FILL" 1}
+.vnote .wv{flex:1;min-width:0;height:30px;display:flex;align-items:center;gap:2px;cursor:pointer}
+.vnote .wv i{flex:1;min-width:2px;border-radius:2px;background:var(--label-4)}
+.vnote .wv i.p{background:var(--tint)}
+.bubble.user .vnote .wv i{background:rgba(255,255,255,.4)}.bubble.user .vnote .wv i.p{background:#fff}
+.vnote .dur{font-size:12px;font-variant-numeric:tabular-nums;opacity:.75;min-width:30px;text-align:right}
+.vtx{display:block;margin-top:6px;font-size:12px;font-weight:600;opacity:.75;text-decoration:underline;text-underline-offset:2px}
+.vtxt{font-size:14px;line-height:20px;margin-top:6px;opacity:.9;white-space:pre-wrap}
+.nstat{font-size:12px;opacity:.7;margin-top:6px;font-style:italic}
+/* "Ngozi is recording a voice note" */
+.recnote{display:flex;align-items:center;gap:8px;color:var(--label-2);font-size:15px}
+.recnote .ms{color:var(--rose);font-size:20px;font-variation-settings:"FILL" 1;animation:blink 1.2s infinite}
+.recnote .eq{display:flex;align-items:center;gap:2px;height:18px}
+.recnote .eq i{width:3px;border-radius:2px;background:var(--rose);animation:wave 1s ease-in-out infinite;height:16px;transform-origin:center}
+.recnote .eq i:nth-child(2){animation-delay:-.2s}.recnote .eq i:nth-child(3){animation-delay:-.45s}.recnote .eq i:nth-child(4){animation-delay:-.3s}.recnote .eq i:nth-child(5){animation-delay:-.6s}
 .livebtn{height:44px;border-radius:22px;padding:0 16px 0 12px;display:flex;align-items:center;gap:6px;background:linear-gradient(120deg,#3B4FD8,#8C4FC9 55%,#D0587E);color:#fff;font-family:var(--font);font-weight:600;font-size:15px;flex:none}
 .livebtn .i{width:20px;height:20px;stroke-width:2}
 @media (max-width:480px){.livebtn span{display:none}.livebtn{padding:0;width:44px;justify-content:center}}
@@ -184,6 +215,18 @@ a{color:inherit;text-decoration:none}
 .tp .spacer{flex:1}
 .tag2{display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 10px;border-radius:999px;font-size:12px;font-weight:650;white-space:nowrap;align-self:flex-start;margin-top:8px;background:var(--s);color:var(--on)}
 .tag2 .ms{font-size:14px;font-variation-settings:"FILL" 1,"wght" 600}
+
+/* ===== Sound panel (background + volumes) ===== */
+.spanel .opts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.sopt{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;border-radius:16px;background:rgba(255,255,255,.07);box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);font-size:12.5px;font-weight:600;text-align:center}
+.sopt .ms{font-size:24px}
+.sopt.on{background:rgba(255,255,255,.95);color:#141A4A}
+.sopt.on .ms{font-variation-settings:"FILL" 1}
+.slider{display:flex;align-items:center;gap:12px;margin-top:12px;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.07)}
+.slider .ms{opacity:.8}
+.slider label{font-size:13px;font-weight:600;min-width:84px}
+.slider input{flex:1;accent-color:#D0587E;height:28px}
+.slider output{font-size:12px;opacity:.6;min-width:34px;text-align:right;font-variant-numeric:tabular-nums}
 
 /* ===== Voice picker ===== */
 .vpick{position:fixed;inset:0;z-index:70;display:flex;align-items:flex-end;justify-content:center;background:rgba(2,2,10,.55);font-family:var(--font);animation:fadein .2s}
@@ -331,20 +374,20 @@ a{color:inherit;text-decoration:none}
 <div class="shell">
   <!-- Navigation rail (desktop) -->
   <nav class="rail" aria-label="App">
-    <a href="index.html" aria-label="Sexhapist home"><svg class="logo"><use href="#logo"/></svg></a>
+    <a href="/" aria-label="Sexhapist home"><svg class="logo"><use href="#logo"/></svg></a>
     <button class="fab" data-act="live" aria-label="Start live voice"><span class="ms f">graphic_eq</span></button>
     <div class="fab-l">Live</div>
     <button class="navitem" data-nav="talk"><i><span class="ms">chat_bubble</span></i>Talk</button>
     <button class="navitem" data-nav="topics"><i><span class="ms">grid_view</span></i>Topics</button>
     <button class="navitem" data-nav="private"><i><span class="ms">lock</span></i>Private</button>
-    <a class="navitem bottom" href="index.html"><i><span class="ms">arrow_outward</span></i>Home</a>
+    <a class="navitem bottom" href="/"><i><span class="ms">arrow_outward</span></i>Home</a>
   </nav>
 
   <main class="main">
     <!-- TALK: home of the app. Empty state = greeting + starters; then the conversation. -->
     <section class="view" id="talk" aria-label="Talk">
       <header class="appbar">
-        <a class="brand" href="index.html"><svg class="logo" width="26" height="26"><use href="#logo"/></svg><span>Se<em>x</em>hapist</span></a>
+        <a class="brand" href="/"><svg class="logo" width="26" height="26"><use href="#logo"/></svg><span>Se<em>x</em>hapist</span></a>
         <div class="vtitle">Talk</div>
         <div class="spacer"></div>
         <div class="pathseg" role="radiogroup" aria-label="Conversation for"><button data-path="him" role="radio">For him</button><button data-path="her" role="radio">For her</button></div>
@@ -368,8 +411,9 @@ a{color:inherit;text-decoration:none}
         <form class="composer" id="composer">
           <button type="button" class="cbtn" data-nav="topics" aria-label="Browse topics" title="Topics"><svg class="i"><use href="#i-plus"/></svg></button>
           <input id="messageInput" placeholder="Say it however it comes" autocomplete="off" aria-label="Message">
-          <button type="button" class="cbtn" id="sendMic" aria-label="Dictate a message" title="Dictate"><svg class="i"><use href="#i-mic"/></svg></button>
+          <button type="button" class="cbtn" id="sendMic" aria-label="Record a voice note" title="Record a voice note"><svg class="i"><use href="#i-mic"/></svg></button>
           <button type="button" class="livebtn" data-act="live" aria-label="Start live voice"><svg class="i"><use href="#i-waveform"/></svg><span>Live</span></button>
+          <div class="recbar" aria-live="polite"><button type="button" class="cbtn" id="recCancel" aria-label="Discard recording" title="Discard"><span class="ms">delete</span></button><span class="recdot"></span><span class="rectime" id="recTime">0:00</span><span class="rechint">Recording voice note</span><div class="reclevel" id="recLevel"></div><button type="button" class="cbtn send" id="recSend" aria-label="Send voice note" title="Send"><svg class="i"><use href="#i-arrow-u"/></svg></button></div>
         </form>
         <div class="fineprint">Not a licensed clinical service. If you're in danger, call 112.</div>
       </div></div>
@@ -378,7 +422,7 @@ a{color:inherit;text-decoration:none}
     <!-- TOPICS (Tonal bento) -->
     <section class="view" id="topics" aria-label="Topics">
       <header class="appbar">
-        <a class="brand" href="index.html"><svg class="logo" width="26" height="26"><use href="#logo"/></svg><span>Se<em>x</em>hapist</span></a>
+        <a class="brand" href="/"><svg class="logo" width="26" height="26"><use href="#logo"/></svg><span>Se<em>x</em>hapist</span></a>
         <div class="vtitle">Topics</div>
         <div class="spacer"></div>
         <div class="pathseg" role="radiogroup" aria-label="Topics for"><button data-path="him" role="radio">For him</button><button data-path="her" role="radio">For her</button></div>
@@ -393,7 +437,7 @@ a{color:inherit;text-decoration:none}
     <!-- PRIVATE (Tonal) -->
     <section class="view" id="private" aria-label="Private">
       <header class="appbar">
-        <a class="brand" href="index.html"><svg class="logo" width="26" height="26"><use href="#logo"/></svg><span>Se<em>x</em>hapist</span></a>
+        <a class="brand" href="/"><svg class="logo" width="26" height="26"><use href="#logo"/></svg><span>Se<em>x</em>hapist</span></a>
         <div class="vtitle">Private</div>
       </header>
       <div class="scroll"><div class="wide-col" style="max-width:900px">
@@ -406,7 +450,7 @@ a{color:inherit;text-decoration:none}
           <div class="pcard"><span class="shp ova" style="width:40px;height:40px;background:var(--sh);color:var(--on)"><span class="ms i20">delete_sweep</span></span><div class="grow"><b>This conversation</b><small id="convState">Lives only in this browser tab.</small></div><button class="pbtn" id="clearChat">Clear</button></div>
           <div class="pcard"><span class="shp ova" style="width:40px;height:40px;background:var(--tc);color:var(--ontc)"><span class="ms f i20">emergency</span></span><div class="grow"><b>Not a clinical service</b><small>If you're in danger in Nigeria, call 112, or reach a doctor or someone you trust.</small></div></div>
         </div>
-        <div class="plinks"><a href="privacy.html">Privacy policy</a><a href="terms.html">Terms</a><a href="index.html">Home</a></div>
+        <div class="plinks"><a href="/privacy">Privacy policy</a><a href="/terms">Terms</a><a href="/">Home</a></div>
       </div></div>
     </section>
   </main>
@@ -423,7 +467,7 @@ a{color:inherit;text-decoration:none}
 <div class="overlay" id="welcome" hidden role="dialog" aria-modal="true" aria-labelledby="wTitle">
   <div class="scroll" style="position:relative">
     <div class="glow"></div>
-    <div class="wtop"><a href="index.html"><span class="ms i18">arrow_back</span>Home</a></div>
+    <div class="wtop"><a href="/"><span class="ms i18">arrow_back</span>Home</a></div>
     <div class="wcol">
       <div class="whead">
         <svg class="logo"><use href="#logo"/></svg>
@@ -456,7 +500,7 @@ a{color:inherit;text-decoration:none}
   <div class="vnav">
     <button class="gb" id="voiceDown" aria-label="Minimise to text"><svg class="i"><use href="#i-chev-d"/></svg></button>
     <span class="vpill"><svg class="i"><use href="#i-lock"/></svg><span id="voicePath">For Her · anonymous</span></span>
-    <div style="display:flex;gap:8px"><button class="gb" id="voicePickBtn" aria-label="Change voice" title="Change voice"><span class="ms i20" style="font-size:21px">record_voice_over</span></button><button class="gb" id="ambience" aria-label="Ambience" aria-pressed="false" title="Ambience"><svg class="i"><use href="#i-music"/></svg></button></div>
+    <div style="display:flex;gap:8px"><button class="gb" id="voicePickBtn" aria-label="Change voice" title="Change voice"><span class="ms i20" style="font-size:21px">record_voice_over</span></button><button class="gb" id="ambience" aria-label="Sound and volume" title="Sound and volume"><span class="ms i20" style="font-size:21px">tune</span></button></div>
   </div>
   <div class="vbody">
     <div class="orbwrap">
@@ -485,9 +529,20 @@ a{color:inherit;text-decoration:none}
 <div class="vpick" id="voicePick" hidden role="dialog" aria-modal="true" aria-label="Choose a voice">
   <div class="panel">
     <div class="hd"><b>Choose a voice</b><button id="voicePickClose" aria-label="Close"><span class="ms">close</span></button></div>
-    <p class="sub">Tap to hear it. Your choice is remembered for this door.</p>
-    <h3>Nigerian</h3><div class="vg" id="vgLocal"></div>
-    <h3>International</h3><div class="vg" id="vgIntl"></div>
+    <p class="sub">Your choices are remembered for this door.</p>
+    <h3>Live calls</h3><div class="vg" id="vgLive"></div>
+    <h3>Voice notes · Nigerian</h3><div class="vg" id="vgLocal"></div>
+    <h3>Voice notes · International</h3><div class="vg" id="vgIntl"></div>
+  </div>
+</div>
+
+<div class="vpick spanel" id="soundPanel" hidden role="dialog" aria-modal="true" aria-label="Sound">
+  <div class="panel">
+    <div class="hd"><b>Sound</b><button id="soundClose" aria-label="Close"><span class="ms">close</span></button></div>
+    <p class="sub">Pick what plays softly behind the conversation.</p>
+    <div class="opts" id="bgOpts"></div>
+    <div class="slider"><span class="ms">music_note</span><label for="bgVol">Background</label><input type="range" id="bgVol" min="0" max="100" step="1"><output id="bgVolOut"></output></div>
+    <div class="slider"><span class="ms">record_voice_over</span><label for="voiceVol">Voice</label><input type="range" id="voiceVol" min="0" max="100" step="1"><output id="voiceVolOut"></output></div>
   </div>
 </div>
 
@@ -612,7 +667,7 @@ a{color:inherit;text-decoration:none}
   function addBanner(title,sub){const d=document.createElement('div');d.className='banner';d.innerHTML='<span class="ms f">schedule</span><div><b></b><small></small></div>';d.querySelector('b').textContent=title;d.querySelector('small').textContent=sub;$('messages').appendChild(d);scrollDown();}
   function newConversation(){state.history=[];$('messages').replaceChildren();$('messageInput').value='';syncSendMic();syncEmpty();persist();}
   function persist(){if(state.history.length)store.set('sx_conv',JSON.stringify({path:state.path,history:state.history}),true);else store.del('sx_conv',true);}
-  function restore(){try{const c=JSON.parse(store.get('sx_conv',true)||'null');if(!c||!c.history?.length)return;if(c.path)state.path=c.path;state.history=c.history;c.history.forEach(m=>addMessage(m.content,m.role==='user'?'user':'bot'));}catch{}}
+  function restore(){try{const c=JSON.parse(store.get('sx_conv',true)||'null');if(!c||!c.history?.length)return;if(c.path)state.path=c.path;state.history=c.history;c.history.forEach(m=>{const b=addMessage(m.content,m.role==='user'?'user':'bot');if(m.voice){const t=document.createElement('div');t.className='nstat';t.textContent='Voice note';b.prepend(t);}});}catch{}}
 
   // ---- Voices (keep ids in sync with lib/voices.js) ----
   const VOICES=[
@@ -634,6 +689,8 @@ a{color:inherit;text-decoration:none}
   const previews=new Map();
   function renderVoices(){
     const cur=currentVoice();
+    {const box=$('vgLive');box.replaceChildren();const lv=liveVoice();LIVE_VOICES.forEach(v=>{const b=document.createElement('button');b.className='vopt'+(v.id===lv?' on':'');b.innerHTML='<span class="av"></span><span><b></b><small></small></span>';b.querySelector('.av').textContent=v.name[0];b.querySelector('b').textContent=v.name;b.querySelector('small').textContent=v.desc;
+      b.onclick=()=>{store.set('sx_rtvoice_'+(state.path||'her'),v.id);renderVoices();toast(rt.live?'Your next call will use '+v.name+'.':v.name+' will answer your live calls.');};box.appendChild(b);});}
     [['vgLocal','local'],['vgIntl','intl']].forEach(([id,g])=>{const box=$(id);box.replaceChildren();VOICES.filter(v=>v.g===g).forEach(v=>{
       const b=document.createElement('button');b.className='vopt'+(v.id===cur?' on':'');b.dataset.id=v.id;
       b.innerHTML='<span class="av"></span><span><b></b><small></small></span>';b.querySelector('.av').textContent=v.name[0];b.querySelector('b').textContent=v.name;b.querySelector('small').textContent=v.desc;
@@ -663,7 +720,7 @@ a{color:inherit;text-decoration:none}
   async function playVoiceResponse(responseP){
     const response=await responseP;if(!response.ok||!response.body)throw new Error('ElevenLabs voice unavailable');
     if(!state.voiceMode)return;
-    const player=state.ttsAudio||new Audio();state.ttsAudio=player;player.pause();
+    const player=state.ttsAudio||new Audio();state.ttsAudio=player;player.volume=voiceVol();player.pause();
     const mse=window.MediaSource&&MediaSource.isTypeSupported('audio/mpeg');let url;
     const playEnded=new Promise((resolve,reject)=>{player.onended=resolve;player.onerror=()=>reject(new Error('Audio playback failed'));player.onpause=()=>{if(!state.voiceMode)resolve();};});
     if(mse){
@@ -684,41 +741,160 @@ a{color:inherit;text-decoration:none}
   function stopSpeaking(){try{state.ttsAudio&&state.ttsAudio.pause();}catch{}try{speechSynthesis.cancel();}catch{}}
 
   // ---- Ambience ----
-  // Ambience: a seamless 30s loop generated with ElevenLabs sound effects (audio/ambience.mp3).
-  // Web Audio keeps the loop gapless; the gain dips while the AI is speaking.
-  // Background bed sits well under speech; while the AI talks it drops further and
-  // loses its highs so the voice's frequency range stays clear.
-  const AMB_LEVEL=.07,AMB_DUCK=.025,AMB_OPEN_HZ=3200,AMB_DUCK_HZ=700;
-  let ambBuffer=null;
+  // ---- Background sound ----
+  // Tracks were generated with ElevenLabs (music + sound effects). `gain` levels
+  // them to the same loudness; music crossfades into itself, nature loops natively.
+  const BGS=[
+    {id:'piano',name:'Soft piano',icon:'piano',file:'audio/bg/piano.mp3',gain:.57,xfade:4},
+    {id:'guitar',name:'Gentle guitar',icon:'music_note',file:'audio/bg/guitar.mp3',gain:.34,xfade:4},
+    {id:'rain',name:'Rain',icon:'rainy',file:'audio/bg/rain.mp3',gain:.36},
+    {id:'ocean',name:'Ocean',icon:'waves',file:'audio/bg/ocean.mp3',gain:.9},
+    {id:'night',name:'Night garden',icon:'nightlight',file:'audio/bg/night.mp3',gain:.9},
+    {id:'off',name:'Off',icon:'volume_off'}
+  ];
+  const prefNum=(k,d)=>{const v=parseFloat(store.get(k));return isFinite(v)?Math.min(1,Math.max(0,v)):d;};
+  const bgChoice=()=>{const v=store.get('sx_bg');return BGS.some(b=>b.id===v)?v:'piano';};
+  const bgVol=()=>prefNum('sx_bgvol',.5), voiceVol=()=>prefNum('sx_vvol',1);
+  const bgLevel=()=>.8*bgVol()*bgVol();               // perceptual curve
+  const DUCK=.3,OPEN_HZ=3200,DUCK_HZ=700;
+  const bg={ctx:null,master:null,duck:null,lp:null,track:null,buffers:new Map(),srcs:[],timer:null,on:false,ducked:false};
+  function audioCtx(){const C=window.AudioContext||window.webkitAudioContext;if(!bg.ctx){bg.ctx=new C();bg.master=bg.ctx.createGain();bg.duck=bg.ctx.createGain();bg.lp=bg.ctx.createBiquadFilter();bg.lp.type='lowpass';bg.lp.Q.value=.5;bg.lp.frequency.value=OPEN_HZ;bg.lp.connect(bg.duck).connect(bg.master).connect(bg.ctx.destination);}return bg.ctx;}
+  async function loadBg(t){if(bg.buffers.has(t.id))return bg.buffers.get(t.id);const ctx=audioCtx();const buf=await ctx.decodeAudioData(await (await fetch(t.file)).arrayBuffer());bg.buffers.set(t.id,buf);return buf;}
+  function playBuffer(t,buf,when){
+    const ctx=bg.ctx,src=ctx.createBufferSource(),g=ctx.createGain();src.buffer=buf;src.connect(g).connect(bg.lp);
+    const fade=t.xfade||1.5;g.gain.setValueAtTime(0,when);g.gain.linearRampToValueAtTime(t.gain,when+fade);
+    if(t.xfade){const end=when+buf.duration;g.gain.setValueAtTime(t.gain,end-t.xfade);g.gain.linearRampToValueAtTime(0,end);src.start(when);src.stop(end+.05);
+      // queue the next pass to overlap this one's fade-out
+      const next=end-t.xfade;bg.timer=setTimeout(()=>{if(bg.on&&bg.track===t.id)playBuffer(t,buf,next);},Math.max(0,(next-ctx.currentTime-1.5)*1000));}
+    else{src.loop=true;src.start(when);}
+    bg.srcs.push({src,g});src.onended=()=>{bg.srcs=bg.srcs.filter(x=>x.src!==src);};
+  }
+  function fadeOutAll(){const ctx=bg.ctx;if(!ctx)return;const t=ctx.currentTime;clearTimeout(bg.timer);bg.srcs.forEach(({src,g})=>{g.gain.cancelScheduledValues(t);g.gain.setValueAtTime(g.gain.value,t);g.gain.linearRampToValueAtTime(0,t+1);try{src.stop(t+1.05);}catch{}});bg.srcs=[];}
   async function startAmbience(){
-    const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx||state.ambient.on)return;
+    const t=BGS.find(b=>b.id===bgChoice());if(!t||t.id==='off'||!state.voiceMode)return;
+    try{const ctx=audioCtx();await ctx.resume();bg.master.gain.value=bgLevel();const buf=await loadBg(t);if(!state.voiceMode)return;
+      if(bg.on&&bg.track===t.id)return;fadeOutAll();bg.on=true;bg.track=t.id;playBuffer(t,buf,ctx.currentTime+.05);}
+    catch{toast('Could not start background sound on this device.');}
+  }
+  function stopAmbience(){fadeOutAll();bg.on=false;bg.track=null;}
+  function duckAmbience(on){if(!bg.ctx||bg.ducked===on)return;bg.ducked=on;const t=bg.ctx.currentTime,k=on?.25:1.2;
+    bg.duck.gain.cancelScheduledValues(t);bg.duck.gain.setValueAtTime(bg.duck.gain.value,t);bg.duck.gain.linearRampToValueAtTime(on?DUCK:1,t+k);
+    bg.lp.frequency.cancelScheduledValues(t);bg.lp.frequency.setValueAtTime(bg.lp.frequency.value,t);bg.lp.frequency.exponentialRampToValueAtTime(on?DUCK_HZ:OPEN_HZ,t+k);}
+  const ambPref=()=>bgChoice()!=='off';
+  function applyVolumes(){if(bg.master)bg.master.gain.setTargetAtTime(bgLevel(),bg.ctx.currentTime,.05);const v=voiceVol();if(rt.out)rt.out.gain.setTargetAtTime(v,rt.ctx.currentTime,.05);if(state.ttsAudio)state.ttsAudio.volume=v;notePlayer.volume=v;}
+  function renderSound(){
+    const box=$('bgOpts');box.replaceChildren();const cur=bgChoice();
+    BGS.forEach(b=>{const el=document.createElement('button');el.className='sopt'+(b.id===cur?' on':'');el.innerHTML='<span class="ms"></span><span></span>';el.firstChild.textContent=b.icon;el.lastChild.textContent=b.name;
+      el.onclick=()=>{store.set('sx_bg',b.id);renderSound();if(b.id==='off')stopAmbience();else if(state.voiceMode){bg.track=null;startAmbience();}};box.appendChild(el);});
+    $('bgVol').value=Math.round(bgVol()*100);$('bgVolOut').textContent=$('bgVol').value+'%';
+    $('voiceVol').value=Math.round(voiceVol()*100);$('voiceVolOut').textContent=$('voiceVol').value+'%';
+  }
+  function openSound(){renderSound();$('soundPanel').hidden=false;$('soundClose').focus();}
+
+  // ---- Live calls: Opper realtime (openai/gpt-realtime-2) ----
+  // The server mints a single-use ticket; we stream 24 kHz PCM16 from the mic and
+  // play the model's audio as it arrives. Server-side VAD handles turn taking and
+  // barge-in. A heartbeat every 15 s counts call time against the free budget.
+  const LIVE_VOICES=[
+    {id:'marin',name:'Marin',desc:'Warm and gentle'},{id:'cedar',name:'Cedar',desc:'Warm, steady male'},
+    {id:'sage',name:'Sage',desc:'Calm and grounded'},{id:'coral',name:'Coral',desc:'Soft and kind'},
+    {id:'shimmer',name:'Shimmer',desc:'Light and soothing'},{id:'ash',name:'Ash',desc:'Clear, quiet male'},
+    {id:'ballad',name:'Ballad',desc:'Soft, low male'},{id:'verse',name:'Verse',desc:'Expressive, warm'}
+  ];
+  const DEFAULT_LIVE={her:'marin',him:'cedar'};
+  const liveVoice=()=>{const v=store.get('sx_rtvoice_'+(state.path||'her'));return LIVE_VOICES.some(x=>x.id===v)?v:DEFAULT_LIVE[state.path||'her'];};
+  const rt={responding:false,ws:null,ctx:null,stream:null,node:null,out:null,next:0,playing:[],muted:false,beat:null,live:false,ai:'',you:'',queue:[],fallback:false};
+  const b64=buf=>{let s='';const b=new Uint8Array(buf);for(let i=0;i<b.length;i+=0x8000)s+=String.fromCharCode.apply(null,b.subarray(i,i+0x8000));return btoa(s);};
+  const unb64=str=>{const bin=atob(str),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u.buffer;};
+  async function startRealtime(){
+    rt.fallback=false;rt.ai='';rt.you='';rt.muted=false;
+    setVoiceState('connecting');$('voiceCaption').textContent='Connecting you privately…';
+    const ticketP=fetch('/api/realtime',{method:'POST',headers:{'Content-Type':'application/json','X-Requested-With':'sexhapist'},credentials:'same-origin',body:JSON.stringify({path:state.path,voice:liveVoice()})});
+    const micP=navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true,channelCount:1}});
+    let r,stream;
+    try{[r,stream]=await Promise.all([ticketP,micP]);}
+    catch(e){ticketP.then(x=>x).catch(()=>{});micP.then(s=>s.getTracks().forEach(t=>t.stop())).catch(()=>{});
+      if(e&&e.name==='NotAllowedError'){toast('Allow microphone access in your browser settings to talk live.');closeVoice();return;}throw e;}
+    if(!state.voiceMode){stream.getTracks().forEach(t=>t.stop());return;}
+    if(r.status===402){stream.getTracks().forEach(t=>t.stop());const d=await r.json().catch(()=>({}));closeVoice();markBudget(0);if(d.error==='email_required')showEmailGate();else addBanner('Your free time is up','You can come back tomorrow. Nothing here is linked to you.');return;}
+    if(!r.ok){stream.getTracks().forEach(t=>t.stop());throw new Error('ticket');}
+    const tk=await r.json();
+    if(state.budget){state.budget.remaining=tk.remainingMs;state.budget.total=tk.freeBudgetMs||state.budget.total;state.budget.at=Date.now();}
+    rt.stream=stream;
+    const C=window.AudioContext||window.webkitAudioContext;rt.ctx=new C({sampleRate:24000});await rt.ctx.resume();
+    rt.out=rt.ctx.createGain();rt.out.gain.value=voiceVol();rt.out.connect(rt.ctx.destination);rt.next=0;
+    const ws=new WebSocket(tk.ws_url||'wss://api.opper.ai/v3/realtime',['opper-ticket.'+tk.client_secret]);rt.ws=ws;
+    ws.onopen=()=>ws.send(JSON.stringify({type:'session.start',config:{}}));
+    ws.onmessage=e=>{let ev;try{ev=JSON.parse(e.data);}catch{return;}onRealtime(ev);};
+    ws.onerror=()=>{};
+    ws.onclose=()=>{if(state.voiceMode&&rt.ws===ws){rt.ws=null;if(rt.live)toast('The call ended.');closeVoice();}};
+  }
+  async function startMic(){
+    const ctx=rt.ctx,src=ctx.createMediaStreamSource(rt.stream);
+    const send=f32=>{if(rt.muted||!rt.ws||rt.ws.readyState!==1)return;const pcm=new Int16Array(f32.length);for(let i=0;i<f32.length;i++){const x=Math.max(-1,Math.min(1,f32[i]));pcm[i]=x<0?x*32768:x*32767;}rt.ws.send(JSON.stringify({type:'audio.append',audio:b64(pcm.buffer)}));};
     try{
-      const ctx=state.ambient.context||new Ctx();state.ambient.context=ctx;await ctx.resume();
-      if(!ambBuffer){const r=await fetch('audio/ambience.mp3');ambBuffer=await ctx.decodeAudioData(await r.arrayBuffer());}
-      if(!state.voiceMode)return;
-      const src=ctx.createBufferSource(),gain=ctx.createGain(),lp=ctx.createBiquadFilter();src.buffer=ambBuffer;src.loop=true;lp.type='lowpass';lp.Q.value=.5;lp.frequency.value=state.speakingCount>0?AMB_DUCK_HZ:AMB_OPEN_HZ;
-      gain.gain.value=0;gain.gain.linearRampToValueAtTime(state.speakingCount>0?AMB_DUCK:AMB_LEVEL,ctx.currentTime+2.5);
-      src.connect(lp).connect(gain).connect(ctx.destination);src.start();
-      state.ambient.nodes=[src];state.ambient.master=gain;state.ambient.filter=lp;state.ambient.on=true;$('ambience').setAttribute('aria-pressed','true');
-    }catch{toast('Could not start ambience on this device.');}
+      const code="class P extends AudioWorkletProcessor{constructor(){super();this.b=new Float32Array(2400);this.n=0;}process(i){const c=i[0]&&i[0][0];if(c){for(let k=0;k<c.length;k++){this.b[this.n++]=c[k];if(this.n===this.b.length){this.port.postMessage(this.b.slice(0));this.n=0;}}}return true;}}registerProcessor('pcm-out',P);";
+      await ctx.audioWorklet.addModule(URL.createObjectURL(new Blob([code],{type:'application/javascript'})));
+      rt.node=new AudioWorkletNode(ctx,'pcm-out');rt.node.port.onmessage=e=>send(e.data);
+      const mute=ctx.createGain();mute.gain.value=0;src.connect(rt.node).connect(mute).connect(ctx.destination);
+    }catch{
+      rt.node=ctx.createScriptProcessor(2048,1,1);rt.node.onaudioprocess=e=>send(e.inputBuffer.getChannelData(0));
+      const mute=ctx.createGain();mute.gain.value=0;src.connect(rt.node).connect(mute).connect(ctx.destination);
+    }
   }
-  function duckAmbience(on){const a=state.ambient;if(!a.on||!a.master)return;const t=a.context.currentTime;a.master.gain.cancelScheduledValues(t);a.master.gain.setValueAtTime(a.master.gain.value,t);a.master.gain.linearRampToValueAtTime(on?AMB_DUCK:AMB_LEVEL,t+(on?.25:1.2));if(a.filter){a.filter.frequency.cancelScheduledValues(t);a.filter.frequency.setValueAtTime(a.filter.frequency.value,t);a.filter.frequency.exponentialRampToValueAtTime(on?AMB_DUCK_HZ:AMB_OPEN_HZ,t+(on?.25:1.2));}}
-  function stopAmbience(){
-    const a=state.ambient;if(!a||!a.on)return;
-    const ctx=a.context,g=a.master,nodes=a.nodes.slice();
-    if(ctx&&g){const t=ctx.currentTime;g.gain.cancelScheduledValues(t);g.gain.setValueAtTime(g.gain.value,t);g.gain.linearRampToValueAtTime(.0001,t+1.2);}
-    setTimeout(()=>nodes.forEach(n=>{try{n.stop();}catch{}}),1300);
-    a.nodes=[];a.master=null;a.on=false;$('ambience').setAttribute('aria-pressed','false');
+  function stopPlayback(){rt.playing.forEach(s=>{try{s.stop();}catch{}});rt.playing=[];rt.next=0;}
+  function playPcm(b64str){
+    const ctx=rt.ctx;if(!ctx)return;const i16=new Int16Array(unb64(b64str));if(!i16.length)return;
+    const buf=ctx.createBuffer(1,i16.length,24000),ch=buf.getChannelData(0);for(let i=0;i<i16.length;i++)ch[i]=i16[i]/32768;
+    const src=ctx.createBufferSource();src.buffer=buf;src.connect(rt.out);
+    const at=Math.max(ctx.currentTime+.04,rt.next);src.start(at);rt.next=at+buf.duration;rt.playing.push(src);
+    src.onended=()=>{rt.playing=rt.playing.filter(x=>x!==src);if(!rt.playing.length&&!rt.responding&&state.voiceMode&&rt.live)setVoiceState(rt.muted?'muted':'listening');};
   }
-  const ambPref=()=>store.get('sx_amb')!=='off';
+  const cleanLive=t=>t.replace(/\s*[—–]\s*/g,', ').replace(/\*/g,'');
+  function logTurn(role,text){text=cleanLive(text||'').trim();if(!text)return;addMessage(text,role==='user'?'user':'bot');state.history.push({role,content:text,live:true});persist();}
+  function onRealtime(ev){
+    switch(ev.type){
+      case 'session.started':rt.live=true;startMic().then(()=>{setVoiceState('listening');$('voiceCaption').textContent='I’m here. Whenever you’re ready, just start talking.';});
+        startClock(true);clearInterval(rt.beat);rt.beat=setInterval(heartbeat,15000);break;
+      case 'speech.started':rt.responding=false;if(rt.playing.length){stopPlayback();if(rt.ai)logTurn('assistant',rt.ai+'…');rt.ai='';try{rt.ws.send(JSON.stringify({type:'response.cancel'}));}catch{}}
+        setVoiceState('listening');$('voiceCaption').textContent='Listening…';break;
+      case 'speech.stopped':setVoiceState('thinking');break;
+      case 'transcript.committed':{const t=ev.text||ev.transcript||ev.delta||'';if(t.trim()){logTurn('user',t);if(!rt.playing.length)$('voiceCaption').textContent=cleanLive(t);}break;}
+      case 'response.started':rt.ai='';rt.responding=true;break;
+      case 'text.delta':rt.ai+=(ev.delta||ev.text||'');$('voiceCaption').textContent=cleanLive(rt.ai);break;
+      case 'audio.delta':rt.responding=true;if(!rt.playing.length)setVoiceState('speaking');playPcm(ev.audio||ev.delta||'');break;
+      case 'response.completed':rt.responding=false;if(rt.ai)logTurn('assistant',rt.ai);rt.ai='';if(!rt.playing.length&&rt.live)setVoiceState(rt.muted?'muted':'listening');break;
+      case 'session.terminating':toast(ev.reason==='idle_timeout'?'The call ended after a quiet minute.':'The call has ended.');break;
+      case 'error':console.warn('realtime error',ev);if(!rt.live){rt.fallback=true;}break;
+    }
+  }
+  async function heartbeat(){
+    try{const r=await fetch('/api/realtime',{method:'POST',headers:{'Content-Type':'application/json','X-Requested-With':'sexhapist'},credentials:'same-origin',body:JSON.stringify({beat:true})});
+      const d=await r.json().catch(()=>({}));
+      if(r.status===402){closeVoice();markBudget(0);if(d.error==='email_required')showEmailGate();else addBanner('Your free time is up','You can come back tomorrow. Nothing here is linked to you.');return;}
+      if(r.ok&&state.budget){state.budget.remaining=d.remainingMs;state.budget.total=d.freeBudgetMs||state.budget.total;state.budget.at=Date.now();renderBudget();}
+    }catch{}
+  }
+  function stopRealtime(){
+    clearInterval(rt.beat);rt.beat=null;const was=rt.live;rt.live=false;
+    if(was)fetch('/api/realtime',{method:'POST',headers:{'Content-Type':'application/json','X-Requested-With':'sexhapist'},credentials:'same-origin',keepalive:true,body:JSON.stringify({beat:true})}).catch(()=>{});
+    const ws=rt.ws;rt.ws=null;try{ws&&ws.close();}catch{}
+    try{rt.stream&&rt.stream.getTracks().forEach(t=>t.stop());}catch{}rt.stream=null;
+    stopPlayback();try{rt.node&&rt.node.disconnect();}catch{}rt.node=null;
+    try{rt.ctx&&rt.ctx.close();}catch{}rt.ctx=null;rt.out=null;
+    if(was&&rt.ai)logTurn('assistant',rt.ai);rt.ai='';
+  }
+  function toggleMute(){rt.muted=!rt.muted;setVoiceState(rt.muted?'muted':(rt.playing.length?'speaking':'listening'));$('voiceCaption').textContent=rt.muted?'You’re muted. Tap the mic when you want to speak.':'Listening…';}
 
   // ---- Send ----
   async function readReplyStream(response,pending){const reader=response.body.getReader(),decoder=new TextDecoder();let wire='',reply='',spoken='';const consume=line=>{if(!line.startsWith('data:'))return;let event;try{event=JSON.parse(line.slice(5).trim());}catch{return;}if(event.error)throw new Error(event.error);if(!event.text)return;reply+=event.text;pending.classList.remove('pending');pending.innerHTML=fmt(reply);scrollDown();if(state.voiceMode)$('voiceCaption').textContent=reply.replace(/\*/g,'');spoken+=event.text;const sentences=spoken.match(/^.*?[.!?](?:\s|$)/s)||(!state.spokeFirst&&spoken.length>48?spoken.match(/^.{24,}?[,;:](?:\s)/s):null);if(sentences)state.spokeFirst=true;if(sentences&&sentences[0].trim()){const part=sentences[0].trim();if(state.voiceMode)queueElevenLabs(part.replace(/\*/g,''));spoken=spoken.slice(sentences[0].length);}};while(true){const{value,done}=await reader.read();wire+=decoder.decode(value||new Uint8Array(),{stream:!done});const lines=wire.split('\n');wire=lines.pop()||'';for(const line of lines)consume(line.replace(/\r$/,''));if(done)break;}if(wire)consume(wire);if(spoken.trim()&&state.voiceMode)queueElevenLabs(spoken.replace(/\*/g,''));return reply.trim()||'I lost the thread there. Try that again?';}
-  async function send(text){
+  async function send(text,opts={}){
     text=(text||'').trim();if(!text||state.busy)return;state.spokeFirst=false;
     state.busy=true;
-    addMessage(text,'user');state.history.push({role:'user',content:text});persist();
-    const pending=addMessage(state.voiceMode?'I’m thinking with you…':'Taking a moment with that…','bot pending');
+    const asNote=!!opts.voice&&!state.voiceMode;
+    if(!opts.userEl)addMessage(text,'user');
+    state.history.push({role:'user',content:text,...(opts.voice?{voice:true}:{})});persist();
+    const pending=asNote?addRecordingIndicator():addMessage(state.voiceMode?'I’m thinking with you…':'Taking a moment with that…','bot pending');
     if(state.voiceMode)setVoiceState('thinking');
     $('messageInput').disabled=true;
     try{
@@ -731,15 +907,15 @@ a{color:inherit;text-decoration:none}
         return;
       }
       if(!r.ok)throw new Error('reply_failed');
-      startClock();
       let reply;
-      if(r.headers.get('content-type')?.includes('text/event-stream'))reply=await readReplyStream(r,pending);
+      if(asNote&&r.headers.get('content-type')?.includes('text/event-stream'))reply=await replyAsVoiceNote(r,pending);
+      else if(r.headers.get('content-type')?.includes('text/event-stream'))reply=await readReplyStream(r,pending);
       else{const d=await r.json();reply=d.message||'I lost the thread there. Try that again?';pending.classList.remove('pending');pending.innerHTML=fmt(reply);if(state.voiceMode){$('voiceCaption').textContent=reply.replace(/\*/g,'');queueElevenLabs(reply.replace(/\*/g,''));}}
-      pending.classList.remove('pending');state.history.push({role:'assistant',content:reply});persist();
+      pending.classList.remove('pending');state.history.push({role:'assistant',content:reply,...(asNote?{voice:true}:{})});persist();
     }catch(e){
       removeMessage(pending);
       const err=addMessage('I’m having trouble connecting. Tap to try again.','bot');
-      err.style.cursor='pointer';err.onclick=()=>{removeMessage(err);const last=state.history.pop();persist();$('messages').querySelectorAll('.bubble.user').forEach((b,i,a)=>{if(i===a.length-1)b.remove();});send(last.content);};
+      err.style.cursor='pointer';err.onclick=()=>{removeMessage(err);const last=state.history.pop();persist();if(last.voice)send(last.content,{userEl:[...$('messages').querySelectorAll('.bubble.user')].pop(),voice:true});else{$('messages').querySelectorAll('.bubble.user').forEach((b,i,a)=>{if(i===a.length-1)b.remove();});send(last.content);}};
       if(state.voiceMode)$('voiceCaption').textContent='I’m having trouble connecting. Please try again in a moment.';
     }finally{
       state.busy=false;$('messageInput').disabled=false;syncEmpty();
@@ -747,7 +923,133 @@ a{color:inherit;text-decoration:none}
       if(!state.voiceMode&&state.view==='talk'&&matchMedia('(hover:hover)').matches)$('messageInput').focus();
     }
   }
-  function syncSendMic(){if(state.recMode==='chat')return;const has=$('messageInput').value.trim().length>0,b=$('sendMic');b.classList.toggle('send',has);b.querySelector('use').setAttribute('href',has?'#i-arrow-u':'#i-mic');b.setAttribute('aria-label',has?'Send message':'Dictate a message');b.title=has?'Send':'Dictate';}
+  function syncSendMic(){if(state.recMode==='chat')return;const has=$('messageInput').value.trim().length>0,b=$('sendMic');b.classList.toggle('send',has);b.querySelector('use').setAttribute('href',has?'#i-arrow-u':'#i-mic');b.setAttribute('aria-label',has?'Send message':'Record a voice note');b.title=has?'Send':'Record a voice note';}
+
+  // ---- Voice notes (chat) ----
+  // Record with MediaRecorder, transcribe on the server, and reply in kind:
+  // the therapist's answer is spoken sentence by sentence (fetched in parallel),
+  // stitched into one clip, and shown as a playable note with its transcript.
+  const NOTE_MAX_MS=120000;
+  const rec={mr:null,stream:null,chunks:[],t0:0,timer:null,ctx:null,an:null,raf:0,cancel:false};
+  const noteMime=()=>{for(const m of ['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg;codecs=opus'])if(window.MediaRecorder&&MediaRecorder.isTypeSupported(m))return m;return '';};
+  async function startNote(){
+    if(state.busy)return;
+    if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){toast('Voice notes are not supported in this browser. Type instead.');return;}
+    try{rec.stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}});}
+    catch{toast('Allow microphone access in your browser settings to send voice notes.');return;}
+    stopNotePlayback();
+    const mime=noteMime();rec.mr=new MediaRecorder(rec.stream,mime?{mimeType:mime,audioBitsPerSecond:32000}:{});
+    rec.chunks=[];rec.cancel=false;rec.mr.ondataavailable=e=>{if(e.data&&e.data.size)rec.chunks.push(e.data);};
+    rec.mr.onstop=finishNote;rec.mr.start(250);rec.t0=Date.now();
+    $('composer').classList.add('rec');
+    const lv=$('recLevel');lv.replaceChildren();for(let i=0;i<28;i++)lv.appendChild(document.createElement('i'));
+    rec.timer=setInterval(()=>{const ms=Date.now()-rec.t0;$('recTime').textContent=mmss(ms);if(ms>=NOTE_MAX_MS)stopNote(false);},200);
+    try{const C=window.AudioContext||window.webkitAudioContext;rec.ctx=new C();const src=rec.ctx.createMediaStreamSource(rec.stream);rec.an=rec.ctx.createAnalyser();rec.an.fftSize=512;src.connect(rec.an);
+      const buf=new Uint8Array(rec.an.fftSize),bars=[...lv.children];let k=0;
+      const tick=()=>{rec.an.getByteTimeDomainData(buf);let m=0;for(const v of buf)m=Math.max(m,Math.abs(v-128));if(k++%3===0){bars.shift().remove();const b=document.createElement('i');b.style.height=Math.max(4,Math.min(28,m/2.2))+'px';lv.appendChild(b);bars.push(b);}rec.raf=requestAnimationFrame(tick);};tick();}catch{}
+  }
+  function stopNote(cancel){if(!rec.mr||rec.mr.state==='inactive')return;rec.cancel=!!cancel;rec.mr.stop();}
+  function cleanupRec(){clearInterval(rec.timer);cancelAnimationFrame(rec.raf);try{rec.stream.getTracks().forEach(t=>t.stop());}catch{}try{rec.ctx&&rec.ctx.close();}catch{}rec.ctx=null;$('composer').classList.remove('rec');$('recTime').textContent='0:00';}
+  async function finishNote(){
+    const ms=Date.now()-rec.t0,type=(rec.mr.mimeType||noteMime()||'audio/webm').split(';')[0];cleanupRec();
+    if(rec.cancel)return;
+    if(ms<700){toast('Hold on a little longer. That note was too short.');return;}
+    const blob=new Blob(rec.chunks,{type});
+    const bubble=addVoiceNote('user',blob,'');setNoteStatus(bubble,'Transcribing…');
+    let text='';
+    try{
+      const r=await fetch('/api/transcribe',{method:'POST',headers:{'Content-Type':type,'X-Requested-With':'sexhapist'},credentials:'same-origin',body:blob});
+      if(r.status===402){const d=await r.json().catch(()=>({}));(bubble.closest('.msgrow')||bubble).remove();syncEmpty();markBudget(0);if(d.error==='email_required')showEmailGate();else addBanner('Your free time is up','You can come back tomorrow. Nothing here is linked to you.');return;}
+      if(!r.ok)throw 0;text=((await r.json()).text||'').trim();
+    }catch{setNoteStatus(bubble,'Couldn’t send that note. Tap the mic to try again.');return;}
+    if(!text){setNoteStatus(bubble,'I couldn’t make out any words. Try again a little closer to the mic.');return;}
+    setNoteStatus(bubble,null);setNoteTranscript(bubble,text);
+    send(text,{userEl:bubble,voice:true});
+  }
+
+  // Turn any audio blob into a WAV we can seek reliably (MediaRecorder webm has no
+  // duration) plus waveform peaks for the bubble.
+  async function prepareAudio(blobs){
+    const list=Array.isArray(blobs)?blobs:[blobs];const rate=24000;
+    const dec=new (window.OfflineAudioContext||window.webkitOfflineAudioContext)(1,1,rate);
+    const bufs=[];for(const b of list){bufs.push(await dec.decodeAudioData(await b.arrayBuffer()));}
+    const total=bufs.reduce((n,b)=>n+Math.ceil(b.duration*rate),0);
+    const off=new (window.OfflineAudioContext||window.webkitOfflineAudioContext)(1,Math.max(1,total),rate);
+    let at=0;for(const b of bufs){const src=off.createBufferSource();src.buffer=b;src.connect(off.destination);src.start(at/rate);at+=Math.ceil(b.duration*rate);}
+    const out=(await off.startRendering()).getChannelData(0);
+    const N=40,step=Math.max(1,Math.floor(out.length/N)),peaks=[];let max=0;
+    for(let i=0;i<N;i++){let m=0;for(let j=i*step;j<Math.min(out.length,(i+1)*step);j+=4)m=Math.max(m,Math.abs(out[j]));peaks.push(m);max=Math.max(max,m);}
+    const wav=new ArrayBuffer(44+out.length*2),v=new DataView(wav),w=(o,str)=>{for(let i=0;i<str.length;i++)v.setUint8(o+i,str.charCodeAt(i));};
+    w(0,'RIFF');v.setUint32(4,36+out.length*2,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,rate,true);v.setUint32(28,rate*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,out.length*2,true);
+    for(let i=0;i<out.length;i++){const x=Math.max(-1,Math.min(1,out[i]));v.setInt16(44+i*2,x<0?x*32768:x*32767,true);}
+    return {url:URL.createObjectURL(new Blob([wav],{type:'audio/wav'})),duration:out.length/rate,peaks:peaks.map(p=>max?Math.max(.12,p/max):.2)};
+  }
+  const notePlayer=new Audio();let noteUI=null;
+  function stopNotePlayback(){notePlayer.pause();if(noteUI)noteUI.reset();noteUI=null;}
+  function noteMarkup(){return '<div class="vnote"><button class="pl" aria-label="Play voice note"><span class="ms">play_arrow</span></button><div class="wv"></div><span class="dur">0:00</span></div>';}
+  function addVoiceNote(role,blobs,transcript){
+    let b;
+    if(role==='user'){b=document.createElement('div');b.className='bubble user vbub';const m=$('messages');if(!m.children.length)m.appendChild(dayLabel());m.appendChild(b);}
+    else{b=addMessage('','bot');b.classList.add('vbub');}
+    b.innerHTML=noteMarkup();syncEmpty();scrollDown();
+    const pl=b.querySelector('.pl'),wv=b.querySelector('.wv'),dur=b.querySelector('.dur');
+    for(let i=0;i<40;i++){const x=document.createElement('i');x.style.height='20%';wv.appendChild(x);}
+    const ui={b,ready:null,duration:0,reset(){pl.firstChild.textContent='play_arrow';pl.setAttribute('aria-label','Play voice note');paint(0);dur.textContent=mmss(ui.duration*1000);}};
+    const paint=f=>{[...wv.children].forEach((x,i)=>x.classList.toggle('p',i/40<f));};
+    ui.ready=prepareAudio(blobs).then(a=>{ui.url=a.url;ui.duration=a.duration;[...wv.children].forEach((x,i)=>x.style.height=Math.round(a.peaks[i]*100)+'%');dur.textContent=mmss(a.duration*1000);return a;}).catch(()=>{ui.url=URL.createObjectURL(Array.isArray(blobs)?new Blob(blobs,{type:'audio/mpeg'}):blobs);return null;});
+    const play=async(from)=>{
+      await ui.ready;if(noteUI===ui&&!notePlayer.paused&&from==null){notePlayer.pause();return;}
+      if(noteUI!==ui){stopNotePlayback();notePlayer.src=ui.url;noteUI=ui;}notePlayer.volume=voiceVol();
+      if(from!=null&&ui.duration)notePlayer.currentTime=from*ui.duration;
+      try{await notePlayer.play();}catch{toast('Tap play again to listen.');}
+    };
+    pl.onclick=()=>play();
+    wv.onclick=e=>{const r=wv.getBoundingClientRect();play(Math.max(0,Math.min(1,(e.clientX-r.left)/r.width)));};
+    ui.onTime=()=>{if(ui.duration){paint(notePlayer.currentTime/ui.duration);dur.textContent=mmss(notePlayer.currentTime*1000);}};
+    ui.onPlay=()=>{pl.firstChild.textContent='pause';pl.setAttribute('aria-label','Pause voice note');};
+    ui.onPause=()=>{pl.firstChild.textContent='play_arrow';pl.setAttribute('aria-label','Play voice note');};
+    b.__note=ui;b.__play=play;
+    if(transcript)setNoteTranscript(b,transcript);
+    return b;
+  }
+  notePlayer.addEventListener('timeupdate',()=>noteUI&&noteUI.onTime());
+  notePlayer.addEventListener('play',()=>noteUI&&noteUI.onPlay());
+  notePlayer.addEventListener('pause',()=>noteUI&&noteUI.onPause());
+  notePlayer.addEventListener('ended',()=>{if(noteUI)noteUI.reset();noteUI=null;});
+  function setNoteStatus(b,txt){let el=b.querySelector('.nstat');if(!txt){el&&el.remove();return;}if(!el){el=document.createElement('div');el.className='nstat';b.appendChild(el);}el.textContent=txt;}
+  function setNoteTranscript(b,text){
+    b.querySelectorAll('.vtx,.vtxt').forEach(x=>x.remove());
+    const t=document.createElement('button');t.type='button';t.className='vtx';t.textContent='Show transcript';
+    const body=document.createElement('div');body.className='vtxt';body.hidden=true;body.textContent=text.replace(/\*/g,'');
+    t.onclick=()=>{body.hidden=!body.hidden;t.textContent=body.hidden?'Show transcript':'Hide transcript';if(!body.hidden)scrollDown();};
+    b.appendChild(t);b.appendChild(body);
+  }
+  function addRecordingIndicator(){
+    const name=(VOICES.find(v=>v.id===currentVoice())||{name:'Your Sexhapist'}).name;
+    const b=addMessage('','bot');b.classList.add('recnote');
+    b.innerHTML='<span class="ms">mic</span><span></span><span class="eq"><i></i><i></i><i></i><i></i><i></i></span>';
+    b.children[1].textContent=name+' is recording a voice note';return b;
+  }
+  // Read the SSE reply, request speech for each sentence as soon as it is complete,
+  // then turn the clips into one voice note. Falls back to text if speech fails.
+  async function replyAsVoiceNote(response,pending){
+    const reader=response.body.getReader(),decoder=new TextDecoder();let wire='',reply='',buf='';const clips=[];
+    const flush=(force)=>{let m;while((m=buf.match(/^.*?[.!?](?:\s|$)/s))){const part=m[0].trim();buf=buf.slice(m[0].length);if(part)clips.push(fetchVoice(part.replace(/\*/g,'')));}if(force&&buf.trim()){clips.push(fetchVoice(buf.trim().replace(/\*/g,'')));buf='';}};
+    const consume=line=>{if(!line.startsWith('data:'))return;let ev;try{ev=JSON.parse(line.slice(5).trim());}catch{return;}if(ev.error)throw new Error(ev.error);if(!ev.text)return;reply+=ev.text;buf+=ev.text;flush(false);};
+    while(true){const{value,done}=await reader.read();wire+=decoder.decode(value||new Uint8Array(),{stream:!done});const lines=wire.split('\n');wire=lines.pop()||'';for(const l of lines)consume(l.replace(/\r$/,''));if(done)break;}
+    if(wire)consume(wire);flush(true);
+    reply=reply.trim()||'I lost the thread there. Try that again?';
+    try{
+      const blobs=await Promise.all(clips.map(p=>p.then(r=>{if(!r.ok)throw new Error('voice');return r.blob();})));
+      if(!blobs.length)throw new Error('voice');
+      const row=pending.closest('.msgrow');const note=addVoiceNote('bot',blobs,reply);
+      row.replaceWith(note.closest('.msgrow'));scrollDown();
+      note.__note.ready.then(()=>{if(!state.voiceMode&&!rec.mr?.state?.startsWith('rec'))note.__play();});
+    }catch{
+      pending.classList.remove('recnote');pending.innerHTML=fmt(reply);toast('Voice reply unavailable right now, so here it is in text.');
+    }
+    return reply;
+  }
 
   // ---- Speech recognition ----
   const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;
@@ -774,23 +1076,29 @@ a{color:inherit;text-decoration:none}
   }
 
   // ---- Live voice ----
-  const VOICE_LABEL={idle:'Tap to talk',listening:'Listening…',thinking:'Thinking with you…',speaking:'Speaking…'};
+  const VOICE_LABEL={idle:'Tap to talk',connecting:'Connecting…',listening:'Listening…',thinking:'Thinking with you…',speaking:'Speaking…',muted:'Muted'};
   function setVoiceState(s){
     const v=$('voice');v.classList.toggle('listening',s==='listening');v.classList.toggle('speaking',s==='speaking');
     $('voiceLabel').textContent=VOICE_LABEL[s];duckAmbience(s==='speaking');
+    if(rt.live||s==='connecting'){const m=s==='muted';$('voiceMicK').classList.toggle('live',false);$('voiceMicIcon').querySelector('use').setAttribute('href',m?'#i-mic':'#i-mic-off');$('voiceMicLbl').textContent=m?'Unmute':'Mute';return;}
     const live=s==='listening';$('voiceMicK').classList.toggle('live',live);
     $('voiceMicIcon').querySelector('use').setAttribute('href',live?'#i-mic-off':'#i-mic');$('voiceMicLbl').textContent=live?'Mute':'Talk';
   }
   function openVoice(){
     if(!state.path){state.pending={voice:true};openWelcome();return;}
+    stopNotePlayback();if(rec.mr&&rec.mr.state!=='inactive')stopNote(true);
     state.voiceMode=true;unlockVoiceAudio();setVoiceState('idle');
     $('voiceCaption').textContent='Speak naturally. Your words appear here as you talk.';
     $('voice').hidden=false;document.querySelector('meta[name=theme-color]').content='#07081A';refreshBudget();
-    if(ambPref())startAmbience(); // soft background by default; the music button turns it off
-    ['/api/chat','/api/voice'].forEach(u=>fetch(u,{method:'GET',credentials:'same-origin'}).catch(()=>{}));
-    if(Recognition)setTimeout(()=>listen('voice'),250); // Live starts listening straight away, like Gemini Live.
+    if(ambPref())startAmbience(); // soft background by default; the Sound panel changes it
+    startRealtime().catch(()=>{ // realtime unavailable: fall back to listen, think, speak
+      if(!state.voiceMode)return;stopRealtime();rt.fallback=true;setVoiceState('idle');
+      $('voiceCaption').textContent='Speak naturally. Your words appear here as you talk.';
+      ['/api/chat','/api/voice'].forEach(u=>fetch(u,{method:'GET',credentials:'same-origin'}).catch(()=>{}));
+      if(Recognition)setTimeout(()=>listen('voice'),250);
+    });
   }
-  function closeVoice(){state.voiceMode=false;stopListening();stopSpeaking();stopAmbience();$('voice').hidden=true;document.querySelector('meta[name=theme-color]').content='#FBF8FF';show('talk');}
+  function closeVoice(){if(!state.voiceMode&&$('voice').hidden)return;state.voiceMode=false;stopRealtime();stopListening();stopSpeaking();stopAmbience();clearInterval(state.timer);state.timer=null;setTimeout(refreshBudget,400);$('voice').hidden=true;document.querySelector('meta[name=theme-color]').content='#FBF8FF';show('talk');}
 
   // ---- Welcome (first visit) ----
   function openWelcome(){$('welcome').hidden=false;}
@@ -821,7 +1129,7 @@ a{color:inherit;text-decoration:none}
         const d=await r.json().catch(()=>({}));
         if(!r.ok)throw new Error(d.error||'unlock_failed');
         g.remove();syncEmpty();
-        state.budget={remaining:d.remainingMs,total:d.freeBudgetMs,paid:false,started:true,emailUnlocked:true,ipRemaining:d.ipRemainingMs,at:Date.now()};startClock(true);renderBudget();
+        state.budget={remaining:d.remainingMs,total:d.freeBudgetMs,paid:false,started:true,emailUnlocked:true,ipRemaining:d.ipRemainingMs,at:Date.now()};renderBudget();
         toast('You’re in. Take your time.');
         const t=state.pendingSend;state.pendingSend=null;if(t)send(t);else focusInputSoon();
       }catch(ex){
@@ -835,7 +1143,7 @@ a{color:inherit;text-decoration:none}
 
   // ---- Free-time budget (GET /api/session) ----
   const mmss=ms=>{const s=Math.max(0,Math.round(ms/1000));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
-  async function refreshBudget(){try{const r=await fetch('/api/session',{credentials:'same-origin'});if(!r.ok)throw 0;const d=await r.json();state.budget={remaining:d.remainingMs,total:d.freeBudgetMs||300000,paid:d.paid,started:d.hasSession,needsEmail:d.needsEmail,emailUnlocked:d.emailUnlocked,ipRemaining:d.ipRemainingMs,at:Date.now()};if(d.needsEmail&&!$('emailGate'))showEmailGate();if(d.hasSession&&!d.paid)startClock(true);renderBudget();}catch{renderBudget();}}
+  async function refreshBudget(){try{const r=await fetch('/api/session',{credentials:'same-origin'});if(!r.ok)throw 0;const d=await r.json();state.budget={remaining:d.remainingMs,total:d.freeBudgetMs||300000,paid:d.paid,started:d.hasSession,needsEmail:d.needsEmail,emailUnlocked:d.emailUnlocked,ipRemaining:d.ipRemainingMs,at:Date.now()};if(d.needsEmail&&!$('emailGate'))showEmailGate();if(state.voiceMode&&rt.live&&!d.paid)startClock(true);renderBudget();}catch{renderBudget();}}
   function startClock(fresh){if(!state.budget||state.budget.paid)return;if(state.timer&&!fresh)return;state.budget.started=true;if(!fresh)state.budget.at=Date.now();clearInterval(state.timer);state.timer=setInterval(renderBudget,1000);}
   function markBudget(ms){if(!state.budget)state.budget={total:300000,paid:false,started:true};state.budget.remaining=ms;state.budget.at=Date.now();clearInterval(state.timer);state.timer=null;renderBudget();}
   function remainingNow(){const b=state.budget;if(!b)return null;return Math.max(0,state.timer?b.remaining-(Date.now()-b.at):b.remaining);}
@@ -846,7 +1154,7 @@ a{color:inherit;text-decoration:none}
     const rem=remainingNow(),used=b.total-rem;
     t.textContent=mmss(used)+' / '+mmss(b.total)+' free';p.hidden=false;p.firstElementChild.style.width=Math.min(100,used/b.total*100)+'%';
     $('freeLeft').textContent=rem>0?mmss(rem)+' of free time left':'Free time used';
-    $('freeLeftSub').textContent=b.emailUnlocked?'Extended with your email. Up to 30 minutes a day.':b.started?(rem>0?'5 free minutes per session. Add your email for more.':'Add your email to keep talking.'):'5 free minutes. The clock starts with your first message.';
+    $('freeLeftSub').textContent=b.emailUnlocked?'Extended with your email. Up to 30 minutes a day.':b.started?(rem>0?'5 free minutes per session, counted only while you talk.':'Add your email to keep talking.'):'5 free minutes, counted only while you talk.';
     if(rem<=0&&state.timer){clearInterval(state.timer);state.timer=null;if(!b.emailUnlocked&&b.ipRemaining!==0)refreshBudget();}
   }
 
@@ -859,14 +1167,18 @@ a{color:inherit;text-decoration:none}
   $('clearChat').onclick=()=>{newConversation();show('private');toast('Conversation cleared.');};
   $('messageInput').addEventListener('input',syncSendMic);
   $('composer').onsubmit=e=>{e.preventDefault();const v=$('messageInput').value;if(!v.trim())return;$('messageInput').value='';syncSendMic();send(v);};
-  $('sendMic').onclick=()=>{if($('messageInput').value.trim()&&state.recMode!=='chat')$('composer').requestSubmit();else listen('chat');};
-  const talk=()=>{if(state.busy)return;unlockVoiceAudio();listen('voice');};
+  $('sendMic').onclick=()=>{if($('messageInput').value.trim())$('composer').requestSubmit();else startNote();};
+  $('recCancel').onclick=()=>stopNote(true);$('recSend').onclick=()=>stopNote(false);
+  const talk=()=>{if(rt.live){toggleMute();return;}if(state.busy)return;unlockVoiceAudio();listen('voice');};
   $('voiceMic').onclick=talk;$('orbTap').onclick=talk;
   $('voiceEnd').onclick=closeVoice;$('voiceDown').onclick=closeVoice;$('voiceText').onclick=closeVoice;
   $('voicePickBtn').onclick=openVoicePick;$('voicePickBtn2').onclick=openVoicePick;$('voicePickClose').onclick=closeVoicePick;
   $('voicePick').addEventListener('click',e=>{if(e.target===$('voicePick'))closeVoicePick();});
-  $('ambience').onclick=()=>{if(state.ambient.on){stopAmbience();store.set('sx_amb','off');}else{store.set('sx_amb','on');startAmbience();}};
-  addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(!$('voicePick').hidden)closeVoicePick();else if(!$('voice').hidden)closeVoice();});
+  $('ambience').onclick=openSound;$('soundClose').onclick=()=>{$('soundPanel').hidden=true;};
+  $('soundPanel').addEventListener('click',e=>{if(e.target===$('soundPanel'))$('soundPanel').hidden=true;});
+  $('bgVol').oninput=e=>{store.set('sx_bgvol',e.target.value/100);$('bgVolOut').textContent=e.target.value+'%';applyVolumes();};
+  $('voiceVol').oninput=e=>{store.set('sx_vvol',e.target.value/100);$('voiceVolOut').textContent=e.target.value+'%';applyVolumes();};
+  addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(!$('soundPanel').hidden)$('soundPanel').hidden=true;else if(!$('voicePick').hidden)closeVoicePick();else if(!$('voice').hidden)closeVoice();});
 
   // ---- Boot: deep links from the home page ----
   restore();

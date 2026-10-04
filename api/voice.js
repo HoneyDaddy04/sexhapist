@@ -22,7 +22,7 @@ export default async function handler(req, res) {
   if (await enforceRateLimit(req, res, 'voice')) return;
 
   // Server-side IP-keyed budget (B2-1/B2-3).
-  const { session, totalRemainingMs, needsEmail } = await loadBudget(req);
+  const { session, totalRemainingMs, needsEmail } = await loadBudget(req, { accrue: false });
   if (totalRemainingMs <= 0) {
     setSessionCookie(res, session);
     return res.status(402).json({ error: needsEmail ? 'email_required' : 'time_expired' });

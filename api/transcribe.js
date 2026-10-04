@@ -111,7 +111,7 @@ export default async function handler(req, res) {
       file,
       model: useOpenRouter
         ? (process.env.OPENROUTER_TRANSCRIBE_MODEL || 'openai/gpt-4o-mini-transcribe')
-        : (process.env.TRANSCRIBE_MODEL || 'whisper-1'),
+        : (process.env.TRANSCRIBE_MODEL || 'gpt-4o-mini-transcribe'),
       language: 'en',
       prompt: 'Conversational Nigerian English. May include some Pidgin like "i dey hear", "wahala", "abi", "sef".',
     }, { signal }));
