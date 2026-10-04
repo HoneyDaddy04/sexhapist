@@ -1,10 +1,8 @@
 import OpenAI from 'openai';
-import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
-import { applyCors, cookieSameSite } from '../lib/cors.js';
-
-const FREE_DURATION_MS = 3 * 60 * 1000;
-const COOKIE_NAME = 'sx_session';
-const COOKIE_MAX_AGE_S = 24 * 60 * 60;
+import { applyCors, checkCsrf } from '../lib/cors.js';
+import { ensureConfigured, loadBudget, setSessionCookie } from '../lib/session.js';
+import { enforceRateLimit } from '../lib/ratelimit.js';
+import { withTimeout, moderateText, CRISIS_MESSAGE } from '../lib/safety.js';
 
 const NIGERIAN_FOUNDATION = `You are Nigerian. You grew up here. You know Lagos traffic, NEPA stories, owambe weekends, family WhatsApp groups, the church and mosque shaping how people talk (or do not talk) about sex, the way "aunty" and "uncle" carry weight even when they are not blood. You know the silence around sex in most Nigerian homes, and how that silence shows up in people's marriages and bedrooms.
 
@@ -92,61 +90,15 @@ For medical issues she is asking about regarding him (ED, hormones, etc.), point
 
 Make her feel less alone. Then make her wiser about him. Then leave her with one small move that is hers to choose.`;
 
-function getSecret() {
-  const s = process.env.SESSION_SECRET;
-  if (!s || s.length < 16) {
-    throw new Error('SESSION_SECRET env var is missing or too short');
-  }
-  return s;
-}
-
-function sign(payload) {
-  const data = Buffer.from(JSON.stringify(payload)).toString('base64url');
-  const sig = createHmac('sha256', getSecret()).update(data).digest('base64url');
-  return `${data}.${sig}`;
-}
-
-function verify(token) {
-  if (!token || typeof token !== 'string') return null;
-  const parts = token.split('.');
-  if (parts.length !== 2) return null;
-  const [data, sig] = parts;
-  const expected = createHmac('sha256', getSecret()).update(data).digest('base64url');
-  const a = Buffer.from(sig);
-  const b = Buffer.from(expected);
-  if (a.length !== b.length || !timingSafeEqual(a, b)) return null;
-  try {
-    return JSON.parse(Buffer.from(data, 'base64url').toString('utf8'));
-  } catch {
-    return null;
-  }
-}
-
-function parseCookies(header) {
-  const out = {};
-  if (!header) return out;
-  for (const part of header.split(';')) {
-    const idx = part.indexOf('=');
-    if (idx === -1) continue;
-    const k = part.slice(0, idx).trim();
-    const v = part.slice(idx + 1).trim();
-    if (k) out[k] = v;
-  }
-  return out;
-}
-
-function setSessionCookie(res, session) {
-  const value = sign(session);
-  const cookie = [
-    `${COOKIE_NAME}=${value}`,
-    'Path=/',
-    'HttpOnly',
-    'Secure',
-    `SameSite=${cookieSameSite()}`,
-    `Max-Age=${COOKIE_MAX_AGE_S}`,
-  ].join('; ');
-  res.setHeader('Set-Cookie', cookie);
-}
+// Sanitize the client-supplied transcript.
+//
+// SECURITY (B2-4): we keep client-provided assistant turns ONLY as conversational
+// context, but the system prompt remains authoritative (always prepended,
+// server-side) and we drop any client "assistant" content that looks like an
+// attempt to inject instructions/role overrides. We never let the client send
+// `system` turns. The latest user message is additionally run through the
+// moderation endpoint in the handler.
+const ASSISTANT_INJECTION_RE = /(ignore (all|previous|the) (instructions|rules)|you are now|system prompt|disregard (the|your))/i;
 
 function sanitizeMessages(messages) {
   if (!Array.isArray(messages)) return null;
@@ -158,11 +110,21 @@ function sanitizeMessages(messages) {
     const trimmed = m.content.trim();
     if (!trimmed) continue;
     if (trimmed.length > 4000) continue;
+    // Do not trust client-faked assistant turns that try to override safety framing.
+    if (m.role === 'assistant' && ASSISTANT_INJECTION_RE.test(trimmed)) continue;
     cleaned.push({ role: m.role, content: trimmed });
   }
   if (cleaned.length === 0) return null;
   if (cleaned.length > 40) return cleaned.slice(-40);
   return cleaned;
+}
+
+// Latest user message, for the moderation pass.
+function latestUserMessage(messages) {
+  for (let i = messages.length - 1; i >= 0; i--) {
+    if (messages[i].role === 'user') return messages[i].content;
+  }
+  return '';
 }
 
 export default async function handler(req, res) {
@@ -171,11 +133,18 @@ export default async function handler(req, res) {
     res.setHeader('Allow', 'POST');
     return res.status(405).json({ error: 'method_not_allowed' });
   }
+  // Validate config up front (B1-4).
+  if (!ensureConfigured(res)) return;
+  // Lightweight CSRF defense (B2-6).
+  if (!checkCsrf(req)) return res.status(403).json({ error: 'forbidden' });
 
   const useOpenRouter = !!process.env.OPENROUTER_API_KEY;
   if (!useOpenRouter && !process.env.OPENAI_API_KEY) {
-    return res.status(500).json({ error: 'server_misconfigured', detail: 'set OPENAI_API_KEY (Vercel) or OPENROUTER_API_KEY (proxy)' });
+    return res.status(500).json({ error: 'server_misconfigured' });
   }
+
+  // Cheap checks before expensive work (B1-6): rate limit first.
+  if (await enforceRateLimit(req, res, 'chat')) return;
 
   let body = req.body;
   if (typeof body === 'string') {
@@ -191,26 +160,8 @@ export default async function handler(req, res) {
   const path = body.path === 'her' ? 'her' : 'him';
   const systemPrompt = path === 'her' ? SYSTEM_PROMPT_HER : SYSTEM_PROMPT_HIM;
 
-  const cookies = parseCookies(req.headers.cookie);
-  let session = verify(cookies[COOKIE_NAME]);
-
-  const now = Date.now();
-  if (!session) {
-    session = {
-      id: randomBytes(8).toString('hex'),
-      startedAt: now,
-      paid: false,
-      paidUntil: 0,
-    };
-  }
-
-  const elapsed = now - session.startedAt;
-  const freeRemainingMs = Math.max(0, FREE_DURATION_MS - elapsed);
-  const paidActive = session.paid && session.paidUntil > now;
-  const totalRemainingMs = paidActive
-    ? Math.max(freeRemainingMs, session.paidUntil - now)
-    : freeRemainingMs;
-
+  // Server-side, IP-keyed budget (B2-1/B2-3). Dropping the cookie does not reset it.
+  const { session, totalRemainingMs } = await loadBudget(req);
   if (totalRemainingMs <= 0) {
     setSessionCookie(res, session);
     return res.status(402).json({
@@ -231,8 +182,56 @@ export default async function handler(req, res) {
       })
     : new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+  // Moderation pass on the latest user message (B2-4). If flagged for
+  // self-harm/violence, return a safe crisis message instead of calling the model.
+  const userText = latestUserMessage(messages);
+  const moderation = await moderateText(client, userText);
+  if (moderation.flagged) {
+    setSessionCookie(res, session);
+    return res.status(200).json({
+      message: CRISIS_MESSAGE,
+      remainingMs: totalRemainingMs,
+      safety: true,
+    });
+  }
+
+  // Optional SSE mode for the Clarity voice experience. Text arrives as the
+  // model generates it so the client can render and speak sentence by sentence.
+  if (body.stream === true) {
+    res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
+    res.setHeader('X-Accel-Buffering', 'no');
+    try {
+      await withTimeout(async (signal) => {
+        const stream = await client.chat.completions.create({
+          model: useOpenRouter
+            ? (process.env.OPENROUTER_MODEL || 'openai/gpt-4o')
+            : (process.env.CHAT_MODEL || 'gpt-4o-mini'),
+          max_tokens: 600,
+          temperature: 0.7,
+          stream: true,
+          messages: [{ role: 'system', content: systemPrompt }, ...messages],
+        }, { signal });
+        let reply = '';
+        for await (const chunk of stream) {
+          const part = chunk.choices?.[0]?.delta?.content || '';
+          if (!part) continue;
+          reply += part;
+          res.write(`data: ${JSON.stringify({ text: part })}\n\n`);
+        }
+        setSessionCookie(res, session);
+        res.write(`data: ${JSON.stringify({ done: true, remainingMs: totalRemainingMs, message: reply.replace(/[—–]/g, '.') })}\n\n`);
+      });
+      return res.end();
+    } catch (err) {
+      console.error('chat stream error', err);
+      res.write(`data: ${JSON.stringify({ error: err?.isTimeout ? 'upstream_timeout' : 'upstream_error' })}\n\n`);
+      return res.end();
+    }
+  }
+
   try {
-    const completion = await client.chat.completions.create({
+    const completion = await withTimeout((signal) => client.chat.completions.create({
       model: useOpenRouter
         ? (process.env.OPENROUTER_MODEL || 'openai/gpt-4o')
         : (process.env.CHAT_MODEL || 'gpt-4o-mini'),
@@ -242,7 +241,7 @@ export default async function handler(req, res) {
         { role: 'system', content: systemPrompt },
         ...messages,
       ],
-    });
+    }, { signal }));
 
     const reply = (completion.choices?.[0]?.message?.content || '')
       .replace(/—/g, '.')
@@ -254,7 +253,8 @@ export default async function handler(req, res) {
       remainingMs: totalRemainingMs,
     });
   } catch (err) {
-    console.error('openrouter error', err);
-    return res.status(502).json({ error: 'upstream_error', detail: err?.message || 'unknown' });
+    console.error('chat upstream error', err);
+    if (err?.isTimeout) return res.status(504).json({ error: 'upstream_timeout' });
+    return res.status(502).json({ error: 'upstream_error' });
   }
 }

@@ -1,73 +1,30 @@
-import { createHmac, timingSafeEqual } from 'node:crypto';
-
-const COOKIE_NAME = 'sx_session';
-const FREE_DURATION_MS = 3 * 60 * 1000;
-
-function getSecret() {
-  const s = process.env.SESSION_SECRET;
-  if (!s || s.length < 16) throw new Error('SESSION_SECRET missing');
-  return s;
-}
-
-function verify(token) {
-  if (!token || typeof token !== 'string') return null;
-  const parts = token.split('.');
-  if (parts.length !== 2) return null;
-  const [data, sig] = parts;
-  const expected = createHmac('sha256', getSecret()).update(data).digest('base64url');
-  const a = Buffer.from(sig);
-  const b = Buffer.from(expected);
-  if (a.length !== b.length || !timingSafeEqual(a, b)) return null;
-  try { return JSON.parse(Buffer.from(data, 'base64url').toString('utf8')); }
-  catch { return null; }
-}
-
-function parseCookies(header) {
-  const out = {};
-  if (!header) return out;
-  for (const part of header.split(';')) {
-    const idx = part.indexOf('=');
-    if (idx === -1) continue;
-    const k = part.slice(0, idx).trim();
-    const v = part.slice(idx + 1).trim();
-    if (k) out[k] = v;
-  }
-  return out;
-}
-
-function clearCookie(res) {
-  res.setHeader('Set-Cookie', [
-    `${COOKIE_NAME}=`,
-    'Path=/',
-    'HttpOnly',
-    'Secure',
-    'SameSite=Lax',
-    'Max-Age=0',
-  ].join('; '));
-}
+import { applyCors, checkCsrf } from '../lib/cors.js';
+import { ensureConfigured, peekBudget, clearCookie } from '../lib/session.js';
 
 // POST /api/reset
-// Clears the session cookie ONLY if the existing session is expired
-// (so a mid-session refresh doesn't lose the user's ongoing free time).
+// Clears the session cookie ONLY if the caller's budget is fully used up
+// (so a mid-session refresh doesn't lose ongoing free time).
+//
+// NOTE (B2-1): clearing the cookie does NOT grant fresh free time, because the
+// free budget is the server-side IP record (see lib/session.js), which is not
+// affected by this endpoint. This only tidies up the client cookie.
 export default async function handler(req, res) {
+  if (applyCors(req, res)) return; // B1-3
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     return res.status(405).json({ error: 'method_not_allowed' });
   }
+  if (!ensureConfigured(res)) return; // B1-4
+  if (!checkCsrf(req)) return res.status(403).json({ error: 'forbidden' }); // B2-6
 
-  const cookies = parseCookies(req.headers.cookie);
-  const session = verify(cookies[COOKIE_NAME]);
+  const { hasSession, seen, totalRemainingMs } = await peekBudget(req);
 
-  if (!session) {
+  if (!hasSession && !seen) {
     return res.status(200).json({ status: 'no_session' });
   }
 
-  const now = Date.now();
-  const elapsed = now - session.startedAt;
-  const paidActive = session.paid && session.paidUntil > now;
-
-  if (elapsed > FREE_DURATION_MS && !paidActive) {
-    clearCookie(res);
+  if (totalRemainingMs <= 0) {
+    clearCookie(res); // uses cookieSameSite() via shared helper (B1-3)
     return res.status(200).json({ status: 'reset' });
   }
 

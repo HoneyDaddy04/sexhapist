@@ -1,70 +1,24 @@
 import OpenAI from 'openai';
-import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import { toFile } from 'openai/uploads';
-import { applyCors, cookieSameSite } from '../lib/cors.js';
+import { applyCors, checkCsrf } from '../lib/cors.js';
+import { ensureConfigured, loadBudget, setSessionCookie } from '../lib/session.js';
+import { enforceRateLimit } from '../lib/ratelimit.js';
+import { withTimeout } from '../lib/safety.js';
 
-const COOKIE_NAME = 'sx_session';
-const COOKIE_MAX_AGE_S = 24 * 60 * 60;
-const FREE_DURATION_MS = 3 * 60 * 1000;
 const MAX_AUDIO_BYTES = 6 * 1024 * 1024;
+
+// Allowed inbound audio content types (B3-2).
+const ALLOWED_AUDIO_TYPES = ['audio/webm', 'audio/mp4', 'audio/mpeg', 'audio/ogg', 'audio/wav'];
 
 export const config = {
   api: {
+    // bodyParser:false means Vercel does not parse the body; we read the raw
+    // stream ourselves and enforce MAX_AUDIO_BYTES below. Note: the old
+    // `sizeLimit` here was dead config (it only applies when bodyParser is on),
+    // so it has been removed. The real cap is MAX_AUDIO_BYTES in readBody().
     bodyParser: false,
-    sizeLimit: '8mb',
   },
 };
-
-function getSecret() {
-  const s = process.env.SESSION_SECRET;
-  if (!s || s.length < 16) throw new Error('SESSION_SECRET missing');
-  return s;
-}
-
-function sign(payload) {
-  const data = Buffer.from(JSON.stringify(payload)).toString('base64url');
-  const sig = createHmac('sha256', getSecret()).update(data).digest('base64url');
-  return `${data}.${sig}`;
-}
-
-function verify(token) {
-  if (!token || typeof token !== 'string') return null;
-  const parts = token.split('.');
-  if (parts.length !== 2) return null;
-  const [data, sig] = parts;
-  const expected = createHmac('sha256', getSecret()).update(data).digest('base64url');
-  const a = Buffer.from(sig);
-  const b = Buffer.from(expected);
-  if (a.length !== b.length || !timingSafeEqual(a, b)) return null;
-  try { return JSON.parse(Buffer.from(data, 'base64url').toString('utf8')); }
-  catch { return null; }
-}
-
-function parseCookies(header) {
-  const out = {};
-  if (!header) return out;
-  for (const part of header.split(';')) {
-    const idx = part.indexOf('=');
-    if (idx === -1) continue;
-    const k = part.slice(0, idx).trim();
-    const v = part.slice(idx + 1).trim();
-    if (k) out[k] = v;
-  }
-  return out;
-}
-
-function setSessionCookie(res, session) {
-  const value = sign(session);
-  const cookie = [
-    `${COOKIE_NAME}=${value}`,
-    'Path=/',
-    'HttpOnly',
-    'Secure',
-    `SameSite=${cookieSameSite()}`,
-    `Max-Age=${COOKIE_MAX_AGE_S}`,
-  ].join('; ');
-  res.setHeader('Set-Cookie', cookie);
-}
 
 function readBody(req) {
   return new Promise((resolve, reject) => {
@@ -100,21 +54,26 @@ export default async function handler(req, res) {
     res.setHeader('Allow', 'POST');
     return res.status(405).json({ error: 'method_not_allowed' });
   }
+  if (!ensureConfigured(res)) return; // B1-4
+  if (!checkCsrf(req)) return res.status(403).json({ error: 'forbidden' }); // B2-6
+
   const useOpenRouter = !!process.env.OPENROUTER_API_KEY;
   if (!useOpenRouter && !process.env.OPENAI_API_KEY) {
-    return res.status(500).json({ error: 'server_misconfigured', detail: 'set OPENAI_API_KEY (Vercel) or OPENROUTER_API_KEY (proxy)' });
+    return res.status(500).json({ error: 'server_misconfigured' });
   }
 
-  const cookies = parseCookies(req.headers.cookie);
-  let session = verify(cookies[COOKIE_NAME]);
-  const now = Date.now();
-  if (!session) {
-    session = { id: randomBytes(8).toString('hex'), startedAt: now, paid: false, paidUntil: 0 };
+  // Reject unsupported content types up front (B3-2).
+  const rawCt = (req.headers['content-type'] || '').split(';')[0].trim().toLowerCase();
+  if (!ALLOWED_AUDIO_TYPES.includes(rawCt)) {
+    return res.status(415).json({ error: 'unsupported_media_type' });
   }
-  const elapsed = now - session.startedAt;
-  const freeRemaining = FREE_DURATION_MS - elapsed;
-  const paidActive = session.paid && session.paidUntil > now;
-  if (freeRemaining <= 0 && !paidActive) {
+
+  // Cheap checks before reading the (large) body / calling upstream (B1-6).
+  if (await enforceRateLimit(req, res, 'transcribe')) return;
+
+  // Server-side IP-keyed budget (B2-1/B2-3).
+  const { session, totalRemainingMs } = await loadBudget(req);
+  if (totalRemainingMs <= 0) {
     setSessionCookie(res, session);
     return res.status(402).json({ error: 'time_expired' });
   }
@@ -148,18 +107,19 @@ export default async function handler(req, res) {
         })
       : new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
     const file = await toFile(buffer, `clip.${ext}`, { type: ct.split(';')[0] });
-    const result = await client.audio.transcriptions.create({
+    const result = await withTimeout((signal) => client.audio.transcriptions.create({
       file,
       model: useOpenRouter
         ? (process.env.OPENROUTER_TRANSCRIBE_MODEL || 'openai/gpt-4o-mini-transcribe')
         : (process.env.TRANSCRIBE_MODEL || 'whisper-1'),
       language: 'en',
       prompt: 'Conversational Nigerian English. May include some Pidgin like "i dey hear", "wahala", "abi", "sef".',
-    });
+    }, { signal }));
     setSessionCookie(res, session);
     return res.status(200).json({ text: (result.text || '').trim() });
   } catch (err) {
     console.error('transcribe error', err);
-    return res.status(502).json({ error: 'transcribe_failed', detail: err?.message || 'unknown' });
+    if (err?.isTimeout) return res.status(504).json({ error: 'upstream_timeout' });
+    return res.status(502).json({ error: 'transcribe_failed' });
   }
 }

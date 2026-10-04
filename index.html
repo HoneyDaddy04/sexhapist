@@ -1453,6 +1453,83 @@
   }
   body.path-her .send-btn { background: var(--blush); }
   .send-btn:hover { filter: brightness(0.92); }
+  .send-btn.disabled,
+  .chat-input:disabled { opacity: 0.5; pointer-events: none; }
+
+  /* ===== TOAST (transient inline errors / notices) ===== */
+  .chat-toast {
+    position: absolute;
+    left: 50%;
+    bottom: 84px;
+    transform: translateX(-50%) translateY(8px);
+    max-width: calc(100% - 40px);
+    background: rgba(29,29,31,0.94);
+    color: #fff;
+    font-size: 13px;
+    line-height: 1.4;
+    padding: 10px 14px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s;
+    z-index: 20;
+  }
+  .chat-toast.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+  }
+  .chat-toast button {
+    color: rgba(255,255,255,0.7);
+    font-size: 16px;
+    line-height: 1;
+    flex-shrink: 0;
+    padding: 0 2px;
+  }
+  .chat-toast button:hover { color: #fff; }
+  .chat-toast .toast-play {
+    font-size: 12px;
+    color: #fff;
+    text-decoration: underline;
+    flex-shrink: 0;
+  }
+
+  /* persistent inline note (e.g. mic permission blocked) */
+  .chat-note {
+    margin: 0 24px 10px;
+    background: #fde7ea;
+    color: #8a1a2c;
+    font-size: 12.5px;
+    line-height: 1.45;
+    padding: 10px 14px;
+    border-radius: 12px;
+    display: none;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .chat-note.visible { display: flex; }
+  .chat-note button {
+    color: #8a1a2c;
+    font-size: 15px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .mic-primer {
+    margin: 0 24px 8px;
+    font-size: 11.5px;
+    color: var(--ink-muted);
+    text-align: center;
+    display: none;
+  }
+  .mic-primer.visible { display: block; }
+  @media (max-width: 600px) {
+    .chat-note, .mic-primer { margin-left: 16px; margin-right: 16px; }
+    .chat-toast { bottom: 76px; }
+  }
 
   /* ===== SETTINGS ===== */
   .settings-modal {
@@ -1766,7 +1843,7 @@
         <button data-path="him" class="active" onclick="setPath('him')">For him</button>
         <button data-path="her" onclick="setPath('her')">For her</button>
       </div>
-      <button class="btn btn-primary" onclick="openChat()" style="padding: 8px 18px; font-size: 13px;">Talk now</button>
+      <button class="btn btn-primary" onclick="openChatVoice()" style="padding: 8px 18px; font-size: 13px;">Talk now</button>
     </div>
   </div>
 </nav>
@@ -2180,7 +2257,7 @@
     <h2>Stop guessing. <em>Start reconnecting.</em></h2>
     <p>Your first conversation is one tap away.</p>
   </div>
-  <button class="btn btn-primary btn-large" onclick="openChat()">Talk to a Sexhapist</button>
+  <button class="btn btn-primary btn-large" onclick="openChatVoice()">Talk to a Sexhapist</button>
 </section>
 
 <footer>
@@ -2197,7 +2274,7 @@
 
 <!-- CHAT -->
 <div class="chat-overlay" id="chatOverlay">
-  <div class="chat-window">
+  <div class="chat-window" role="dialog" aria-modal="true" aria-label="Chat with your Sexhapist">
     <div class="chat-header">
       <div class="chat-header-left">
         <div class="chat-header-info">
@@ -2220,11 +2297,11 @@
     </div>
 
     <div class="mode-bar" role="tablist" aria-label="Chat mode">
-      <button class="mode-btn active" data-mode="chat" type="button" role="tab" onclick="setMode('chat')">
+      <button class="mode-btn active" data-mode="chat" type="button" role="tab" aria-selected="true" onclick="setMode('chat')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         Chat
       </button>
-      <button class="mode-btn" data-mode="live" type="button" role="tab" onclick="setMode('live')">
+      <button class="mode-btn" data-mode="live" type="button" role="tab" aria-selected="false" onclick="setMode('live')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
         Live
       </button>
@@ -2240,10 +2317,10 @@
         <div class="stage-orb-core"></div>
         <div class="stage-orb-glint"></div>
       </div>
-      <div class="stage-label" id="stageLabel">tap below to begin</div>
+      <div class="stage-label" id="stageLabel" aria-live="polite">tap below to begin</div>
       <div class="stage-controls">
         <span class="stage-recording-time" id="stageRecTime">0:00</span>
-        <button class="stage-mic" id="stageMic" type="button" data-tooltip="tap to end" aria-label="End live session">
+        <button class="stage-mic" id="stageMic" type="button" data-tooltip="use Begin session" aria-label="End live session">
           <svg class="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
           <svg class="stop-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
         </button>
@@ -2255,7 +2332,16 @@
     </div>
 
     <div class="chat-body" id="chatBody"></div>
+    <div class="chat-note" id="micNote" role="alert">
+      <span id="micNoteText"></span>
+      <button type="button" aria-label="Dismiss" onclick="hideMicNote()">&times;</button>
+    </div>
+    <div class="mic-primer" id="micPrimer">we never store your audio. it is transcribed and discarded.</div>
     <div class="quick-replies" id="quickReplies"></div>
+    <div class="chat-toast" id="chatToast" role="status">
+      <span id="chatToastText"></span>
+      <button type="button" aria-label="Dismiss" onclick="hideToast()">&times;</button>
+    </div>
     <div class="chat-input-row">
       <input type="text" class="chat-input" id="chatInput" placeholder="type or tap the mic..." onkeypress="if(event.key==='Enter') sendMessage()"/>
       <button class="mic-inline" id="micInline" type="button" aria-label="Record voice message" title="Tap to record">
@@ -2272,7 +2358,7 @@
 
 <!-- OUT OF TIME -->
 <div class="out-of-time-modal" id="outOfTimeModal">
-  <div class="out-of-time-box">
+  <div class="out-of-time-box" role="dialog" aria-modal="true" aria-label="Free time is up">
     <h3>your free time is <em>up</em></h3>
     <p>three minutes goes fast when something needs to be said. take a breath. when you are ready, we can keep going.</p>
     <div class="out-of-time-actions">
@@ -2288,16 +2374,19 @@
     path: 'him',
     // Two modes: 'chat' (text + inline mic) and 'live' (voice-to-voice gated by Begin Session).
     mode: 'chat',
-    voiceMode: 'auto',
     voiceUnlocked: false,
     botSpeaking: false,
     liveMode: false,
+    sending: false,
     historyHim: [],
     historyHer: [],
     sessionStartedAt: null,
     remainingMs: FREE_DURATION_MS,
+    freeBudgetMs: FREE_DURATION_MS,
     paid: false,
     timerInterval: null,
+    toastTimer: null,
+    micPrimed: false,
   };
 
   const QUICK_REPLIES = {
@@ -2340,7 +2429,24 @@
     // Update chat persona name
     document.getElementById('chatPersonaName').textContent =
       path === 'her' ? 'Your Sexhapist · For Her' : 'Your Sexhapist';
-    // Reset chat body display so welcome shows again on next open if user switched
+    // If the overlay is open, re-render the conversation for the new path so the
+    // visible chat, quick replies and welcome all match the persona.
+    const overlay = document.getElementById('chatOverlay');
+    if (changed && overlay && overlay.classList.contains('active')) {
+      const body = document.getElementById('chatBody');
+      const history = path === 'her' ? state.historyHer : state.historyHim;
+      body.innerHTML = '';
+      if (history.length === 0) {
+        addBotMessage(WELCOMES[path], { suppressVoice: true });
+      } else {
+        history.forEach(m => {
+          if (m.role === 'user') addUserMessage(m.content);
+          else addBotMessage(m.content, { suppressVoice: true });
+        });
+      }
+      renderQuickReplies();
+      hideMicNote();
+    }
   }
 
   function renderQuickReplies() {
@@ -2359,6 +2465,7 @@
   // ===== AUDIO =====
   const audio = {
     ctx: null,
+    primedEl: null,
     ambient: { master: null, nodes: [], on: false },
     mic: { stream: null, recorder: null, chunks: [], analyser: null, raf: null, startedAt: 0, timerInterval: null, mime: '' },
     speech: { current: null, analyser: null, raf: null },
@@ -2372,6 +2479,85 @@
     }
     if (audio.ctx.state === 'suspended') audio.ctx.resume().catch(() => {});
     return audio.ctx;
+  }
+
+  // Shared headers for JSON POSTs to /api/* (backend now requires this custom header).
+  function apiJsonHeaders() {
+    return { 'Content-Type': 'application/json', 'X-Requested-With': 'sexhapist' };
+  }
+
+  // ===== TOAST / NOTES =====
+  function showToast(msg, opts) {
+    opts = opts || {};
+    const toast = document.getElementById('chatToast');
+    const text = document.getElementById('chatToastText');
+    if (!toast || !text) return;
+    text.textContent = msg;
+    // Remove any prior replay affordance.
+    const oldPlay = toast.querySelector('.toast-play');
+    if (oldPlay) oldPlay.remove();
+    if (opts.onPlay) {
+      const play = document.createElement('button');
+      play.className = 'toast-play';
+      play.type = 'button';
+      play.textContent = 'tap to play';
+      play.onclick = () => { hideToast(); opts.onPlay(); };
+      text.insertAdjacentElement('afterend', play);
+    }
+    toast.classList.add('visible');
+    if (state.toastTimer) { clearTimeout(state.toastTimer); state.toastTimer = null; }
+    if (!opts.sticky) {
+      state.toastTimer = setTimeout(hideToast, opts.duration || 4000);
+    }
+  }
+  function hideToast() {
+    const toast = document.getElementById('chatToast');
+    if (toast) toast.classList.remove('visible');
+    if (state.toastTimer) { clearTimeout(state.toastTimer); state.toastTimer = null; }
+  }
+  function showMicNote(msg) {
+    const note = document.getElementById('micNote');
+    const text = document.getElementById('micNoteText');
+    if (!note || !text) return;
+    text.textContent = msg;
+    note.classList.add('visible');
+  }
+  function hideMicNote() {
+    const note = document.getElementById('micNote');
+    if (note) note.classList.remove('visible');
+  }
+  function showMicPrimer() {
+    const primer = document.getElementById('micPrimer');
+    if (primer) primer.classList.add('visible');
+  }
+  function hideMicPrimer() {
+    const primer = document.getElementById('micPrimer');
+    if (primer) primer.classList.remove('visible');
+  }
+
+  // ===== AUDIO UNLOCK (iOS autoplay) =====
+  // Prime a reusable <audio> element on a real user gesture so later playback
+  // (which happens after an awaited fetch) is allowed by mobile browsers.
+  function unlockAudioPlayback() {
+    if (state.voiceUnlocked && audio.primedEl) return;
+    state.voiceUnlocked = true;
+    try {
+      if (!audio.primedEl) {
+        const el = new Audio();
+        el.preload = 'auto';
+        // a tiny silent wav so play() has something to chew on
+        el.src = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
+        audio.primedEl = el;
+      }
+      const p = audio.primedEl.play();
+      if (p && typeof p.then === 'function') {
+        p.then(() => { try { audio.primedEl.pause(); audio.primedEl.currentTime = 0; } catch {} })
+         .catch(() => {});
+      } else {
+        try { audio.primedEl.pause(); } catch {}
+      }
+    } catch {}
+    ensureCtx();
   }
 
   const STAGE_LABELS = {
@@ -2457,9 +2643,12 @@
     if (!ctx) return;
     try {
       if (!audio.mic.stream) {
+        showMicPrimer();
         audio.mic.stream = await navigator.mediaDevices.getUserMedia({
           audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
         });
+        hideMicPrimer();
+        hideMicNote();
       }
       audio.mic.mime = pickMime();
       const recorder = audio.mic.mime
@@ -2478,15 +2667,22 @@
       audio.mic.timerInterval = setInterval(() => {
         const s = Math.floor((Date.now() - audio.mic.startedAt) / 1000);
         if (time) time.textContent = `${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`;
-        if (s >= 30) stopRecording();
+        if (s >= 30) {
+          showToast('got it, 30s max per clip.');
+          if (input) input.placeholder = 'got it, 30s max';
+          stopRecording();
+        }
       }, 250);
     } catch (err) {
       console.error('mic error', err);
+      hideMicPrimer();
       setInlineMicState('idle');
-      if (input) {
-        input.placeholder = err && err.name === 'NotAllowedError'
-          ? 'mic blocked. allow it in your browser.'
-          : 'could not start the mic. try typing.';
+      if (err && err.name === 'NotAllowedError') {
+        showMicNote('mic access is blocked. tap the lock or camera icon in your browser address bar, allow the microphone, then try again. you can also just type instead.');
+        if (input) input.placeholder = 'mic blocked. type instead.';
+      } else {
+        showToast('could not start the mic. try typing.');
+        if (input) input.placeholder = 'could not start the mic. try typing.';
       }
     }
   }
@@ -2518,7 +2714,7 @@
     try {
       const res = await fetch('/api/transcribe', {
         method: 'POST',
-        headers: { 'Content-Type': blob.type || 'audio/webm' },
+        headers: { 'Content-Type': blob.type || 'audio/webm', 'X-Requested-With': 'sexhapist' },
         credentials: 'same-origin',
         body: blob,
       });
@@ -2530,8 +2726,16 @@
         showOutOfTime();
         return;
       }
+      if (res.status === 429) {
+        showToast('slow down a moment, then try again.');
+        return;
+      }
+      if (res.status === 503) {
+        showToast('still warming up. try that again in a moment.');
+        return;
+      }
       if (!res.ok) {
-        if (input) input.placeholder = 'could not catch that. try again?';
+        showToast('could not catch that. try again?');
         return;
       }
       const text = (data.text || '').trim();
@@ -2542,7 +2746,7 @@
       sendUserMessage(text);
     } catch (e) {
       setInlineMicState('idle');
-      if (input) input.placeholder = 'connection blip. try again?';
+      showToast('connection blip. try again?');
     }
   }
 
@@ -2656,7 +2860,9 @@
     }
     state.mode = mode;
     document.querySelectorAll('.mode-btn').forEach(b => {
-      b.classList.toggle('active', b.dataset.mode === mode);
+      const isActive = b.dataset.mode === mode;
+      b.classList.toggle('active', isActive);
+      b.setAttribute('aria-selected', isActive ? 'true' : 'false');
     });
     const win = document.querySelector('.chat-window');
     win.classList.remove('mode-chat', 'mode-live', 'live-on');
@@ -2677,9 +2883,12 @@
       setStageState('idle');
     } else if (mode === 'live') {
       if (label) label.textContent = 'tap below to begin';
+      // Pre-session the stage mic does nothing (Begin session is the real control),
+      // so the tooltip should not promise an action. It becomes 'tap to end' once live.
       const tooltip = document.querySelector('.stage-mic[data-tooltip]');
-      if (tooltip) tooltip.setAttribute('data-tooltip', 'tap to end');
+      if (tooltip) tooltip.setAttribute('data-tooltip', state.liveMode ? 'tap to end' : 'use Begin session');
       setStageState('idle');
+      showStartHint();
     }
   }
 
@@ -2695,9 +2904,12 @@
     if (!ctx) return;
     try {
       if (!audio.mic.stream) {
+        showMicPrimer();
         audio.mic.stream = await navigator.mediaDevices.getUserMedia({
           audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
         });
+        hideMicPrimer();
+        hideMicNote();
       }
       const src = ctx.createMediaStreamSource(audio.mic.stream);
       audio.mic.analyser = ctx.createAnalyser();
@@ -2724,14 +2936,18 @@
       startVADCycle();
     } catch (err) {
       console.error('live mode error', err);
+      hideMicPrimer();
       state.liveMode = false;
       document.querySelector('.chat-window').classList.remove('live-on');
       document.getElementById('stageMic').classList.remove('live-active');
       setStageState('idle');
-      document.getElementById('stageLabel').textContent =
-        err && err.name === 'NotAllowedError'
-          ? 'mic blocked. allow it, then try again.'
-          : 'could not start live mode.';
+      if (err && err.name === 'NotAllowedError') {
+        showMicNote('mic access is blocked. tap the lock or camera icon in your browser address bar, allow the microphone, then tap Begin session again. you can also switch to Chat and type.');
+        document.getElementById('stageLabel').textContent = 'mic blocked. allow it, then try again.';
+      } else {
+        showToast('could not start live mode.');
+        document.getElementById('stageLabel').textContent = 'could not start live mode.';
+      }
     }
   }
 
@@ -2856,7 +3072,7 @@
     try {
       const res = await fetch('/api/transcribe', {
         method: 'POST',
-        headers: { 'Content-Type': blob.type || 'audio/webm' },
+        headers: { 'Content-Type': blob.type || 'audio/webm', 'X-Requested-With': 'sexhapist' },
         credentials: 'same-origin',
         body: blob,
       });
@@ -2868,7 +3084,18 @@
         showOutOfTime();
         return;
       }
+      if (res.status === 429) {
+        showToast('slow down a moment.');
+        if (state.liveMode) {
+          startVADCycle();
+          setStageState('listening');
+          document.getElementById('stageLabel').textContent = 'i’m listening. talk anytime.';
+        }
+        return;
+      }
       if (!res.ok) {
+        if (res.status === 503) showToast('still warming up. try again in a moment.');
+        else showToast('could not catch that. try again?');
         if (state.liveMode) {
           startVADCycle();
           setStageState('listening');
@@ -2887,6 +3114,7 @@
       }
       sendUserMessage(text);
     } catch (e) {
+      showToast('connection blip. talk again.');
       if (state.liveMode) {
         startVADCycle();
         setStageState('listening');
@@ -2916,6 +3144,8 @@
     if (beginBtn) {
       beginBtn.addEventListener('click', (e) => {
         e.preventDefault();
+        // Real user gesture: unlock audio so the first bot reply auto-plays on iOS.
+        unlockAudioPlayback();
         if (state.mode !== 'live') setMode('live');
         if (!state.liveMode) startLiveMode();
       });
@@ -2927,6 +3157,7 @@
       inlineMic.addEventListener('click', (e) => {
         e.preventDefault();
         if (state.mode !== 'chat') return;
+        unlockAudioPlayback();
         if (audio.mic.recorder && audio.mic.recorder.state === 'recording') {
           stopRecording();
         } else {
@@ -2941,7 +3172,12 @@
 
   // ===== CHAT =====
   function openChat() {
+    window.location.href = 'app.html';
+    return;
     document.getElementById('chatOverlay').classList.add('active');
+    setSendingState(false);
+    hideMicNote();
+    hideToast();
     document.getElementById('chatPersonaName').textContent =
       state.path === 'her' ? 'Your Sexhapist · For Her' : 'Your Sexhapist';
     const history = state.path === 'her' ? state.historyHer : state.historyHim;
@@ -2965,7 +3201,51 @@
     win.classList.add('mode-' + state.mode);
     syncSessionFromServer();
     startTimer();
+    // Focus the input on open (chat mode) for keyboard + screen reader users.
+    if (state.mode === 'chat') {
+      const input = document.getElementById('chatInput');
+      if (input) setTimeout(() => { try { input.focus(); } catch {} }, 60);
+    }
   }
+
+  // Trap Tab focus inside the currently active dialog and close on Escape.
+  function getActiveDialog() {
+    const oot = document.getElementById('outOfTimeModal');
+    if (oot && oot.classList.contains('active')) return oot.querySelector('.out-of-time-box');
+    const overlay = document.getElementById('chatOverlay');
+    if (overlay && overlay.classList.contains('active')) return overlay.querySelector('.chat-window');
+    return null;
+  }
+  document.addEventListener('keydown', (e) => {
+    const dialog = getActiveDialog();
+    if (!dialog) return;
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      const oot = document.getElementById('outOfTimeModal');
+      if (oot && oot.classList.contains('active')) closeOutOfTime();
+      else closeChat();
+      return;
+    }
+    if (e.key === 'Tab') {
+      const focusable = dialog.querySelectorAll(
+        'button:not([disabled]), [href], input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      const visible = Array.prototype.filter.call(focusable, el => el.offsetParent !== null);
+      if (visible.length === 0) return;
+      const first = visible[0];
+      const last = visible[visible.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      } else if (!dialog.contains(document.activeElement)) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  });
 
   function showStartHint() {
     // Only the Live mode shows the orb stage; in Chat mode the input row is the affordance.
@@ -2999,6 +3279,7 @@
       const data = await res.json();
       state.paid = !!data.paid;
       const budget = data.freeBudgetMs || FREE_DURATION_MS;
+      state.freeBudgetMs = budget;
       if (data.hasSession) {
         const remaining = Math.max(0, data.remainingMs || 0);
         const elapsed = budget - remaining;
@@ -3034,13 +3315,39 @@
       const ambBtn = document.getElementById('ambientToggle');
       if (ambBtn) { ambBtn.classList.remove('on'); ambBtn.setAttribute('aria-pressed', 'false'); }
     }
+    // Release the microphone so the OS mic indicator turns off after closing.
+    if (audio.mic.stream) {
+      try { audio.mic.stream.getTracks().forEach(t => t.stop()); } catch {}
+      audio.mic.stream = null;
+      audio.mic.analyser = null;
+    }
+    hideToast();
+    hideMicPrimer();
   }
   function openChatWith(prefill) {
+    window.location.href = 'app.html?topic=' + encodeURIComponent(prefill || '');
+    return;
     openChat();
-    setTimeout(() => {
-      document.getElementById('chatInput').value = prefill;
-      document.getElementById('chatInput').focus();
-    }, 300);
+    // Set synchronously after open so there is no race; keep prefill (do not auto-send)
+    // so the user can edit before sending.
+    const input = document.getElementById('chatInput');
+    if (input) {
+      input.value = prefill;
+      input.focus();
+    }
+  }
+
+  // Open the overlay straight into Live (voice) mode. Used by the headline voice CTAs.
+  function openChatVoice() {
+    window.location.href = 'app.html';
+    return;
+    // This runs inside a real user gesture (a click), so unlock audio now.
+    unlockAudioPlayback();
+    openChat();
+    setMode('live');
+    showStartHint();
+    const begin = document.getElementById('beginSessionBtn');
+    if (begin) setTimeout(() => { try { begin.focus(); } catch {} }, 60);
   }
 
   // ===== TIMER =====
@@ -3072,10 +3379,17 @@
       if (state.paid) { renderTimer(); return; }
       if (!state.sessionStartedAt) return;
       const elapsed = Date.now() - state.sessionStartedAt;
-      state.remainingMs = Math.max(0, FREE_DURATION_MS - elapsed);
+      // The interval is display-only; remainingMs returned by /api/chat is the source of
+      // truth and realigns sessionStartedAt, so this stays consistent with the server.
+      state.remainingMs = Math.max(0, state.freeBudgetMs - elapsed);
       renderTimer();
       if (state.remainingMs <= 0) {
         stopTimer();
+        // A live user must not be able to blow past 0:00.
+        if (!state.paid) {
+          if (state.liveMode) stopLiveMode();
+          showOutOfTime();
+        }
       }
     }, 1000);
   }
@@ -3089,6 +3403,8 @@
   // ===== OUT OF TIME =====
   function showOutOfTime() {
     document.getElementById('outOfTimeModal').classList.add('active');
+    const btn = document.getElementById('getMoreTimeBtn');
+    if (btn) setTimeout(() => { try { btn.focus(); } catch {} }, 60);
   }
   function closeOutOfTime() {
     document.getElementById('outOfTimeModal').classList.remove('active');
@@ -3162,9 +3478,18 @@
     if (t) t.remove();
   }
 
+  function setSendingState(sending) {
+    state.sending = sending;
+    const input = document.getElementById('chatInput');
+    const sendBtn = document.querySelector('.send-btn');
+    if (input) input.disabled = sending;
+    if (sendBtn) sendBtn.classList.toggle('disabled', sending);
+  }
+
   async function sendUserMessage(text) {
     if (!text) return;
     if (!state.paid && state.remainingMs <= 0) { showOutOfTime(); return; }
+    if (state.sending) return; // a request is already in flight
 
     document.getElementById('quickReplies').style.display = 'none';
     hideStartHint();
@@ -3185,11 +3510,12 @@
       document.getElementById('stageLabel').textContent = 'thinking...';
     }
     showTyping();
+    setSendingState(true);
 
     try {
       const res = await fetch('/api/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: apiJsonHeaders(),
         credentials: 'same-origin',
         body: JSON.stringify({ messages: history, path: state.path }),
       });
@@ -3201,26 +3527,45 @@
         state.remainingMs = 0;
         renderTimer();
         setStageState('idle');
+        if (state.liveMode) stopLiveMode();
         showOutOfTime();
+        return;
+      }
+      if (res.status === 429 || (data && data.error === 'rate_limited')) {
+        setStageState('idle');
+        showToast('slow down a moment, then try again.');
+        return;
+      }
+      if (res.status === 503) {
+        setStageState('idle');
+        showToast('warming up, try again in a moment.');
         return;
       }
       if (!res.ok) {
         setStageState('idle');
+        showToast('something glitched on my end. give it a second and try again.');
         addBotMessage('something glitched on my end. give it a second and try again.');
         return;
       }
 
       const reply = data.message || 'i lost the thread there. try that again?';
       if (typeof data.remainingMs === 'number') {
+        // Server is the source of truth: adopt its value and realign the display clock.
         state.remainingMs = data.remainingMs;
+        state.sessionStartedAt = Date.now() - (state.freeBudgetMs - data.remainingMs);
         renderTimer();
       }
       history.push({ role: 'assistant', content: reply });
       addBotMessage(reply);
+      // Keep quick replies available across the session (CSS hides them in Live mode).
+      renderQuickReplies();
     } catch (e) {
       hideTyping();
       setStageState('idle');
+      showToast('connection issue on my end. mind trying that again?');
       addBotMessage('connection issue on my end. mind trying that again?');
+    } finally {
+      setSendingState(false);
     }
   }
 
@@ -3228,6 +3573,7 @@
     const input = document.getElementById('chatInput');
     const text = input.value.trim();
     if (!text) return;
+    unlockAudioPlayback();
     input.value = '';
     sendUserMessage(text);
   }
@@ -3310,19 +3656,47 @@
     try {
       const res = await fetch('/api/voice', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: apiJsonHeaders(),
         credentials: 'same-origin',
         body: JSON.stringify({ text, path: state.path }),
       });
+      if (res.status === 402) {
+        state.botSpeaking = false;
+        const m = document.getElementById('stageMic');
+        if (m) m.classList.remove('speaking');
+        state.remainingMs = 0;
+        renderTimer();
+        if (state.liveMode) stopLiveMode();
+        else setStageState('idle');
+        showOutOfTime();
+        return;
+      }
+      if (res.status === 429) {
+        state.botSpeaking = false;
+        const m = document.getElementById('stageMic');
+        if (m) m.classList.remove('speaking');
+        if (!state.liveMode) setStageState('idle');
+        showToast('slow down a moment, then try again.');
+        return;
+      }
       if (!res.ok) {
         state.botSpeaking = false;
+        const m = document.getElementById('stageMic');
+        if (m) m.classList.remove('speaking');
         if (isStageBusy() && !state.liveMode) setStageState('idle');
+        if (res.status === 503) showToast('voice is warming up, try again in a moment.', { onPlay: () => playVoice(text) });
+        else showToast('could not play the voice. tap to retry.', { onPlay: () => playVoice(text) });
         return;
       }
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
-      const audioEl = new Audio(url);
+      // Reuse the element unlocked on the user gesture so iOS allows playback
+      // after this awaited fetch; fall back to a fresh element if none was primed.
+      const audioEl = audio.primedEl || new Audio();
+      audioEl.onended = null;
+      audioEl.onerror = null;
       audioEl.preload = 'auto';
+      audioEl.src = url;
 
       audio.speech.current = { audioEl, url };
       setStageState('speaking');
@@ -3355,8 +3729,14 @@
       try {
         await audioEl.play();
       } catch (err) {
+        // iOS/Safari can reject play() if the gesture was consumed by the awaited fetch.
+        // Surface a visible affordance so the user can replay within a fresh gesture.
         console.warn('voice play blocked', err);
         cleanup();
+        showToast('tap to hear the reply.', {
+          sticky: true,
+          onPlay: () => playVoice(text),
+        });
       }
     } catch (e) {
       console.error('playVoice error', e);
@@ -3364,7 +3744,10 @@
       stopSpeechFallbackPulse();
       audio.speech.current = null;
       state.botSpeaking = false;
+      const m = document.getElementById('stageMic');
+      if (m) m.classList.remove('speaking');
       if (!state.liveMode) setStageState('idle');
+      showToast('could not play the voice. tap to retry.', { onPlay: () => playVoice(text) });
     }
   }
 

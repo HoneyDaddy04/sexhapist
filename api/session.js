@@ -1,47 +1,29 @@
-import { createHmac, timingSafeEqual } from 'node:crypto';
+import { applyCors } from '../lib/cors.js';
+import { ensureConfigured, peekBudget, FREE_DURATION_MS } from '../lib/session.js';
 
-const COOKIE_NAME = 'sx_session';
-const FREE_DURATION_MS = 3 * 60 * 1000;
-
-function getSecret() {
-  const s = process.env.SESSION_SECRET;
-  if (!s || s.length < 16) throw new Error('SESSION_SECRET missing');
-  return s;
-}
-
-function verify(token) {
-  if (!token || typeof token !== 'string') return null;
-  const parts = token.split('.');
-  if (parts.length !== 2) return null;
-  const [data, sig] = parts;
-  const expected = createHmac('sha256', getSecret()).update(data).digest('base64url');
-  const a = Buffer.from(sig);
-  const b = Buffer.from(expected);
-  if (a.length !== b.length || !timingSafeEqual(a, b)) return null;
-  try { return JSON.parse(Buffer.from(data, 'base64url').toString('utf8')); }
-  catch { return null; }
-}
-
-function parseCookies(header) {
-  const out = {};
-  if (!header) return out;
-  for (const part of header.split(';')) {
-    const idx = part.indexOf('=');
-    if (idx === -1) continue;
-    const k = part.slice(0, idx).trim();
-    const v = part.slice(idx + 1).trim();
-    if (k) out[k] = v;
-  }
-  return out;
-}
-
+// GET /api/session — reports the caller's remaining budget.
+//
+// Budget is the server-side, IP-keyed time-since-first-seen model documented in
+// lib/session.js. This endpoint uses peekBudget() so a bare poll does NOT itself
+// start the clock; the clock starts when the user actually uses chat/voice/
+// transcribe (which call loadBudget()).
 export default async function handler(req, res) {
-  res.setHeader('Cache-Control', 'no-store');
-  const cookies = parseCookies(req.headers.cookie);
-  const session = verify(cookies[COOKIE_NAME]);
-  const now = Date.now();
+  if (applyCors(req, res)) return; // B1-3
+  // GET-only guard (B1-5).
+  if (req.method !== 'GET') {
+    res.setHeader('Allow', 'GET');
+    return res.status(405).json({ error: 'method_not_allowed' });
+  }
+  if (!ensureConfigured(res)) return; // B1-4
 
-  if (!session) {
+  res.setHeader('Cache-Control', 'no-store');
+
+  const { hasSession, seen, totalRemainingMs, paidActive, firstSeenAt } = await peekBudget(req);
+
+  // hasSession reflects whether the server has started this caller's clock
+  // (either a valid cookie exists OR the IP has a firstSeenAt record).
+  const started = hasSession || seen;
+  if (!started) {
     return res.status(200).json({
       hasSession: false,
       remainingMs: FREE_DURATION_MS,
@@ -50,18 +32,11 @@ export default async function handler(req, res) {
     });
   }
 
-  const elapsed = now - session.startedAt;
-  const freeRemaining = Math.max(0, FREE_DURATION_MS - elapsed);
-  const paidActive = session.paid && session.paidUntil > now;
-  const remainingMs = paidActive
-    ? Math.max(freeRemaining, session.paidUntil - now)
-    : freeRemaining;
-
   return res.status(200).json({
     hasSession: true,
-    remainingMs,
+    remainingMs: totalRemainingMs,
     freeBudgetMs: FREE_DURATION_MS,
     paid: paidActive,
-    startedAt: session.startedAt,
+    startedAt: firstSeenAt,
   });
 }
