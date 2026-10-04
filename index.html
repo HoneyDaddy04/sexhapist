@@ -1836,7 +1836,7 @@
       <div class="logo-name">Se<em>x</em>hapist</div>
     </div>
     <div class="nav-center">
-      <a href="blogs.html">Notes</a>
+      <a href="/blogs">Notes</a>
     </div>
     <div class="nav-links">
       <div class="path-switch" id="pathSwitch">
@@ -2264,10 +2264,10 @@
   <div class="footer-inner">
     <span>© 2026 Sexhapist · AI Intimacy Companion · Not a licensed clinical service.</span>
     <div class="footer-links">
-      <a href="blogs.html">Notes</a>
-      <a href="privacy.html">Privacy</a>
-      <a href="terms.html">Terms</a>
-      <a href="contact.html">Contact</a>
+      <a href="/blogs">Notes</a>
+      <a href="/privacy">Privacy</a>
+      <a href="/terms">Terms</a>
+      <a href="/contact">Contact</a>
     </div>
   </div>
 </footer>
@@ -3172,7 +3172,7 @@
 
   // ===== CHAT =====
   function openChat() {
-    window.location.href = 'app.html';
+    window.location.href = '/app';
     return;
     document.getElementById('chatOverlay').classList.add('active');
     setSendingState(false);
@@ -3325,7 +3325,7 @@
     hideMicPrimer();
   }
   function openChatWith(prefill) {
-    window.location.href = 'app.html?topic=' + encodeURIComponent(prefill || '');
+    window.location.href = '/app?topic=' + encodeURIComponent(prefill || '');
     return;
     openChat();
     // Set synchronously after open so there is no race; keep prefill (do not auto-send)
@@ -3339,7 +3339,7 @@
 
   // Open the overlay straight into Live (voice) mode. Used by the headline voice CTAs.
   function openChatVoice() {
-    window.location.href = 'app.html';
+    window.location.href = '/app';
     return;
     // This runs inside a real user gesture (a click), so unlock audio now.
     unlockAudioPlayback();
@@ -3411,7 +3411,7 @@
   }
   function onGetMoreTime() {
     const msg = "Hi, I'd love more time to talk. Please add me to the beta waitlist so I can keep using Sexhapist.";
-    window.location.href = 'contact.html?intent=beta&msg=' + encodeURIComponent(msg);
+    window.location.href = '/contact?intent=beta&msg=' + encodeURIComponent(msg);
   }
   function sendQuick(text) {
     document.getElementById('chatInput').value = text;

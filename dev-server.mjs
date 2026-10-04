@@ -84,7 +84,9 @@ async function handleApi(req, res, name) {
 
 async function serveStatic(req, res, urlPath) {
   let rel = decodeURIComponent(urlPath.split('?')[0]);
-  if (rel === '/' || rel === '') rel = '/index.html';
+  if (rel === '/' || rel === '' || rel === '/home') rel = '/index.html';
+  // clean URLs, matching vercel.json: /app -> /app.html
+  else if (!extname(rel) && !rel.endsWith('/')) rel += '.html';
   // prevent path traversal
   const full = normalize(join(ROOT, rel));
   if (!full.startsWith(ROOT + sep) && full !== ROOT) {
