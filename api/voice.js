@@ -3,11 +3,7 @@ import { ensureConfigured, loadBudget, setSessionCookie } from '../lib/session.j
 import { enforceRateLimit } from '../lib/ratelimit.js';
 import { withTimeout } from '../lib/safety.js';
 import { Readable } from 'node:stream';
-
-// Nigerian voices from the ElevenLabs public library.
-// Him: "NZ The African Man - Nigerian Voice Pro". Her: "Bukola - Young Nigerian, Gentle, Clear, Warm".
-const VOICE_HIM = process.env.VOICE_ID_HIM || 'gsyHQ9kWCDIipR26RqQ1';
-const VOICE_HER = process.env.VOICE_ID_HER || 'oC2pCZZWEDRe6lmZpaaw';
+import { pickVoice } from '../lib/voices.js';
 
 export default async function handler(req, res) {
   if (applyCors(req, res)) return; // B1-1
@@ -43,12 +39,12 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'invalid_text' });
   }
   const path = body.path === 'her' ? 'her' : 'him';
-  const voiceId = path === 'her' ? VOICE_HER : VOICE_HIM;
+  const voiceId = pickVoice(body.voice, path);
 
   try {
     await withTimeout(async (signal) => {
       const model = process.env.VOICE_MODEL || 'eleven_flash_v2_5';
-      const upstream = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}/stream?output_format=mp3_44100_128`, {
+      const upstream = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}/stream?output_format=mp3_44100_64`, {
         method: 'POST',
         signal,
         headers: {
@@ -60,11 +56,13 @@ export default async function handler(req, res) {
           text,
           model_id: model,
           // A steady, gentle delivery keeps speech calm and easy to follow.
+          // Calm, unhurried therapist delivery.
           voice_settings: {
-            stability: 0.68,
-            similarity_boost: 0.82,
-            style: 0.12,
+            stability: 0.62,
+            similarity_boost: 0.8,
+            style: 0.08,
             use_speaker_boost: true,
+            speed: 0.94,
           },
         }),
       });

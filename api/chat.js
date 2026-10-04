@@ -138,6 +138,7 @@ function chatProvider() {
       name: 'opper',
       client: new OpenAI({ apiKey: process.env.OPPER_API_KEY, baseURL: 'https://api.opper.ai/v3/compat' }),
       models: [process.env.OPPER_MODEL || 'openai/gpt-6-sol', process.env.OPPER_FALLBACK_MODEL || 'openai/gpt-6-luna'],
+      extra: { reasoning_effort: process.env.OPPER_REASONING || 'none' },
     };
   }
   if (process.env.OPENROUTER_API_KEY) {
@@ -205,15 +206,16 @@ export default async function handler(req, res) {
       : { error: 'time_expired', message: 'your free time is up. take a breath. when you are ready, we can keep going.', remainingMs: 0 });
   }
 
-  const { client, models } = provider;
+  const { client, models, extra = {} } = provider;
   // Moderation always runs on OpenAI (Opper/OpenRouter have no moderation endpoint).
   const modClient = process.env.OPENAI_API_KEY ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY }) : null;
 
   // Moderation pass on the latest user message (B2-4). If flagged for
   // self-harm/violence, return a safe crisis message instead of calling the model.
   const userText = latestUserMessage(messages);
-  const moderation = modClient ? await moderateText(modClient, userText) : { flagged: false };
-  if (moderation.flagged) {
+  const moderationP = modClient ? moderateText(modClient, userText) : Promise.resolve({ flagged: false });
+
+  if (body.stream !== true && (await moderationP).flagged) {
     setSessionCookie(res, session);
     return res.status(200).json({
       message: CRISIS_MESSAGE,
@@ -232,6 +234,7 @@ export default async function handler(req, res) {
     setSessionCookie(res, session);
     let reply = '';
     let lastErr;
+    let cleared = false;
     for (const model of models) {
       try {
         await withTimeout(async (signal) => {
@@ -239,11 +242,16 @@ export default async function handler(req, res) {
             model,
             max_tokens: 700,
             stream: true,
+            ...extra,
             messages: [{ role: 'system', content: systemPrompt }, ...messages],
           }, { signal });
           for await (const chunk of stream) {
             const part = cleanText(chunk.choices?.[0]?.delta?.content || '');
             if (!part) continue;
+            if (!cleared) {
+              if ((await moderationP).flagged) { reply = CRISIS_MESSAGE; res.write(`data: ${JSON.stringify({ text: CRISIS_MESSAGE, safety: true })}\n\n`); break; }
+              cleared = true;
+            }
             reply += part;
             res.write(`data: ${JSON.stringify({ text: part })}\n\n`);
           }
@@ -266,6 +274,7 @@ export default async function handler(req, res) {
       const completion = await withTimeout((signal) => client.chat.completions.create({
         model,
         max_tokens: 700,
+        ...extra,
         messages: [{ role: 'system', content: systemPrompt }, ...messages],
       }, { signal }));
       const reply = cleanText(completion.choices?.[0]?.message?.content || '');
