@@ -686,7 +686,9 @@ a{color:inherit;text-decoration:none}
   // ---- Ambience ----
   // Ambience: a seamless 30s loop generated with ElevenLabs sound effects (audio/ambience.mp3).
   // Web Audio keeps the loop gapless; the gain dips while the AI is speaking.
-  const AMB_LEVEL=.35,AMB_DUCK=.14;
+  // Background bed sits well under speech; while the AI talks it drops further and
+  // loses its highs so the voice's frequency range stays clear.
+  const AMB_LEVEL=.07,AMB_DUCK=.025,AMB_OPEN_HZ=3200,AMB_DUCK_HZ=700;
   let ambBuffer=null;
   async function startAmbience(){
     const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx||state.ambient.on)return;
@@ -694,13 +696,13 @@ a{color:inherit;text-decoration:none}
       const ctx=state.ambient.context||new Ctx();state.ambient.context=ctx;await ctx.resume();
       if(!ambBuffer){const r=await fetch('audio/ambience.mp3');ambBuffer=await ctx.decodeAudioData(await r.arrayBuffer());}
       if(!state.voiceMode)return;
-      const src=ctx.createBufferSource(),gain=ctx.createGain();src.buffer=ambBuffer;src.loop=true;
+      const src=ctx.createBufferSource(),gain=ctx.createGain(),lp=ctx.createBiquadFilter();src.buffer=ambBuffer;src.loop=true;lp.type='lowpass';lp.Q.value=.5;lp.frequency.value=state.speakingCount>0?AMB_DUCK_HZ:AMB_OPEN_HZ;
       gain.gain.value=0;gain.gain.linearRampToValueAtTime(state.speakingCount>0?AMB_DUCK:AMB_LEVEL,ctx.currentTime+2.5);
-      src.connect(gain).connect(ctx.destination);src.start();
-      state.ambient.nodes=[src];state.ambient.master=gain;state.ambient.on=true;$('ambience').setAttribute('aria-pressed','true');
+      src.connect(lp).connect(gain).connect(ctx.destination);src.start();
+      state.ambient.nodes=[src];state.ambient.master=gain;state.ambient.filter=lp;state.ambient.on=true;$('ambience').setAttribute('aria-pressed','true');
     }catch{toast('Could not start ambience on this device.');}
   }
-  function duckAmbience(on){const a=state.ambient;if(!a.on||!a.master)return;const t=a.context.currentTime;a.master.gain.cancelScheduledValues(t);a.master.gain.setValueAtTime(a.master.gain.value,t);a.master.gain.linearRampToValueAtTime(on?AMB_DUCK:AMB_LEVEL,t+.6);}
+  function duckAmbience(on){const a=state.ambient;if(!a.on||!a.master)return;const t=a.context.currentTime;a.master.gain.cancelScheduledValues(t);a.master.gain.setValueAtTime(a.master.gain.value,t);a.master.gain.linearRampToValueAtTime(on?AMB_DUCK:AMB_LEVEL,t+(on?.25:1.2));if(a.filter){a.filter.frequency.cancelScheduledValues(t);a.filter.frequency.setValueAtTime(a.filter.frequency.value,t);a.filter.frequency.exponentialRampToValueAtTime(on?AMB_DUCK_HZ:AMB_OPEN_HZ,t+(on?.25:1.2));}}
   function stopAmbience(){
     const a=state.ambient;if(!a||!a.on)return;
     const ctx=a.context,g=a.master,nodes=a.nodes.slice();
